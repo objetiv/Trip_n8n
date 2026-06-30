@@ -1,0 +1,128 @@
+{
+  "updatedAt": "2026-06-23T01:00:54.060Z",
+  "createdAt": "2026-06-12T20:17:51.331Z",
+  "id": "KGrcb91meIyRZze3",
+  "name": "Trigger",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://trip-n8n.3vyu0i.easypanel.host/webhook/e5718c45-e215-43ea-9437-e4bb8cb90652",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        208,
+        0
+      ],
+      "id": "ff49dc13-1ee1-4888-a26f-5ef1a18b839f",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "f6b73761-5f1b-409c-9e24-bd81838989a4",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "b5cd44f0-ec12-4ab9-8339-798e2922ecad",
+      "name": "Webhook",
+      "webhookId": "f6b73761-5f1b-409c-9e24-bd81838989a4"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "e9edbee0-3bb7-4657-9a76-d77bc1a059ce",
+  "activeVersionId": "e9edbee0-3bb7-4657-9a76-d77bc1a059ce",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-06-12T20:17:51.333Z",
+      "createdAt": "2026-06-12T20:17:51.333Z",
+      "role": "workflow:owner",
+      "workflowId": "KGrcb91meIyRZze3",
+      "projectId": "G6oOhMxSr8k56eQz"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-06-23T01:00:52.902Z",
+    "createdAt": "2026-06-23T01:00:52.902Z",
+    "versionId": "e9edbee0-3bb7-4657-9a76-d77bc1a059ce",
+    "workflowId": "KGrcb91meIyRZze3",
+    "nodes": [
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://trip-n8n.3vyu0i.easypanel.host/webhook/e5718c45-e215-43ea-9437-e4bb8cb90652",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          208,
+          0
+        ],
+        "id": "ff49dc13-1ee1-4888-a26f-5ef1a18b839f",
+        "name": "HTTP Request"
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "f6b73761-5f1b-409c-9e24-bd81838989a4",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "b5cd44f0-ec12-4ab9-8339-798e2922ecad",
+        "name": "Webhook",
+        "webhookId": "f6b73761-5f1b-409c-9e24-bd81838989a4"
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "VIBES VIBES",
+    "name": null,
+    "description": null
+  },
+  "tags": []
+}
