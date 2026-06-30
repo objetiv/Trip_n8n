@@ -1,0 +1,288 @@
+{
+  "updatedAt": "2026-06-29T22:08:22.908Z",
+  "createdAt": "2026-06-22T22:48:41.263Z",
+  "id": "5gTwuDYvI4edXEiG",
+  "name": "Trigger_reevaluation",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://trip-n8n.3vyu0i.easypanel.host/webhook/2762341a-c640-4bc6-921d-83af774634ca",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "pais",
+              "value": "={{ $json.body.pais }}"
+            },
+            {
+              "name": "=estado",
+              "value": "={{ $json.body.estado }}"
+            },
+            {
+              "name": "=cidade",
+              "value": "={{ $json.body.cidade }}"
+            },
+            {
+              "name": "bairro",
+              "value": "={{ $json.body.bairro }}"
+            },
+            {
+              "name": "=avaliar_todos",
+              "value": "={{ $json.body.revaluation_target }}"
+            },
+            {
+              "name": "minimum_grade",
+              "value": "={{ $json.body.minimum_grade }}"
+            },
+            {
+              "name": "minimum_reviews",
+              "value": "={{ $json.body.minimum_reviews }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -16,
+        -80
+      ],
+      "id": "4e9faa89-2d2f-47a0-b418-505b267072cf",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "813e9688-37a6-45ef-9b5b-4f8e17b302e4",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -224,
+        -80
+      ],
+      "id": "8aa50256-76d2-44da-b145-876c0d4c20a1",
+      "name": "Webhook",
+      "webhookId": "813e9688-37a6-45ef-9b5b-4f8e17b302e4"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -384,
+        -368
+      ],
+      "id": "2a34a2cf-4109-4fdf-8f7f-77225b16fa38",
+      "name": "When clicking ‘Execute workflow’",
+      "disabled": true
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "trip-n8n.3vyu0i.easypanel.host",
+            "user-agent": "Deno/2.1.4 (variant; SupabaseEdgeRuntime/1.74.2)",
+            "content-length": "549",
+            "accept": "*/*",
+            "accept-encoding": "gzip,br",
+            "accept-language": "*",
+            "content-type": "application/json",
+            "traceparent": "00-019f156c404a768fb78db8d702ba0c5c-c34b55ba9a437261-01",
+            "x-forwarded-for": "18.116.15.62",
+            "x-forwarded-host": "trip-n8n.3vyu0i.easypanel.host",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "76e76919d272",
+            "x-real-ip": "18.116.15.62"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "id": "0f8b3d7a-0def-4dcf-975f-4c5e08edd60f",
+            "pais": "Brasil",
+            "passo": 0.005,
+            "bairro": "Pinheiros",
+            "cidade": "São Paulo",
+            "estado": "SP",
+            "status": "pending",
+            "created_at": "2026-06-29T22:07:23.689341+00:00",
+            "nr_latitude": -23.561414,
+            "nr_longitude": -46.68203,
+            "minimum_grade": 4,
+            "avaliados_total": 2,
+            "minimum_reviews": 50,
+            "avaliados_baseline": [
+              {
+                "nome": "Bar do Zé",
+                "nota": 3.8,
+                "reviews": 120,
+                "place_id": "ChIJ0WGkg4FEzpQRrlsz_whLqZs"
+              },
+              {
+                "nome": "Cantina da Maria",
+                "nota": 4.1,
+                "reviews": 340,
+                "place_id": "ChIJrTLr-GyuEmsRBfy61i59si0"
+              }
+            ],
+            "revaluation_target": "restaurantes"
+          },
+          "webhookUrl": "https://trip-n8n.3vyu0i.easypanel.host/webhook/813e9688-37a6-45ef-9b5b-4f8e17b302e4",
+          "executionMode": "production"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "versionId": "303de5d4-c609-4629-87b0-d334f1baccf0",
+  "activeVersionId": "303de5d4-c609-4629-87b0-d334f1baccf0",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-06-22T22:48:41.265Z",
+      "createdAt": "2026-06-22T22:48:41.265Z",
+      "role": "workflow:owner",
+      "workflowId": "5gTwuDYvI4edXEiG",
+      "projectId": "G6oOhMxSr8k56eQz"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-06-29T22:08:22.909Z",
+    "createdAt": "2026-06-29T22:08:22.909Z",
+    "versionId": "303de5d4-c609-4629-87b0-d334f1baccf0",
+    "workflowId": "5gTwuDYvI4edXEiG",
+    "nodes": [
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://trip-n8n.3vyu0i.easypanel.host/webhook/2762341a-c640-4bc6-921d-83af774634ca",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "pais",
+                "value": "={{ $json.body.pais }}"
+              },
+              {
+                "name": "=estado",
+                "value": "={{ $json.body.estado }}"
+              },
+              {
+                "name": "=cidade",
+                "value": "={{ $json.body.cidade }}"
+              },
+              {
+                "name": "bairro",
+                "value": "={{ $json.body.bairro }}"
+              },
+              {
+                "name": "=avaliar_todos",
+                "value": "={{ $json.body.revaluation_target }}"
+              },
+              {
+                "name": "minimum_grade",
+                "value": "={{ $json.body.minimum_grade }}"
+              },
+              {
+                "name": "minimum_reviews",
+                "value": "={{ $json.body.minimum_reviews }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          -16,
+          -80
+        ],
+        "id": "4e9faa89-2d2f-47a0-b418-505b267072cf",
+        "name": "HTTP Request"
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "813e9688-37a6-45ef-9b5b-4f8e17b302e4",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          -224,
+          -80
+        ],
+        "id": "8aa50256-76d2-44da-b145-876c0d4c20a1",
+        "name": "Webhook",
+        "webhookId": "813e9688-37a6-45ef-9b5b-4f8e17b302e4"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          -384,
+          -368
+        ],
+        "id": "2a34a2cf-4109-4fdf-8f7f-77225b16fa38",
+        "name": "When clicking ‘Execute workflow’",
+        "disabled": true
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "When clicking ‘Execute workflow’": {
+        "main": [
+          []
+        ]
+      }
+    },
+    "authors": "VIBES VIBES",
+    "name": null,
+    "description": null
+  },
+  "tags": []
+}
