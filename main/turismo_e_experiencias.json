@@ -1,0 +1,2763 @@
+{
+  "updatedAt": "2026-06-29T23:33:43.287Z",
+  "createdAt": "2026-06-03T22:48:23.855Z",
+  "id": "i5zjd89NJwuhoZJU",
+  "name": "turismo_e_experiencias",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "aeba2f1c-fd65-48c9-a892-f01247ac559e",
+              "name": "price_to_value_review",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2048,
+        1504
+      ],
+      "id": "b598c534-c1f6-4a84-b601-57e21a3d10dc",
+      "name": "Price to value review5"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a7990d00-10eb-4ae3-be6c-fbd1e6f5117d",
+              "name": "space_review",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2048,
+        1776
+      ],
+      "id": "22f5df51-8fb9-4620-9967-be5f93623c99",
+      "name": "Space review6"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0873695e-b19a-4fe6-b2b8-4d2cf76d61be",
+              "name": "service_review",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2048,
+        1232
+      ],
+      "id": "9a6af5ca-192b-462e-b89d-d8836e2532ba",
+      "name": "service_review5"
+    },
+    {
+      "parameters": {
+        "content": "Qualitative analizer\n\n\n\n\n",
+        "height": 1360,
+        "width": 2416
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        400,
+        624
+      ],
+      "id": "dbeacd68-048c-493d-80b3-2aea58ee890e",
+      "name": "Sticky Note16"
+    },
+    {
+      "parameters": {
+        "content": "Turismo e experiências\n",
+        "height": 2032,
+        "width": 4080,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -384,
+        -16
+      ],
+      "id": "47fc91a7-aa26-4ae7-83ff-aa8c7d7f76bf",
+      "name": "Sticky Note17"
+    },
+    {
+      "parameters": {
+        "numberInputs": 5
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2320,
+        1152
+      ],
+      "id": "63296b0b-72cf-4394-85cd-49da204f6852",
+      "name": "Merge30"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0873695e-b19a-4fe6-b2b8-4d2cf76d61be",
+              "name": "capacity_review",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2048,
+        912
+      ],
+      "id": "f13a70fc-d3d5-4d57-9a63-d941539db7db",
+      "name": "capacity_review"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        176,
+        1232
+      ],
+      "id": "83690565-b4de-4d22-9b78-f1ff83394588",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=ID DO ESTABELECIMENTO: {{ $json.id }}\nNOME DO ESTABELECIMENTO: {{ $json.nome }}\nTIPO: {{ $json.subtipos_pt_str }}\n\nCOMENTÁRIOS A ANALISAR:\n{{ $json.comentarios_frases }}",
+        "options": {
+          "systemMessage": "Você é um especialista em análise de reviews e descrição de estabelecimentos.\nSua tarefa é analisar TODOS os comentários fornecidos sobre o local \"{nome_estabelecimento}\" (tipo: {subtipos}) e gerar um RESUMO CURTO, NATURAL E ATRATIVO do estabelecimento.\nO objetivo é produzir um texto que descreva rapidamente a experiência principal percebida pelos visitantes, usando apenas informações recorrentes e claramente presentes nos comentários.\n## Objetivo do resumo\nO resumo deve:\n* Transmitir rapidamente o que torna o local interessante\n* Destacar os aspectos mais mencionados pelos visitantes\n* Soar natural, humano e confiável\n* Funcionar como uma descrição curta para perfil, guia ou recomendação\n* Refletir a percepção geral dos reviews\n## O que considerar\nConsidere principalmente:\n* Experiência principal oferecida pelo local\n* Ambiente e atmosfera\n* Atrações mais elogiadas\n* Diferenciais recorrentes\n* Sensação transmitida pelos visitantes\n* Pontos fortes mencionados repetidamente\n* Perfil da experiência (tranquila, divertida, familiar, rural, aventureira, acolhedora etc.)\n## O que EVITAR\nNÃO:\n* Invente informações\n* Use marketing exagerado\n* Use frases genéricas vazias\n* Mencione notas, avaliações ou quantidade de reviews\n* Cite reclamações isoladas\n* Transforme o texto em propaganda artificial\n* Use listas, emojis ou hashtags\n* Use linguagem robótica\n## Regras importantes\n1. O resumo deve ser baseado SOMENTE em evidências presentes nos comentários.\n2. Priorize aspectos recorrentes e consistentes.\n3. Ignore comentários irrelevantes ou muito isolados.\n4. Se houver opiniões muito divididas, mantenha a descrição neutra e equilibrada — descreva o local de forma ponderada em vez de retornar 77.\n5. O texto deve parecer escrito por um humano.\n6. Não use adjetivos extremos sem forte evidência recorrente.\n7. Não invente atrações, estrutura ou experiências não mencionadas.\n## Formato de saída (ESTRITAMENTE JSON)\nVocê deve retornar EXCLUSIVAMENTE um objeto JSON válido. Não inclua NENHUM texto antes ou depois do JSON. Não inclua marcações markdown (como ```json).\nA estrutura do JSON deve ser exatamente esta:\n{\n  \"id\": \"Copie aqui exatamente o ID DO ESTABELECIMENTO fornecido\",\n  \"resultado\": \"SEU RESUMO AQUI\"\n}\nRegras ESTRITAS para o campo \"resultado\":\n1. O texto deve ter entre 1 e 3 frases curtas.\n2. O texto deve possuir no MÁXIMO 320 caracteres.\n3. Não use aspas, quebras de linha (\\n), listas, emojis ou hashtags dentro do texto.\n4. SEMPRE que houver qualquer comentário aproveitável, escreva o resumo — mesmo que os comentários sejam poucos, baseie-se no que houver e mantenha o texto mais enxuto e cauteloso. Não retorne \"77\" por escassez de dados nem por opiniões divididas. Retorne \"77\" APENAS quando NÃO houver absolutamente nenhum comentário com conteúdo aproveitável sobre o local (lista vazia ou apenas ruído sem qualquer informação). Na prática, com comentários reais, \"77\" deve ser raríssimo.\n5. O campo \"resultado\" só admite DOIS formatos: o texto do resumo OU exatamente \"77\". NUNCA escreva \"insuficiente\", \"dados insuficientes\", \"não foi possível resumir\" nem qualquer outra mensagem — isso quebra o processamento posterior.\n6. Exemplo ideal: \"Fazenda com ambiente tranquilo e contato próximo com animais, muito elogiada por famílias e crianças. O local é reconhecido pela experiência rural acolhedora e pela ótima estrutura para passar o dia na natureza.\"\n## Comentários a analisar\n{lista_de_comentarios}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        1424,
+        672
+      ],
+      "id": "0959e2dd-1641-4402-8530-91f773d52474",
+      "name": "AI Agent",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-nano",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-nano"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1424,
+        800
+      ],
+      "id": "688a0007-82e4-4f29-aaab-259ebead6885",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "dhG0ktohViAz4N21",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=ID DO ESTABELECIMENTO: {{ $json.id }}\nNOME DO ESTABELECIMENTO: {{ $json.nome }}\nTIPO: {{ $json.subtipos_pt_str }}\n\nCOMENTÁRIOS A ANALISAR:\n{{ $json.comentarios_frases }}",
+        "options": {
+          "systemMessage": "Você avalia reviews de uma atração turística e dá nota a UM tema só: CAPACIDADE.\nCAPACIDADE é o quanto o espaço do local comporta de pessoas e de movimento: se é amplo e absorve bem a quantidade de gente, com espaço para circular, ou se é insuficiente e fica saturado, apertado, congestionado. Um local pequeno pode ir bem se raramente satura; um grande e famoso pode ir mal se vive lotado e não dá para se mover. \"Cheio\" não é defeito por si só — o que pesa é se o espaço aguenta a gente que recebe.\nOs comentários vêm quebrados em frases curtas, uma por linha, no formato \"F<n> (C<n>): texto\". Os rótulos F/C só numeram — ignore-os e julgue o texto, em qualquer idioma, pelo sentido.\nAvalie SOMENTE este ângulo. Uma mesma frase pode também servir a outro tema; isso não é problema seu. Se ela disser algo sobre o espaço comportar (ou não) a quantidade de pessoas e o movimento, conte aqui. Sinais indiretos contam (amplo, cabe todo mundo, espaço de sobra, dá pra circular tranquilo, nunca fica apertado = positivo; vive lotado, superlotado, não cabe ninguém, espremido, não dá pra andar = negativo). Atenção: \"lotado, mas o espaço é enorme e absorve bem\" é positivo; \"espaço minúsculo, não cabe ninguém\" é negativo.\nANTES de decidir a nota, faça internamente uma varredura de TODAS as frases, uma por uma, e marque cada uma como POSITIVA, NEGATIVA ou NÃO FALA deste tema. Só conclua 77 se, após revisar cada linha, NENHUMA frase falar do tamanho do espaço ou da quantidade de gente que o local comporta. Termos como \"amplo\", \"cabe muita gente\", \"espaço de sobra\", \"lotado/superlotado\", \"apertado\", \"não cabe ninguém\" CONTAM como menção ao tema e proíbem o 77.\nPara cada frase, decida: ela fala da capacidade do espaço de forma POSITIVA (comporta bem), NEGATIVA (não comporta) ou NÃO FALA deste tema?\n- Se NENHUMA frase falar deste tema → a nota é 77.\n- Se houver frases que falam, dê nota 0–10 pelo balanço:\n  só positivas: 8–9 | mais positivas que negativas: 6–7 | misturado: 5 | mais negativas: 3–4 | quase todas negativas: 1–2.\n  Uma única negativa isolada no meio de várias positivas não baixa de 6.\nResponda SÓ com um objeto JSON, sem nada antes nem depois, sem markdown, com exatamente duas chaves: \"id\" e \"resultado\".\nO valor de \"resultado\" tem SEMPRE duas partes: a nota, depois \": \", depois uma justificativa curta e direta, de pelo menos uma frase completa. O \"resultado\" NUNCA pode ser apenas o número — se você escrever a nota, é OBRIGATÓRIO escrever a justificativa logo depois dos dois pontos. Isso vale também para 77.\nSe a nota for 77, a justificativa NÃO pode mencionar nenhuma frase que fale do tema, nem afirmar e negar a existência dessas frases na mesma resposta — seja coerente.\nExemplos de resposta válida (siga este padrão, sempre com a justificativa preenchida):\n{\"id\": \"abc123\", \"resultado\": \"7.0: As frases dizem que o espaço é amplo e absorve bem o movimento, com uma ressalva sobre lotação no fim de semana.\"}\n{\"id\": \"abc123\", \"resultado\": \"77: nenhuma frase comentou o tamanho do espaço ou a quantidade de gente que o local comporta.\"}\nUse no campo \"id\" o ID do estabelecimento que veio na mensagem.\nRegras do formato, obrigatórias:\n- Exatamente duas chaves: \"id\" e \"resultado\", ambas com valor em texto entre aspas duplas.\n- \"resultado\" começa com a nota (ex.: \"8.0\") OU com 77, seguido de \": \" e a justificativa.\n- Justificativa de pelo menos uma frase completa. Nunca apenas o número.\n- Se for 77, a justificativa não pode citar nenhuma frase que fale do tema."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        1424,
+        960
+      ],
+      "id": "f9d372d9-8a2e-4aba-9c3f-01dca8843bf1",
+      "name": "AI Agent1",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-nano",
+          "mode": "list"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1424,
+        1088
+      ],
+      "id": "032fa967-91d0-42f9-8467-42c8e10a021d",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "dhG0ktohViAz4N21",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=ID DO ESTABELECIMENTO: {{ $json.id }}\nNOME DO ESTABELECIMENTO: {{ $json.nome }}\nTIPO: {{ $json.subtipos_pt_str }}\n\nCOMENTÁRIOS A ANALISAR:\n{{ $json.comentarios_frases }}",
+        "options": {
+          "systemMessage": "Você avalia reviews de uma atração turística e dá nota a UM tema só: SERVIÇO.\nSERVIÇO é a qualidade do cuidado humano com o local e com o visitante: o trabalho de quem opera, atende, organiza, mantém e zela pelo lugar, e o quanto isso se reflete na experiência de quem visita — guias, monitores, bilheteria, organização da visita, conservação por mão humana, prestatividade.\n\n Um local simples bem cuidado e bem operado conta; um famoso pode ir mal se está abandonado, desorganizado ou mal atendido.\nOs comentários vêm quebrados em frases curtas, uma por linha, no formato \"F<n> (C<n>): texto\". Os rótulos F/C só numeram — ignore-os e julgue o texto, em qualquer idioma, pelo sentido.\nAvalie SOMENTE este ângulo. Uma mesma frase pode também servir a outro tema; isso não é problema seu. Se ela disser algo sobre o cuidado, o atendimento, a manutenção ou a operação do local, conte aqui. Sinais indiretos contam (bem cuidado, equipe atenciosa, guias excelentes, tudo organizado, bem mantido, prestativos = positivo; abandonado, descaso, ninguém pra informar, mal organizado, funcionários grosseiros, largado = negativo). Atenção: \"sujo e largado por descaso de quem deveria cuidar\" é serviço.\nANTES de decidir a nota, faça internamente uma varredura de TODAS as frases, uma por uma, e marque cada uma como POSITIVA, NEGATIVA ou NÃO FALA deste tema. Só conclua 77 se, após revisar cada linha, NENHUMA frase falar do cuidado, do atendimento, da manutenção ou da operação do local.\nPara cada frase, decida: ela fala do serviço/cuidado com o local de forma POSITIVA (bem cuidado, bem atendido, bem operado), NEGATIVA (descuidado, mal atendido, mal operado) ou NÃO FALA deste tema?\n- Se NENHUMA frase falar deste tema → a nota é 77.\n- Se houver frases que falam, dê nota 0–10 pelo balanço:\n  só positivas: 8–9 | mais positivas que negativas: 6–7 | misturado: 5 | mais negativas: 3–4 | quase todas negativas: 1–2.\n  Uma única negativa isolada no meio de várias positivas não baixa de 6.\nResponda SÓ com um objeto JSON, sem nada antes nem depois, sem markdown, com exatamente duas chaves: \"id\" e \"resultado\".\nO valor de \"resultado\" tem SEMPRE duas partes: a nota, depois \": \", depois uma justificativa curta e direta, de pelo menos uma frase completa. O \"resultado\" NUNCA pode ser apenas o número — se você escrever a nota, é OBRIGATÓRIO escrever a justificativa logo depois dos dois pontos. Isso vale também para 77.\nSe a nota for 77, a justificativa NÃO pode mencionar nenhuma frase que fale do tema, nem afirmar e negar a existência dessas frases na mesma resposta — seja coerente.\nExemplos de resposta válida (siga este padrão, sempre com a justificativa preenchida):\n{\"id\": \"abc123\", \"resultado\": \"7.0: As frases elogiam o local bem cuidado e a equipe atenciosa, com uma ressalva sobre falta de informação na entrada.\"}\n{\"id\": \"abc123\", \"resultado\": \"77: nenhuma frase comentou o cuidado, a manutenção ou o atendimento no local.\"}\nUse no campo \"id\" o ID do estabelecimento que veio na mensagem.\nRegras do formato, obrigatórias:\n- Exatamente duas chaves: \"id\" e \"resultado\", ambas com valor em texto entre aspas duplas.\n- \"resultado\" começa com a nota (ex.: \"8.0\") OU com 77, seguido de \": \" e a justificativa.\n- Justificativa de pelo menos uma frase completa. Nunca apenas o número.\n- Se for 77, a justificativa não pode citar nenhuma frase que fale do tema."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        1408,
+        1280
+      ],
+      "id": "7067458f-6f26-40d5-b895-1f0dfa333394",
+      "name": "AI Agent2",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-nano",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-nano"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1408,
+        1408
+      ],
+      "id": "ab414f10-cbd8-4674-a454-7e3646c1846b",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "dhG0ktohViAz4N21",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=ID DO ESTABELECIMENTO: {{ $json.id }}\nNOME DO ESTABELECIMENTO: {{ $json.nome }}\nTIPO: {{ $json.subtipos_pt_str }}\n\nCOMENTÁRIOS A ANALISAR:\n{{ $json.comentarios_frases }}",
+        "options": {
+          "systemMessage": "Você avalia reviews de uma atração turística e dá nota a UM tema só: CUSTO-BENEFÍCIO.\nCUSTO-BENEFÍCIO é o juízo sobre dinheiro: se o que se paga (ou não se paga) para usufruir do local é compatível com o que ele oferece — preço sentido como justo, vantajoso ou abusivo, a relação preço x experiência, taxas extras ou cobranças surpresa, e gratuidade. \"Caro mas vale a pena\" pende pro positivo; \"caro demais pelo que oferece\" pende pro negativo. Um local gratuito ou barato pode ter ótimo custo-benefício; um famoso pode ter custo-benefício ruim se os preços forem sentidos como abusivos.\nOs comentários vêm quebrados em frases curtas, uma por linha, no formato \"F<n> (C<n>): texto\". Os rótulos F/C só numeram — ignore-os e julgue o texto, em qualquer idioma, pelo sentido.\nAvalie SOMENTE este ângulo. Uma mesma frase pode também servir a outro tema; isso não é problema seu. Conte aqui apenas as frases que envolvem dinheiro, valor pago, cobrança, ingresso, estacionamento pago ou gratuidade. Sinais indiretos de valor contam (vale cada centavo, preço justo, de graça e ótimo, barato pelo que oferece = positivo; caro demais, não compensa, ingresso salgado, cobram por tudo = negativo). Recomendação ou elogio que não fala de dinheiro NÃO entra neste tema.\nANTES de decidir a nota, faça internamente uma varredura de TODAS as frases, uma por uma, e marque cada uma como POSITIVA, NEGATIVA ou NÃO FALA deste tema. Só conclua 77 se, após revisar cada linha, NENHUMA frase falar de dinheiro, preço, cobrança ou gratuidade.\nPara cada frase, decida: ela fala de dinheiro/valor pago de forma POSITIVA (compensa o que custa), NEGATIVA (não compensa o que custa) ou NÃO FALA deste tema?\n- Se NENHUMA frase falar deste tema → a nota é 77.\n- Se houver frases que falam, dê nota 0–10 pelo balanço:\n  só positivas: 8–9 | mais positivas que negativas: 6–7 | misturado: 5 | mais negativas: 3–4 | quase todas negativas: 1–2.\n  Uma única negativa isolada no meio de várias positivas não baixa de 6.\nResponda SÓ com um objeto JSON, sem nada antes nem depois, sem markdown, com exatamente duas chaves: \"id\" e \"resultado\".\nO valor de \"resultado\" tem SEMPRE duas partes: a nota, depois \": \", depois uma justificativa de pelo menos uma frase completa. O \"resultado\" NUNCA pode ser apenas o número — se você escrever a nota, é OBRIGATÓRIO escrever a justificativa logo depois dos dois pontos. Isso vale também para 77.\nSe a nota for 77, a justificativa NÃO pode mencionar nenhuma frase que fale do tema, nem afirmar e negar a existência dessas frases na mesma resposta — seja coerente.\nExemplos de resposta válida (siga este padrão, sempre com a justificativa preenchida):\n{\"id\": \"abc123\", \"resultado\": \"7.0: As frases dizem que o local é gratuito e que vale o que se paga, com uma ressalva sobre uma cobrança extra inesperada.\"}\n{\"id\": \"abc123\", \"resultado\": \"77: nenhuma frase comentou preço ou valor em dinheiro.\"}\nUse no campo \"id\" o ID do estabelecimento que veio na mensagem.\nRegras do formato, obrigatórias:\n- Exatamente duas chaves: \"id\" e \"resultado\", ambas com valor em texto entre aspas duplas.\n- \"resultado\" começa com a nota (ex.: \"8.0\") OU com 77, seguido de \": \" e a justificativa.\n- Justificativa de pelo menos uma frase completa. Nunca apenas o número.\n- Se for 77, a justificativa não pode citar nenhuma frase que fale do tema."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        1408,
+        1568
+      ],
+      "id": "4d7d266d-0348-4789-a583-ed8adac595c0",
+      "name": "AI Agent3",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-nano",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-nano"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1408,
+        1696
+      ],
+      "id": "31d2fcda-bdcb-42cc-acf0-b4cf303292bf",
+      "name": "OpenAI Chat Model3",
+      "credentials": {
+        "openAiApi": {
+          "id": "dhG0ktohViAz4N21",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=ID DO ESTABELECIMENTO: {{ $json.id }}\nNOME DO ESTABELECIMENTO: {{ $json.nome }}\nTIPO: {{ $json.subtipos_pt_str }}\n\nCOMENTÁRIOS A ANALISAR:\n{{ $json.comentarios_frases }}",
+        "options": {
+          "systemMessage": "Você avalia reviews de uma atração turística e dá nota a UM tema só: INFRAESTRUTURA.\nINFRAESTRUTURA é o que o local oferece de instalações e recursos físicos para o visitante: aquilo que está construído ou disponível e que pode ser usado durante a visita — banheiros, estacionamento, sinalização e placas, bilheteria, lanchonete ou loja, áreas de descanso, acessibilidade, trilhas e passarelas estruturadas, água/energia. Um local simples bem equipado pode ir bem; um famoso pode ir mal se falta o básico. A presença e o bom estado dessas instalações contam; a ausência delas pesa.\nOs comentários vêm quebrados em frases curtas, uma por linha, no formato \"F<n> (C<n>): texto\". Os rótulos F/C só numeram — ignore-os e julgue o texto, em qualquer idioma, pelo sentido.\nAvalie SOMENTE este ângulo. Uma mesma frase pode também servir a outro tema; isso não é problema seu. Se ela disser algo sobre as instalações ou recursos físicos do local, conte aqui — mesmo no meio de uma frase sobre outro assunto. Sinais indiretos contam (tem banheiro limpo, estacionamento amplo, boa sinalização, bem estruturado, tem tudo que precisa = positivo; sem banheiro, falta estrutura, nenhum lugar pra comer, sem acessibilidade, mal sinalizado = negativo).\nANTES de decidir a nota, faça internamente uma varredura de TODAS as frases, uma por uma, e marque cada uma como POSITIVA, NEGATIVA ou NÃO FALA deste tema. Só conclua 77 se, após revisar cada linha, NENHUMA frase mencionar instalações ou recursos físicos do local — nem direta nem indiretamente. Termos como \"tem banheiro\", \"estacionamento\", \"boa sinalização\", \"lanchonete/loja\", \"acessível\", \"bem estruturado\", \"área de descanso\" CONTAM como menção ao tema e proíbem o 77.\nPara cada frase, decida: ela fala das instalações/recursos físicos de forma POSITIVA (bem providos, bem mantidos), NEGATIVA (faltam, ou estão ruins) ou NÃO FALA deste tema?\n- Se NENHUMA frase falar deste tema → a nota é 77.\n- Se houver frases que falam, dê nota 0–10 pelo balanço:\n  só positivas: 8–9 | mais positivas que negativas: 6–7 | misturado: 5 | mais negativas: 3–4 | quase todas negativas: 1–2.\n  Uma única negativa isolada no meio de várias positivas não baixa de 6.\nResponda SÓ com um objeto JSON, sem nada antes nem depois, sem markdown, com exatamente duas chaves: \"id\" e \"resultado\".\nO valor de \"resultado\" tem SEMPRE duas partes: a nota, depois \": \", depois uma justificativa curta e direta, de pelo menos uma frase completa. O \"resultado\" NUNCA pode ser apenas o número — se você escrever a nota, é OBRIGATÓRIO escrever a justificativa logo depois dos dois pontos. Isso vale também para 77.\nSe a nota for 77, a justificativa NÃO pode mencionar nenhuma frase que fale do tema, nem afirmar e negar a existência dessas frases na mesma resposta — seja coerente.\nExemplos de resposta válida (siga este padrão, sempre com a justificativa preenchida):\n{\"id\": \"abc123\", \"resultado\": \"7.0: As frases destacam banheiros limpos e estacionamento amplo, com uma ressalva sobre a falta de sinalização nas trilhas.\"}\n{\"id\": \"abc123\", \"resultado\": \"77: nenhuma frase comentou banheiros, estacionamento, sinalização ou qualquer instalação do local.\"}\nUse no campo \"id\" o ID do estabelecimento que veio na mensagem.\nRegras do formato, obrigatórias:\n- Exatamente duas chaves: \"id\" e \"resultado\", ambas com valor em texto entre aspas duplas.\n- \"resultado\" começa com a nota (ex.: \"8.0\") OU com 77, seguido de \": \" e a justificativa.\n- Justificativa de pelo menos uma frase completa. Nunca apenas o número.\n- Se for 77, a justificativa não pode citar nenhuma frase que fale do tema."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        1424,
+        1824
+      ],
+      "id": "f438738e-382e-4113-9c0f-de33670be9e5",
+      "name": "AI Agent4",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-nano",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-nano"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1424,
+        1952
+      ],
+      "id": "10ba57e0-8cd1-4cca-aabe-880403e7e09f",
+      "name": "OpenAI Chat Model4",
+      "credentials": {
+        "openAiApi": {
+          "id": "dhG0ktohViAz4N21",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0873695e-b19a-4fe6-b2b8-4d2cf76d61be",
+              "name": "summary",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2032,
+        656
+      ],
+      "id": "18b2d98f-2777-4494-a4e5-2f5de2e5f222",
+      "name": "summary"
+    },
+    {
+      "parameters": {
+        "content": "Image analyzer\n",
+        "height": 480,
+        "width": 1984
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        704,
+        112
+      ],
+      "id": "5d08be06-9d33-4b17-82d7-e612e48dc1c6",
+      "name": "Sticky Note15"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Mode: Run Once for All Items\nconst items = $input.all().map(i => i.json).flat();\n\nconst parseReview = (texto) => {\n  if (!texto || typeof texto !== 'string') {\n    return { nota: null, justificativa: null };\n  }\n  if (texto.trim() === '77') {\n    return { nota: 'insuficiente', justificativa: null };\n  }\n  const idx = texto.indexOf(':');\n\n  // SEM dois-pontos: pode ser nota seca tipo \"8.0\" -> trata como nota\n  if (idx === -1) {\n    const soNota = texto.trim().replace(',', '.');\n    if (/^\\d{1,2}(\\.\\d+)?$/.test(soNota)) {\n      const n = parseFloat(soNota);\n      return { nota: isNaN(n) ? null : n, justificativa: null };\n    }\n    return { nota: null, justificativa: texto.trim() };\n  }\n\n  // COM dois-pontos\n  const notaRaw = texto.slice(0, idx).trim().replace(',', '.');\n\n  // \"77: justificativa\" -> insuficiente, preservando a justificativa\n  if (notaRaw === '77') {\n    return { nota: 'insuficiente', justificativa: texto.slice(idx + 1).trim() };\n  }\n\n  const nota = parseFloat(notaRaw);\n  return {\n    nota: isNaN(nota) ? null : nota,\n    justificativa: texto.slice(idx + 1).trim(),\n  };\n};\n\nconst estabelecimentos = items.filter(i => i && i.nome !== undefined);\nconst reviewItems = items.filter(i => {\n  if (!i || i.nome !== undefined) return false;\n  const k = Object.keys(i)[0];\n  return k && k.endsWith('_review');\n});\n\nconst reviewsPorId = /** @type {Record<string, any>} */ ({});\nfor (const item of reviewItems) {\n  const [chave, valorBruto] = Object.entries(item)[0];\n  const nomeAtributo = chave.replace(/_review$/, '');\n  try {\n    const dadosIA = JSON.parse(valorBruto);\n    const idEstabelecimento = dadosIA.id;\n    const resultadoIA = String(dadosIA.resultado || '');\n    if (!idEstabelecimento) continue;\n    if (!reviewsPorId[idEstabelecimento]) {\n      reviewsPorId[idEstabelecimento] = { notasNum: [] };\n    }\n    const { nota, justificativa } = parseReview(resultadoIA);\n    const alvo = reviewsPorId[idEstabelecimento];\n    const chaveNota = `${nomeAtributo}_nota`;\n    const chaveJust = `${nomeAtributo}_justificativa`;\n    const jaTemNota = typeof alvo[chaveNota] === 'number' || alvo[chaveNota] === 'insuficiente';\n    const novaTemNota = typeof nota === 'number' || nota === 'insuficiente';\n    // Só grava se a chave ainda não existe OU se o novo registro traz nota.\n    // Nunca deixa um item SEM nota apagar um que já tinha nota válida.\n    if (!(chaveNota in alvo) || novaTemNota) {\n      if (!(jaTemNota && !novaTemNota)) {\n        alvo[chaveNota] = nota;\n        alvo[chaveJust] = justificativa;\n        if (typeof nota === 'number') {\n          if (!alvo.notasNum.includes(nota)) alvo.notasNum.push(nota);\n        }\n      }\n    }\n  } catch (error) {\n    continue;\n  }\n}\n\nconst summaryPorId = /** @type {Record<string, string>} */ ({});\nfor (const item of items) {\n  if (!item || !item.summary) continue;\n  try {\n    const dados = JSON.parse(item.summary);\n    if (dados.id && dados.resultado) {\n      summaryPorId[dados.id] = dados.resultado;\n    }\n  } catch (error) {\n    continue;\n  }\n}\n\nreturn estabelecimentos.map(est => {\n  const idAtual = est.id;\n  const dadosDoEstabelecimento = reviewsPorId[idAtual] || { notasNum: [] };\n  const arrayDeNotas = dadosDoEstabelecimento.notasNum;\n  const media = arrayDeNotas.length\n    ? Math.round((arrayDeNotas.reduce((a, b) => a + b, 0) / arrayDeNotas.length) * 100) / 100\n    : null;\n  delete dadosDoEstabelecimento.notasNum;\n  return {\n    json: {\n      ...est,\n      ...dadosDoEstabelecimento,\n      resumo: summaryPorId[idAtual] || est.resumo || null,\n      media_reviews: media,\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3168,
+        1216
+      ],
+      "id": "6b0d605f-6ee1-4688-bbf0-4cae85c9cdf6",
+      "name": "Organizer1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2928,
+        1216
+      ],
+      "id": "f412fe4c-35bb-41fb-a4eb-1f2bfa691a36",
+      "name": "Merge10"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        3440,
+        1200
+      ],
+      "id": "3118ad58-2f50-448c-8ae6-af86cac88f39",
+      "name": "Merge3"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "cb30c38e-ad3c-458a-8342-7d67e0a8c747",
+              "leftValue": "={{ $json.aproved }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        4624,
+        1200
+      ],
+      "id": "7bbc8064-a98a-4b8a-aad8-c56f9b986916",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "tableId": "geral_estabelecimentos_avaliados",
+        "dataToSend": "autoMapInputData"
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        5024,
+        1472
+      ],
+      "id": "60586f84-00cf-46fa-a803-c7b5f580dee0",
+      "name": "Create a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "U4InZOJsE9hnMgS6",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Run Once for All Items\n\nconst all = $input.all().map(item => item.json);\n\nconst agrupados = {};\n\nfor (const item of all) {\n  const id = item.id;\n\n  if (!id) continue;\n\n  if (!agrupados[id]) {\n    agrupados[id] = {\n      id\n    };\n  }\n\n  for (const [key, value] of Object.entries(item)) {\n\n    // ignora campos vazios\n    if (\n      value === undefined ||\n      value === null ||\n      value === ''\n    ) {\n      continue;\n    }\n\n    // mantém arrays completos\n    if (Array.isArray(value)) {\n      agrupados[id][key] = value;\n      continue;\n    }\n\n    // mantém objetos completos\n    if (typeof value === 'object') {\n      agrupados[id][key] = value;\n      continue;\n    }\n\n    // mantém valores simples\n    agrupados[id][key] = value;\n  }\n}\n\nreturn Object.values(agrupados).map(item => ({\n  json: item\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3792,
+        1200
+      ],
+      "id": "fbf73cf5-43bf-48bf-9ab5-a980aa7187bb",
+      "name": "Organizer"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Mode: Run Once for Each Item — GERAL (qualquer segmento)\n//\n// CORREÇÃO PRINCIPAL:\n// As notas chegam como STRING \"insuficiente\" (não como o número 77).\n// O código antigo só reconhecia === 77, então \"insuficiente\" escapava\n// da média E do tally de não-avaliadas. Agora tudo passa por normalizar():\n//   - \"insuficiente\" / \"77\" / 77   -> SENTINELA (77) = sem dados\n//   - número (ou \"7,5\" / \"7.5\")     -> número\n//   - null / undefined / \"\"         -> null = não se aplica ao segmento (não conta)\n//\n// MÍNIMOS:\n//   - food e fun  => MIN_FOOD_FUN (6 fixo)\n//   - média       => MIN (vem de minimum_grade; fallback 6)\n// FOOD é portão crítico: insuficiente OU nota < MIN_FOOD_FUN => reprova.\n//   - PORÉM: se já reprovou por >2 insuficientes, a justificativa fica só a dos insuficientes.\n\nconst e = $input.item.json;\n\nconst SENTINELA = 77;\nconst MAX_NAO_AVALIADAS = 2; // acima disso (>2 => 3+) reprova\nconst MIN_FOOD_FUN = 6;      // mínimo fixo para comida e diversão\n\nconst ehNotaValida = (v) =>\n  typeof v === \"number\" && Number.isFinite(v) && v !== SENTINELA;\n\nconst MIN = ehNotaValida(e.minimum_grade) ? e.minimum_grade : 6; // mínimo da média\n\nconst round = (x, d = 2) => {\n  if (x === null || x === undefined || Number.isNaN(x) || !Number.isFinite(x)) {\n    return null;\n  }\n  const f = Math.pow(10, d);\n  return Math.round(x * f) / f;\n};\n\n// --------------------\n// NORMALIZAÇÃO (a peça que faltava)\n// --------------------\nconst normalizar = (v) => {\n  if (v === null || v === undefined) return null;          // ausente\n  if (typeof v === \"number\") return Number.isFinite(v) ? v : null;\n  if (typeof v === \"string\") {\n    const s = v.trim().toLowerCase();\n    if (s === \"\") return null;                             // vazio => ausente\n    if (s === \"insuficiente\") return SENTINELA;            // insuficiente\n    const n = Number(s.replace(\",\", \".\"));\n    if (Number.isFinite(n)) return n;                      // \"77\"->77, \"7,5\"->7.5\n    return SENTINELA;                                      // texto inesperado => insuficiente\n  }\n  return null;\n};\n\n// Todas as notas possíveis, JÁ normalizadas\nconst candidatas = {\n  variety: normalizar(e.variety_nota),\n  service: normalizar(e.service_nota),\n  price_to_value: normalizar(e.price_to_value_nota),\n  capacity: normalizar(e.capacity_nota),\n  beauty: normalizar(e.beauty_nota),\n  space: normalizar(e.space_nota),\n  fun: normalizar(e.fun_nota),\n  food: normalizar(e.food_nota),\n};\n\nconst rotulos = {\n  variety: \"variedade\",\n  service: \"atendimento\",\n  price_to_value: \"custo-benefício\",\n  capacity: \"capacidade\",\n  beauty: \"beleza\",\n  space: \"espaço\",\n  fun: \"diversão\",\n  food: \"comida\",\n};\n\n// --------------------\n// MÉDIA\n// --------------------\nconst presentes = Object.entries(candidatas).filter(([, v]) => ehNotaValida(v));\nconst notasUsadas = presentes.map(([, v]) => v);\nconst media = notasUsadas.length\n  ? notasUsadas.reduce((a, b) => a + b, 0) / notasUsadas.length\n  : null;\n\n// --------------------\n// NÃO AVALIADAS (insuficientes) — agora pega \"insuficiente\"/77 igual\n// --------------------\nconst notasNaoAvaliadas = Object.entries(candidatas)\n  .filter(([, v]) => v === SENTINELA)\n  .map(([k]) => k);\n\nconst reprovaPorInsuficientes = notasNaoAvaliadas.length > MAX_NAO_AVALIADAS;\n\n// --------------------\n// REGRAS\n// --------------------\nconst motivos = [];\nconst observacoes = [];\n\n// FOTOS (crítico)\nconst temFotoAnalise = Array.isArray(e.fotos_analise) && e.fotos_analise.length > 0;\nif (!temFotoAnalise) {\n  motivos.push(\"Sem fotos analisadas (fotos_analise ausente ou vazio)\");\n}\n\n// FOOD (crítico) — insuficiente REPROVA; mínimo = MIN_FOOD_FUN\n// Se já reprovou por >2 insuficientes, NÃO duplica o motivo de comida insuficiente.\nconst foodN = candidatas.food;\nif (foodN !== null) {\n  if (foodN === SENTINELA) {\n    if (!reprovaPorInsuficientes) {\n      motivos.push(\"Comida não pôde ser avaliada (insuficiente)\");\n    }\n  } else if (foodN < MIN_FOOD_FUN) {\n    motivos.push(`Nota de comida abaixo de ${MIN_FOOD_FUN} (food_nota=${round(foodN)})`);\n  }\n}\n\n// FUN (crítico) — mínimo = MIN_FOOD_FUN\nconst funN = candidatas.fun;\nif (funN !== null) {\n  if (funN === SENTINELA) {\n    if (!reprovaPorInsuficientes) {\n      observacoes.push(\"diversão não pôde ser avaliada (insuficiente)\");\n    }\n  } else if (funN < MIN_FOOD_FUN) {\n    motivos.push(`Nota de diversão abaixo de ${MIN_FOOD_FUN} (fun_nota=${round(funN)})`);\n  }\n}\n\n// NÃO AVALIADAS (crítico) — mais de 2 insuficientes => reprova\nif (reprovaPorInsuficientes) {\n  const nomes = notasNaoAvaliadas.map((k) => rotulos[k] || k);\n  motivos.push(\n    `Notas insuficientes: ${notasNaoAvaliadas.length} notas sem dados ` +\n    `— máximo permitido é ${MAX_NAO_AVALIADAS} (${nomes.join(\", \")})`\n  );\n}\n\n// MÉDIA — não repete \"sem notas válidas\" se já reprovou por excesso de insuficientes\nif (media === null) {\n  if (!reprovaPorInsuficientes) {\n    motivos.push(\"Sem notas qualitativas válidas para calcular a média\");\n  }\n} else if (media < MIN) {\n  motivos.push(`media das notas qualitativas abaixo do corte (${MIN})`);\n}\n\nconst aprovado = motivos.length === 0;\n\n// --------------------\n// JUSTIFICATIVA\n// --------------------\nlet motivo;\n\nif (aprovado) {\n  const partes = [`Média das notas qualitativas ${round(media)} (≥ ${MIN})`];\n  if (ehNotaValida(foodN)) partes.push(`comida ${round(foodN)} (≥ ${MIN_FOOD_FUN})`);\n  if (ehNotaValida(funN)) partes.push(`diversão ${round(funN)} (≥ ${MIN_FOOD_FUN})`);\n  if (observacoes.length) partes.push(...observacoes);\n  if (notasNaoAvaliadas.length) {\n    const nomes = notasNaoAvaliadas.map((k) => rotulos[k] || k);\n    partes.push(`não avaliadas: ${nomes.join(\", \")}`);\n  }\n  motivo = \"Aprovado — \" + partes.join(\"; \");\n} else {\n  let txt = \"Reprovado — \" + motivos.join(\" | \");\n  if (observacoes.length) txt += \" | (obs: \" + observacoes.join(\"; \") + \")\";\n  motivo = txt;\n}\n\n// --------------------\n// OUTPUT\n// --------------------\nreturn {\n  json: {\n    ...e,\n    minimum_grade_usado: MIN,\n    min_food_fun_usado: MIN_FOOD_FUN,\n    media_qualitativa: round(media),\n    notas_consideradas: notasUsadas.length,\n    notas_usadas: presentes.map(([k]) => k),\n    notas_nao_avaliadas: notasNaoAvaliadas,\n    qtd_notas_nao_avaliadas: notasNaoAvaliadas.length,\n    tem_fotos_analise: temFotoAnalise,\n    aprovado_notas: aprovado,\n    motivo_notas: motivo,\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4000,
+        1200
+      ],
+      "id": "828945b3-9a59-47d3-8efe-ad010ec6fe49",
+      "name": "média1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nfor (const item of items) {\n  if (!Array.isArray(item.json.fotos_analise)) {\n    continue;\n  }\n  item.json.fotos_analise = item.json.fotos_analise\n    .filter(foto => {\n      const nota = Number(foto.nota_capa ?? 0);\n      const inutil = foto.eh_inutil === true;\n      return !inutil && nota >= 6;\n    })\n    .sort((a, b) => Number(b.nota_capa ?? 0) - Number(a.nota_capa ?? 0));\n}\nreturn items;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4208,
+        1200
+      ],
+      "id": "c4ac1208-5bd0-4938-8200-b307028f203a",
+      "name": "Code in JavaScript4"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Run Once for All Items\nconst items = $input.all().map(i => i.json ?? {});\n\nreturn items.map(item => {\n  return {\n    json: {\n      id: item.id ?? null,\n      nome: item.nome ?? null,\n      subtipos: item.subtipos_pt_str ?? null,\n      endereco: item.endereco ?? null,\n      bairro: item.bairro ?? null,\n      cep: item.cep ?? null,\n      cidade: item.cidade ?? null,\n      estado: item.estado ?? null,\n      pais: item.pais ?? null,\n      telefone: item.telefone ?? null,\n      telefone_extra: item.telefone_extra ?? null,\n      email: item.email ?? null,\n      website: item.website ?? null,\n      instagram: item.instagram ?? null,\n      facebook: item.facebook ?? null,\n      link_google_maps: item.link_google_maps ?? null,\n      nota: item.nota ?? null,\n      qtd_avaliacoes: item.qtd_avaliacoes ?? null,\n      distribuicao_notas: item.distribuicao_notas != null ? JSON.stringify(item.distribuicao_notas) : null,\n      status: item.status ?? null,\n      horarios: item.horarios != null ? JSON.stringify(item.horarios) : null,\n      faixa_preco: item.faixa_preco ?? null,\n      qtd_fotos: item.qtd_fotos ?? null,\n      fotos: item.fotos_analise != null ? JSON.stringify(item.fotos_analise) : null,\n      resumo: item.resumo ?? null,\n      details_google: item.details_google ?? null,\n      google_id: item.google_id ?? null,\n      place_id: item.place_id ?? null,\n      verificado: item.verificado ?? null,\n      timezone: item.timezone ?? null,\n      reviews: item.reviews ?? null,          // jsonb -> objeto cru, SEM stringify\n      par1: item.capacity_nota ?? null,\n      just1: item.capacity_justificativa ?? null,\n      par2: item.service_nota ?? null,\n      just2: item.service_justificativa ?? null,\n      par3: item.space_nota ?? null,\n      just3: item.space_justificativa ?? null,\n      par4: item.price_to_value_nota ?? null,\n      just4: item.price_to_value_justificativa ?? null,\n      par5: null,\n      just5: null,\n      média: item.media_qualitativa ?? null,\n      aproved: item.aprovado_notas ?? null,\n      reason: item.motivo_notas ?? null,\n      segmento: item.categoria_principal ?? null,\n      subsegmento: item.subsegmento ?? null,\n      nr_latitude: item.nr_latitude ?? null,\n      nr_longitude: item.nr_longitude ?? null,\n      minimum_grade: item.minimum_grade ?? null,\n      go_to_reevaluation: true,\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4416,
+        1200
+      ],
+      "id": "bff4465c-8b29-4395-a17b-772a95422e2e",
+      "name": "organizer2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Mode: Run Once for All Items\n// Extrai as URLs das imagens, 1 imagem por row, com id e foto_index.\nconst rows = [];\nconst items = $input.all();\n\nfor (const item of items) {\n  const e = item.json || {};\n  const idEstabelecimento = e.id || null;\n\n  let fotos = [];\n  try {\n    fotos = typeof e.fotos === \"string\" ? JSON.parse(e.fotos) : (e.fotos || []);\n  } catch (err) {\n    fotos = [];\n  }\n  if (!Array.isArray(fotos)) fotos = [];\n\n  const urlsProcessadas = new Set();\n\n  for (const foto of fotos) {\n    const url = (foto && foto.url_original) || \"\";\n    if (!url || urlsProcessadas.has(url)) continue;\n    urlsProcessadas.add(url);\n\n    rows.push({\n      json: {\n        id: idEstabelecimento,\n        foto_index: foto.foto_index ?? null,\n        url: url\n      }\n    });\n  }\n}\n\nreturn rows;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5040,
+        752
+      ],
+      "id": "86c31bfc-48f0-4eb7-bdea-9fbf1d82b816",
+      "name": "image split1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Mode: Run Once for All Items\nconst items = $input.all();\nreturn items.map((item) => {\n  const e = item.json || {};\n\n  let fotos = [];\n  try {\n    fotos = typeof e.fotos === \"string\" ? JSON.parse(e.fotos) : (e.fotos || []);\n  } catch (err) {\n    fotos = [];\n  }\n  if (!Array.isArray(fotos)) fotos = [];\n\n  const fotosOrdenadas = [...fotos].sort((a, b) => {\n    const na = (a && typeof a.nota_capa === \"number\") ? a.nota_capa : -Infinity;\n    const nb = (b && typeof b.nota_capa === \"number\") ? b.nota_capa : -Infinity;\n\n    // Primeiro: nota decrescente\n    if (nb !== na) return nb - na;\n\n    // Desempate: foto_index crescente (menor index primeiro)\n    const ia = (a && typeof a.foto_index === \"number\") ? a.foto_index : Infinity;\n    const ib = (b && typeof b.foto_index === \"number\") ? b.foto_index : Infinity;\n    return ia - ib;\n  });\n\n  return {\n    json: {\n      ...e,\n      fotos: fotosOrdenadas,\n    },\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4864,
+        752
+      ],
+      "id": "7243caa2-52ba-46db-8c7e-87b38514c477",
+      "name": "image organizer1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Mode: Run Once for All Items\n\nconst SUPABASE_URL = \"https://veedrfffsquvyypjrquh.supabase.co\";\nconst BUCKET = \"TRIP\";\nconst KEY = \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZWRyZmZmc3F1dnl5cGpycXVoIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODg2OTQyMSwiZXhwIjoyMDk0NDQ1NDIxfQ.0Z341oGGbmFl2ce8TLVTs55F2667wdug0aF1iFNSNVw\";\n\nconst MAX_RETRIES = 3;\nconst RETRY_DELAY_MS = 1500;\n\nconst sleep = (ms) => new Promise((r) => setTimeout(r, ms));\n\nconst extPorContentType = (ct) => {\n  if (!ct) return \"jpg\";\n  if (ct.includes(\"png\")) return \"png\";\n  if (ct.includes(\"webp\")) return \"webp\";\n  if (ct.includes(\"gif\")) return \"gif\";\n  return \"jpg\";\n};\n\nconst items = $input.all();\nconst contadorPorId = {};\nconst resultados = [];\n\nfor (const item of items) {\n  const e = item.json || {};\n\n  let url = e.url || e.url_original;\n  const id = e.id || \"sem_id\";\n\n  if (!url) continue;\n\n  // Tenta obter uma versão de boa qualidade sem ficar pesada\n  if (url.includes(\"googleusercontent.com\")) {\n    url = url.replace(\n      /=w\\d+-h\\d+.*$/i,\n      \"=w1600-h1600-k-no\"\n    );\n  }\n\n  const idx = contadorPorId[id] ?? 0;\n  contadorPorId[id] = idx + 1;\n\n  // 1. Download da imagem\n  let img = null;\n  let lastErr = null;\n\n  for (let tentativa = 1; tentativa <= MAX_RETRIES; tentativa++) {\n    try {\n      img = await this.helpers.httpRequest({\n        method: \"GET\",\n        url,\n        encoding: \"arraybuffer\",\n        returnFullResponse: true,\n        timeout: 20000,\n        headers: {\n          \"User-Agent\":\n            \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36\",\n          Accept: \"image/webp,image/apng,image/*,*/*;q=0.8\",\n        },\n      });\n\n      break;\n    } catch (err) {\n      lastErr = err;\n\n      const status =\n        err.response?.statusCode || err.statusCode;\n\n      if (status === 403 || status === 404) {\n        break;\n      }\n\n      if (tentativa < MAX_RETRIES) {\n        await sleep(RETRY_DELAY_MS * tentativa);\n      }\n    }\n  }\n\n  if (!img || !img.body || img.body.length === 0) {\n    const status =\n      lastErr?.response?.statusCode ||\n      lastErr?.statusCode ||\n      \"vazio\";\n\n    resultados.push({\n      json: {\n        id,\n        foto_index: idx,\n        url,\n        sucesso: false,\n        erro: `download_falhou_${status}`,\n      },\n    });\n\n    continue;\n  }\n\n  const contentType =\n    img.headers[\"content-type\"] || \"image/jpeg\";\n\n  const ext = extPorContentType(contentType);\n\n  const path = `${id}/${idx}.${ext}`;\n\n  // 2. Upload para Supabase Storage\n  let uploadOk = false;\n  let uploadErr = null;\n\n  for (let tentativa = 1; tentativa <= MAX_RETRIES; tentativa++) {\n    try {\n      await this.helpers.httpRequest({\n        method: \"POST\",\n        url: `${SUPABASE_URL}/storage/v1/object/${BUCKET}/${path}`,\n        timeout: 30000,\n        headers: {\n          Authorization: `Bearer ${KEY}`,\n          \"Content-Type\": contentType,\n          \"x-upsert\": \"true\",\n        },\n        body: Buffer.from(img.body),\n      });\n\n      uploadOk = true;\n      break;\n    } catch (err) {\n      uploadErr = err;\n\n      if (tentativa < MAX_RETRIES) {\n        await sleep(RETRY_DELAY_MS * tentativa);\n      }\n    }\n  }\n\n  if (!uploadOk) {\n    resultados.push({\n      json: {\n        id,\n        foto_index: idx,\n        url,\n        path,\n        sucesso: false,\n        erro:\n          \"upload_falhou: \" +\n          JSON.stringify(\n            uploadErr?.response?.body ??\n              uploadErr?.response?.data ??\n              uploadErr?.message\n          ),\n      },\n    });\n\n    continue;\n  }\n\n  resultados.push({\n    json: {\n      id,\n      foto_index: idx,\n      path,\n      sucesso: true,\n      public_url: `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${path}`,\n    },\n  });\n}\n\nreturn resultados;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5280,
+        752
+      ],
+      "id": "7117f7b2-3bbd-4fde-afed-1ecd71567e88",
+      "name": "STORAGE1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Mode: Run Once for All Items\n// Agrupa as imagens por estabelecimento (id), montando uma lista de URLs por id.\n\nconst items = $input.all();\nconst porId = {};\n\nfor (const item of items) {\n  const e = item.json || {};\n  const id = e.id;\n  if (!id) continue;\n\n  if (!porId[id]) {\n    porId[id] = {\n      id,\n      qtd_fotos: 0,\n      capa: null,\n      _temp: [],   // guarda index+url para ordenar depois\n    };\n  }\n\n  porId[id]._temp.push({ foto_index: e.foto_index, url: e.public_url });\n\n  if (e.foto_index === 0) {\n    porId[id].capa = e.public_url;\n  }\n}\n\nreturn Object.values(porId).map((grupo) => {\n  // ordena por foto_index e extrai só a URL\n  grupo._temp.sort((a, b) => a.foto_index - b.foto_index);\n  const fotos = grupo._temp.map((f) => f.url);\n  delete grupo._temp;\n\n  return {\n    json: {\n      id: grupo.id,\n      qtd_fotos: fotos.length,\n      capa: grupo.capa,\n      fotos, // array só com as URLs, em ordem\n    },\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5520,
+        752
+      ],
+      "id": "8b99f72d-5ffa-4f27-8f02-fed61bd3c7a7",
+      "name": "Organizador1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        5904,
+        1168
+      ],
+      "id": "94be5b23-5980-45a2-800e-dbb201505c47",
+      "name": "Merge5"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all().map(i => i.json);\n\n// Separa uploads de estabelecimentos\nconst uploads = {};\nconst estabelecimentos = {};\n\nfor (const item of items) {\n  const id = item.id;\n  if (!id) continue;\n\n  // É um item de upload se tiver capa e não tiver nome\n  if (item.capa && !item.nome) {\n    uploads[id] = item;\n  } else if (item.nome) {\n    estabelecimentos[id] = item;\n  }\n}\n\n// Mescla upload + estabelecimento pelo id\nreturn Object.keys(estabelecimentos).map(id => {\n  const est = estabelecimentos[id];\n  const upload = uploads[id] || {};\n\n  return {\n    json: {\n      ...est,\n      capa: upload.capa ?? null,\n      fotos_salvas: upload.fotos ?? [],\n      qtd_fotos_salvas: upload.qtd_fotos ?? 0,\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        6112,
+        1168
+      ],
+      "id": "f7ace4a8-73c4-41da-ac67-cbc1715d91cc",
+      "name": "Code in JavaScript5"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all().map(i => i.json);\n\nreturn items.map(item => {\n  return {\n    json: {\n      id: item.id ?? null,\n      nome: item.nome ?? null,\n      subtipos: item.subtipos ?? null,\n      endereco: item.endereco ?? null,\n      bairro: item.bairro ?? null,\n      cep: item.cep ?? null,\n      cidade: item.cidade ?? null,\n      estado: item.estado ?? null,\n      pais: item.pais ?? null,\n      telefone: item.telefone ?? null,\n      telefone_extra: item.telefone_extra ?? null,\n      email: item.email ?? null,\n      website: item.website ?? null,\n      instagram: item.instagram ?? null,\n      facebook: item.facebook ?? null,\n      link_google_maps: item.link_google_maps ?? null,\n      nota: item.nota ?? null,\n      qtd_avaliacoes: item.qtd_avaliacoes ?? null,\n      distribuicao_notas: item.distribuicao_notas ?? null,\n      status: item.status ?? null,\n      horarios: item.horarios ?? null,\n      faixa_preco: item.faixa_preco ?? null,\n\n      qtd_fotos: item.qtd_fotos_salvas ?? item.qtd_fotos ?? null,\n      gallery: item.fotos_salvas ?? item.gallery ?? [],\n      capa: item.capa ?? null,\n\n      fotos: item.fotos ?? null,\n      resumo: item.resumo ?? null,\n      details_google: item.details_google ?? null,\n      google_id: item.google_id ?? null,\n      place_id: item.place_id ?? null,\n      verificado: item.verificado ?? null,\n      timezone: item.timezone ?? null,\n\n      reviews: typeof item.reviews === 'string'\n        ? JSON.parse(item.reviews)\n        : (item.reviews ?? null),\n\n      par1: item.par1 ?? null,\n      just1: item.just1 ?? null,\n      par2: item.par2 ?? null,\n      just2: item.just2 ?? null,\n      par3: item.par3 ?? null,\n      just3: item.just3 ?? null,\n      par4: item.par4 ?? null,\n      just4: item.just4 ?? null,\n      par5: item.par5 ?? null,\n      just5: item.just5 ?? null,\n      \"média\": item[\"média\"] ?? null,\n      aproved: item.aproved ?? null,\n      reason: item.reason ?? null,\n      segmento: item.segmento ?? null,\n      subsegmento: item.subsegmento ?? null,\n      nr_latitude: item.nr_latitude ?? null,\n      nr_longitude: item.nr_longitude ?? null,\n      minimum_grade: item.minimum_grade ?? null,\n      go_to_reevaluation: true,\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        6336,
+        1168
+      ],
+      "id": "bb9b5a76-a273-4d35-8373-946fce063937",
+      "name": "Code in JavaScript6"
+    },
+    {
+      "parameters": {
+        "tableId": "geral_estabelecimentos_avaliados",
+        "dataToSend": "autoMapInputData"
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        6592,
+        1168
+      ],
+      "id": "89474015-4af9-41ef-b567-6d4a57b7f0c6",
+      "name": "Create a row2",
+      "credentials": {
+        "supabaseApi": {
+          "id": "U4InZOJsE9hnMgS6",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "40dba803-f2ac-4b82-8650-dbe40562f84d",
+              "name": "fotos",
+              "value": "={{ $json.fotos }}",
+              "type": "array"
+            },
+            {
+              "id": "64e70dac-1ff7-483b-8812-4ab5621c8e33",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        960,
+        272
+      ],
+      "id": "c40c4755-8696-4fdf-96f0-295fca18177e",
+      "name": "Fotos"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Mode: Run Once for All Items\n// Gera UMA row por foto (para o Switch funcionar), sem duplicatas e COM O ID do restaurante.\nconst categoriasInuteis = [\"Street View & 360°\", \"Videos\", \"Menu\"];\nconst rows = [];\n// 1. Pega TODOS os restaurantes que entraram no nó\nconst items = $input.all();\nfor (const item of items) {\n  const e = item.json || {};\n  const idEstabelecimento = e.id || null;\n  const fotos = Array.isArray(e.fotos) ? e.fotos : [];\n  const urlsProcessadas = new Set();\n  // 2. Transforma cada foto em um item isolado\n  for (let i = 0; i < fotos.length; i++) {\n    const foto = fotos[i] || {};\n    const url = foto.url || \"\";\n    const description = foto.description || \"\";\n    if (!url || urlsProcessadas.has(url)) {\n      continue;\n    }\n    const ehInutil = categoriasInuteis.includes(description) || url.includes(\"streetviewpixels\");\n    urlsProcessadas.add(url);\n    // 3. Joga a foto na lista final\n    rows.push({\n      json: {\n        id: idEstabelecimento,\n        foto_index: i,\n        description: description,\n        url_original: url,\n        eh_inutil: ehInutil\n      }\n    });\n  }\n}\n// Retorna uma lista plana (1 item = 1 foto)\nreturn rows;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1168,
+        272
+      ],
+      "id": "e1836625-74e5-4d08-9193-ebea8aeff05e",
+      "name": "Fotos organizer"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.eh_inutil }}",
+                    "rightValue": "=",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "6a82029b-4182-4a2f-8e4f-432cc4ec6a3e"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "5bf04c1e-a46b-49ae-a66a-7982239aa9ed",
+                    "leftValue": "={{ $json.eh_inutil }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "false",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1360,
+        272
+      ],
+      "id": "4444709a-d38a-4d97-9b95-00c6718a3428",
+      "name": "Switch"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2560,
+        320
+      ],
+      "id": "6739fa50-3f5c-4dc2-a2db-a8ceeca8363c",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Mode: Run Once for All Items\nconst items = $input.all().map(i => i.json);\n\n// Uma FOTO tem url_original. Uma RESPOSTA da IA tem o JSON com \"resultado\".\n// Um mesmo item nunca é os dois ao mesmo tempo, então separamos com prioridade\n// para a resposta: se parece resposta, é resposta; senão, se tem url, é foto.\nfunction looksLikeResposta(i) {\n  if (!i) return false;\n  if (i.choices !== undefined) return true;\n  if (i.message?.content !== undefined) return true;\n  if (typeof i.content === 'string') return true;\n  if (typeof i.resultado === 'string') return true;\n  return false;\n}\n\nconst respostasRaw = items.filter(i => looksLikeResposta(i));\nconst fotos = items.filter(i => !looksLikeResposta(i) && i.url_original !== undefined);\n\nfunction parseResposta(aiOutput) {\n  if (!aiOutput) return null;\n\n  // 1) Extrai o texto bruto de onde quer que ele esteja\n  let rawText = \"\";\n  if (aiOutput.choices && aiOutput.choices[0] && aiOutput.choices[0].message) {\n    rawText = aiOutput.choices[0].message.content;\n  } else if (typeof aiOutput.content === 'string') {\n    rawText = aiOutput.content;\n  } else if (typeof aiOutput === 'string') {\n    rawText = aiOutput;\n  } else if (typeof aiOutput.resultado === 'string') {\n    // caso o item já venha \"achatado\" com resultado/id/foto_index no topo\n    rawText = JSON.stringify(aiOutput);\n  }\n  if (!rawText) return null;\n\n  // 2) Tenta parsear o JSON da IA\n  let parsedJson = null;\n  try {\n    let fixedText = rawText.trim();\n    // tira cercas de markdown se a IA escapou e mandou ```json ... ```\n    fixedText = fixedText.replace(/^```(?:json)?\\s*/i, '').replace(/\\s*```$/i, '').trim();\n    if (!fixedText.endsWith('}')) fixedText += '\\n}';\n    parsedJson = JSON.parse(fixedText);\n  } catch (e) {\n    parsedJson = null;\n  }\n\n  // 3) Se parseou, extrai pelos campos; senão cai no regex\n  let id = null;\n  let foto_index = null;\n  let resultado = \"\";\n\n  if (parsedJson) {\n    id = parsedJson.id ?? null;\n    foto_index = parsedJson.foto_index ?? null;\n    resultado = parsedJson.resultado || \"\";\n  } else {\n    const idMatch = rawText.match(/\"id\"\\s*:\\s*\"([^\"]+)\"/);\n    const fiMatch = rawText.match(/\"foto_index\"\\s*:\\s*(\\d+)/);\n    const resMatch = rawText.match(/\"resultado\"\\s*:\\s*\"([^\"]*(?:\\\\.[^\"]*)*)\"/);\n    id = idMatch ? idMatch[1] : null;\n    foto_index = fiMatch ? parseInt(fiMatch[1], 10) : null;\n    resultado = resMatch ? resMatch[1].replace(/\\\\\"/g, '\"') : \"\";\n  }\n\n  // normaliza foto_index para número inteiro quando possível\n  if (foto_index !== null && foto_index !== undefined) {\n    const fiNum = parseInt(foto_index, 10);\n    foto_index = isNaN(fiNum) ? null : fiNum;\n  }\n\n  // 4) Separa nota e justificativa de \"N.N: justificativa\"\n  let nota = null;\n  let justificativa = null;\n  if (resultado && resultado.trim() !== \"\") {\n    const idx = resultado.indexOf(\":\");\n    if (idx !== -1) {\n      const notaNum = parseFloat(resultado.slice(0, idx).trim().replace(\",\", \".\"));\n      nota = isNaN(notaNum) ? null : notaNum;\n      justificativa = resultado.slice(idx + 1).trim();\n    } else {\n      justificativa = resultado.trim();\n    }\n  }\n\n  return {\n    id,\n    foto_index,\n    nota,\n    justificativa,\n    resposta_bruta: rawText,\n  };\n}\n\n// Indexa as respostas por chave \"id__foto_index\".\n// Se houver vários ids diferentes e/ou vários foto_index, cada par é único.\nconst respMap = new Map();\nfor (const r of respostasRaw) {\n  const p = parseResposta(r);\n  if (!p || p.id === null || p.foto_index === null) continue;\n  const key = `${p.id}__${p.foto_index}`;\n  // não sobrescreve uma resposta já casada (mantém a primeira válida)\n  if (!respMap.has(key)) respMap.set(key, p);\n}\n\n// Casa cada foto com sua resposta pela chave id+foto_index (não por posição)\nconst rows = fotos.map((foto) => {\n  const key = `${foto.id}__${foto.foto_index}`;\n  const parsed = respMap.get(key) || { nota: null, justificativa: null, resposta_bruta: null };\n  return {\n    id: foto.id,\n    foto_index_original: foto.foto_index, // guarda o original pra desempate\n    description: foto.description,\n    url_original: foto.url_original,\n    eh_inutil: foto.eh_inutil,\n    nota_capa: parsed.nota,\n    justificativa_capa: parsed.justificativa,\n    resposta_bruta: parsed.resposta_bruta,\n    serve_como_capa: parsed.nota !== null && parsed.nota >= 7,\n  };\n});\n\n// Agrupa por id: o ranking/reindex de foto_index é feito DENTRO de cada id,\n// para funcionar quando o batch traz vários estabelecimentos misturados.\nconst porId = new Map();\nfor (const row of rows) {\n  if (!porId.has(row.id)) porId.set(row.id, []);\n  porId.get(row.id).push(row);\n}\n\nconst out = [];\nfor (const grupo of porId.values()) {\n  // Ordena por nota decrescente; empate: foto_index_original crescente\n  grupo.sort((a, b) => {\n    const na = a.nota_capa ?? -Infinity;\n    const nb = b.nota_capa ?? -Infinity;\n    if (nb !== na) return nb - na;\n    return (a.foto_index_original ?? Infinity) - (b.foto_index_original ?? Infinity);\n  });\n\n  // Reatribui foto_index em ordem crescente conforme a posição pós-sort,\n  // por estabelecimento (0 = melhor foto daquele id)\n  grupo.forEach((row, i) => {\n    out.push({\n      json: {\n        id: row.id,\n        foto_index: i, // 0 = melhor foto deste id, 1 = segunda melhor, etc.\n        description: row.description,\n        url_original: row.url_original,\n        eh_inutil: row.eh_inutil,\n        nota_capa: row.nota_capa,\n        justificativa_capa: row.justificativa_capa,\n        resposta_bruta: row.resposta_bruta,\n        serve_como_capa: row.serve_como_capa,\n      }\n    });\n  });\n}\n\nreturn out;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2720,
+        320
+      ],
+      "id": "308095d0-99ed-4411-b323-37b484f3f355",
+      "name": "Indexer"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Mode: Run Once for All Items\n// Adiciona campos de avaliação de capa em cada foto.\n// Fotos marcadas como eh_inutil recebem valores padrão de rejeição automática.\n\nconst items = $input.all().map(i => i.json);\n\nconst rows = items.map(foto => {\n  if (foto.eh_inutil) {\n    return {\n      json: {\n        ...foto,\n        nota_capa: 0,\n        justificativa_capa: \"Imagem do Google Street View (ou outras), inadequada como capa de perfil profissional.\",\n        resposta_bruta: \"Imagem do Google Street View (ou outras), inadequada como capa de perfil profissional.\",\n        serve_como_capa: false,\n      }\n    };\n  }\n\n  // Foto útil: campos vazios, prontos para serem preenchidos pela IA depois\n  return {\n    json: {\n      ...foto,\n      nota_capa: null,\n      justificativa_capa: null,\n      resposta_bruta: null,\n      serve_como_capa: null,\n    }\n  };\n});\n\nreturn rows;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2320,
+        176
+      ],
+      "id": "09b00367-5d72-422c-809a-2f3797502d4d",
+      "name": "Automatic rejection"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "=gpt-4.1-mini",
+          "mode": "id"
+        },
+        "text": "=ID DO ESTABELECIMENTO: {{ $json.id }}\n\nÍNDICE DA FOTO: {{ $json.foto_index }}\n\nVocê é um avaliador de qualidade de imagens. Antes de qualquer coisa, você faz uma VARREDURA DE PESSOAS. Depois aplica o filtro de eliminação. Só então, se a imagem sobreviver, avalia a qualidade.\n\n==================================================\nPASSO 0 — VARREDURA DE PESSOAS (FAÇA ISSO ANTES DE TUDO)\n==================================================\n\nAntes de pensar em qualidade, beleza ou nota, responda mentalmente a UMA pergunta, olhando a imagem inteira com atenção: HÁ ALGUM SER HUMANO NA IMAGEM?\n\nProcure ativamente por: rostos (inteiros ou parciais), cabeças, corpos, mãos segurando a câmera, pessoas em pé, sentadas, ao fundo, de lado, de costas, refletidas em espelho/vidro, ou parcialmente cortadas pela borda.\n\nSe você encontrar QUALQUER ser humano, classifique-o em uma de duas categorias:\n\n(A) HUMANO EM DESTAQUE → ELIMINAÇÃO OBRIGATÓRIA (nota 0.0). Enquadra-se aqui se:\n    • é uma selfie (rosto próximo, braço esticado, alguém segurando a câmera);\n    • há QUALQUER rosto humano reconhecível em foco em qualquer parte do quadro, mesmo que pequeno;\n    • há uma pessoa posando, olhando ou sorrindo para a câmera;\n    • uma pessoa está no centro, no primeiro plano, ou ocupa parte relevante do quadro;\n    • uma pessoa divide o destaque com o ambiente;\n    • há um grupo de pessoas.\n  Se a pessoa tem rosto visível e dá pra reconhecer que é uma pessoa, ela está EM DESTAQUE. Na dúvida entre \"destaque\" e \"acidental\", é SEMPRE destaque → ELIMINE.\n\n(B) HUMANO ACIDENTAL → não elimina por esse motivo. SÓ se enquadra aqui se a pessoa é inequivocamente irrelevante: minúscula ao fundo, totalmente desfocada, de costas e sem rosto visível, ou claramente só parte do movimento do ambiente. Esta categoria é a EXCEÇÃO RARA, não a regra.\n\nREGRA DE DECISÃO: se há humano e você não tem CERTEZA ABSOLUTA de que é categoria (B), trate como (A) e dê 0.0. É melhor eliminar uma foto boa do que aprovar uma foto com rosto.\n\nO resultado desta varredura vai OBRIGATORIAMENTE para o campo \"pessoas\" do JSON final. Você não pode dar nota alta e ao mesmo tempo admitir um humano em destaque — isso é uma contradição proibida.\n\n==================================================\nPASSO 1 — FILTRO DE ELIMINAÇÃO\n==================================================\n\nTRAVA ABSOLUTA: assim que identificar que a foto se enquadra em uma condição de eliminação, a nota é 0.0 e ESSA NOTA NÃO MUDA. Não reconsidere, não compense com qualidade técnica, não arredonde para cima. Qualidade NUNCA cancela uma eliminação. Na dúvida, ELIMINE.\n\nPRINCÍPIO ANTI-ALUCINAÇÃO: avalie SOMENTE o que está visível. Não suponha nem invente. Na dúvida sobre um detalhe, trate-o como ausente e NÃO dê o benefício da dúvida.\n\nO QUE NÃO É MOTIVO DE ELIMINAÇÃO: fotografar um ambiente fechado, objeto, vitrine, aquário, terrário, tela de TV/monitor exibindo conteúdo, ou qualquer cena com elementos artificiais CONTINUA SENDO uma fotografia real. O que elimina é a imagem SER uma renderização/arte/print — não o ASSUNTO ser artificial. Um aquário fotografado é uma foto real e legítima.\n\nCondições de eliminação (qualquer uma = 0.0):\n\n- HÁ HUMANO EM DESTAQUE (categoria A do Passo 0). Motivo: \"pessoa em destaque / rosto visível\".\n- NÃO é fotografia real: logo, ícone, ilustração, desenho, pintura digital, render 3D, arte gráfica, cartaz, flyer, banner, peça publicitária, print de tela (screenshot), mapa, ou imagem gerada/desenhada/montada por computador. Arte gráfica elimina mesmo que seja bonita e bem feita.\n- É um PRINT de app/rede social: interface, barra de status, ícones de sistema (bateria, wifi, hora) ou UI de Instagram/WhatsApp/Google Maps, mesmo que haja foto real dentro do print.\n- É majoritariamente TEXTO: cardápio, tabela de preços, horário, ou imagem em que o texto cobre a maior parte do quadro.\n- É COLAGEM/MONTAGEM: várias fotos em grade, painéis ou faixas numa única imagem.\n- Tem tarja preta larga, moldura decorativa ou bordas artificiais ocupando parte relevante do quadro.\n- Tem marca d'água invasiva, logo de terceiros dominante ou texto promocional cobrindo a imagem.\n- É tecnicamente imprestável: muito borrada, escura demais ou estourada a ponto de não dar pra distinguir o que é.\n\nSe NENHUMA condição se aplicar, vá para o PASSO 2.\n\n==================================================\nPASSO 2 — NOTA DE QUALIDADE (0.0 a 10.0)\n==================================================\n\nSó execute se a imagem sobreviveu aos passos 0 e 1. NÃO escolha uma nota redonda primeiro. Avalie as quatro dimensões SEPARADAMENTE, atribua valores conforme a EVIDÊNCIA visual, e SOME.\n\n- NITIDEZ / FOCO (0.0 a 3.0)\n- ILUMINAÇÃO (0.0 a 2.5)\n- ENQUADRAMENTO / COMPOSIÇÃO (0.0 a 2.5)\n- CLAREZA DO ASSUNTO / APELO (0.0 a 2.0)\n\nREGRA DECIMAL OBRIGATÓRIA: para CADA dimensão, escolha um valor com decimal \"quebrada\" que reflita exatamente aquela foto (ex.: 2.7, 1.8, 2.2, 1.3). NÃO use máximos redondos (3.0, 2.5, 2.0) nem meios redondos (1.5) salvo em casos extremos e inquestionáveis. É esperado que quase nenhuma sub-nota seja redonda.\n\nSome as quatro para a nota base. A maioria das fotos boas soma entre 6.5 e 8.0; passar de 9.0 exige as quatro dimensões quase no máximo.\n\nTETO: se é close extremo de um único prato/bebida sem contexto do ambiente, OU tem filtro/saturação artificial muito evidente, a nota não passa de 6.5.\n\n==================================================\nPASSO 3 — PEQUENO BÔNUS DE CAPA\n==================================================\n\nSome +0.7 SOMENTE se TODAS forem verdadeiras: (a) mostra com clareza a FACHADA do estabelecimento — vista externa com entrada, letreiro ou estrutura reconhecível; (b) você tem CERTEZA de que é a vista externa, sem inferir; (c) a nota base do PASSO 2 já é ≥ 5.0. Faltando qualquer uma, não some nada. A nota final nunca passa de 10.0. O bônus nunca se aplica se houve eliminação.\n\nArredonde a nota final para UMA casa decimal.\n\n==================================================\nFORMATO DA RESPOSTA\n==================================================\n\nResponda SÓ com este objeto JSON, sem nada antes nem depois, sem markdown:\n\n{\n\n\"id\": \"<copie exatamente o ID DO ESTABELECIMENTO do topo>\",\n\n\"foto_index\": <copie exatamente o ÍNDICE DA FOTO do topo, como número inteiro>,\n\n\"pessoas\": \"<um de: 'nenhuma' | 'acidental' | 'em destaque'>\",\n\n\"resultado\": \"N.N: justificativa\"\n\n}\n\nRegras do formato, obrigatórias:\n\n- Copie \"id\" e \"foto_index\" EXATAMENTE como vieram no topo. \"foto_index\" é número inteiro, sem aspas.\n- \"pessoas\" registra o resultado do PASSO 0. Se for \"em destaque\", \"resultado\" TEM que começar com 0.0. É proibido \"pessoas\":\"em destaque\" com nota acima de 0.0.\n- \"resultado\" SEMPRE começa com a nota (0.0 a 10.0, UMA casa decimal), seguida de \": \" e a justificativa. Nunca escreva só o número.\n- A justificativa é UMA frase curta (máx ~20 palavras) citando só os fatores DECISIVOS. Quando houver eliminação, nomeie o motivo (ex.: \"0.0: pessoa em destaque / rosto visível.\" ou \"0.0: arte gráfica, não é fotografia.\").\n- NUNCA escreva que NÃO houve eliminação, que não há pessoas, ou qualquer frase sobre o que NÃO aconteceu (exceto o campo \"pessoas\", que é obrigatório).\n- Evite os valores \"ímã\" 7.4, 8.0 e 8.2 como nota final. Se cair neles, reavalie as sub-notas com mais precisão decimal.\n- Nunca escreva \"insuficiente\" nem nada fora do formato. Toda imagem recebe uma nota.",
+        "imageUrls": "={{ $json.url_original }}",
+        "simplify": false,
+        "options": {}
+      },
+      "id": "6ca7bb99-f86a-4e09-b304-2f4af6d4ebb1",
+      "name": "Picasso",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.4,
+      "position": [
+        2304,
+        432
+      ],
+      "retryOnFail": true,
+      "credentials": {
+        "openAiApi": {
+          "id": "dhG0ktohViAz4N21",
+          "name": "OpenAi account"
+        }
+      },
+      "notes": "TEMPLATE DESENVOLVIDO POR NOCODE STARTUP\nhttps://nocodestartup.io/\n\nFORMAÇÃO GESTOR DE AGENTES DE IA:\nhttps://nocodestartup.io/formacao-gestor-agentes-ia/"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all().map(i => i.json);\n\nconst fotosPorId = /** @type {Record<string, any[]>} */ ({});\n\nfor (const item of items) {\n  if (item && item.id && item.foto_index !== undefined && !item.eh_inutil && item.nota_capa >= 6) {\n    if (!fotosPorId[item.id]) {\n      fotosPorId[item.id] = [];\n    }\n    fotosPorId[item.id].push(item);\n  }\n}\n\nconst resultados = Object.keys(fotosPorId).map(id => {\n  const fotosDoEstabelecimento = fotosPorId[id];\n  \n  fotosDoEstabelecimento.sort((a, b) => a.foto_index - b.foto_index);\n  \n  return {\n    json: {\n      id: id,\n      fotos_analise: fotosDoEstabelecimento\n    }\n  };\n});\n\nreturn resultados;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2944,
+        320
+      ],
+      "id": "2d89e829-8ec8-42fd-8954-9e85b1930136",
+      "name": "organizer"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url_original }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1552,
+        448
+      ],
+      "id": "709154e7-2b72-4336-b516-42be7d0069c3",
+      "name": "HTTP Request",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const inputItems = $input.all();\nconst previousItems = $('Switch').all();\n\nconst vistos = new Set();\n\nreturn inputItems.map((item, index) => {\n  const original = previousItems[index].json;\n\n  // Erro de download/processamento → inútil\n  if (item.json.error) {\n    return {\n      json: {\n        ...original,        // url_original preservada\n        eh_inutil: true\n      }\n    };\n  }\n\n  // Chave SÓ para comparação (não afeta o que sai no fluxo)\n  const chaveComparacao = (original.url_original || '')\n    .split('?')[0]\n    .replace(/=s\\d+-k-no$/, '')\n    .replace(/=s\\d+.*$/, '');\n\n  const ehDuplicata = Boolean(chaveComparacao) && vistos.has(chaveComparacao);\n  if (chaveComparacao && !ehDuplicata) {\n    vistos.add(chaveComparacao);\n  }\n\n  return {\n    json: {\n      ...original,          // url_original sai exatamente como entrou\n      eh_inutil: original.eh_inutil || ehDuplicata\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1760,
+        448
+      ],
+      "id": "847eac03-bff5-4316-98c7-dcf22524a2d4",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "43a74f54-74c7-4a59-8c4b-a53157c929dc",
+              "leftValue": "={{ $json.eh_inutil }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2000,
+        448
+      ],
+      "id": "d1dbb560-cd46-4b05-8111-e1cbf189a255",
+      "name": "If"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2528,
+        176
+      ],
+      "id": "c36dd6ff-151b-4c1f-a5aa-0cf434f54253",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "geral_estabelecimentos_desc",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json.id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "go_to_trip",
+              "fieldValue": "TRUE"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        5216,
+        1472
+      ],
+      "id": "85608e5c-80a9-4019-a678-207d8b13ef0a",
+      "name": "Update a row1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "U4InZOJsE9hnMgS6",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "geral_estabelecimentos_desc",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json.id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "go_to_trip",
+              "fieldValue": "TRUE"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        6784,
+        1168
+      ],
+      "id": "fe8e94cb-aa1f-4dbe-b0bc-bb30f77339b7",
+      "name": "Update a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "U4InZOJsE9hnMgS6",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Lê o campo existente SEM alterá-lo, e adiciona um campo novo com frases numeradas.\nconst texto = $json.comentarios_formatados || \"\";\n\n// 1) separa cada \"Comentário N: ...\" preservando o número original\nconst blocos = texto\n  .split(/\\n\\s*\\n/)            // comentários são separados por linha em branco\n  .map(b => b.trim())\n  .filter(Boolean);\n\nconst linhas = [];\nlet contadorFrase = 0;\n\nfor (const bloco of blocos) {\n  // remove o rótulo \"Comentário N:\" do início, guardando o número\n  const m = bloco.match(/^Coment[áa]rio\\s+(\\d+)\\s*:\\s*([\\s\\S]*)$/i);\n  const numComentario = m ? m[1] : \"?\";\n  const corpo = m ? m[2] : bloco;\n\n  // 2) quebra o corpo em frases (fim de frase ou quebra de linha)\n  const frases = corpo\n    .split(/(?<=[.!?])\\s+|\\n+/)\n    .map(f => f.trim())\n    .filter(f => f.length > 0);\n\n  // se o comentário não tiver pontuação, ele inteiro vira uma \"frase\"\n  const lista = frases.length ? frases : [corpo.trim()].filter(Boolean);\n\n  for (const f of lista) {\n    contadorFrase++;\n    // formato: \"F12 (C10): frase isolada\"\n    linhas.push(`F${contadorFrase} (C${numComentario}): ${f}`);\n  }\n}\n\n// adiciona o campo novo, mantém todo o resto do item intacto\n$json.comentarios_frases = linhas.join(\"\\n\");\n\nreturn $input.item;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        704,
+        1216
+      ],
+      "id": "fb8ab3ff-e7d4-4d8b-b281-0b2154f7e315",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Limpa a saída dos agentes mas MANTÉM cada _review como STRING JSON,\n// e MANTÉM os itens separados (é o que o Organizer espera receber).\n// Só desembrulha {action,text} e normaliza, sem mudar a estrutura.\n\nconst CAMPOS = [\"service_review\", \"price_to_value_review\", \"space_review\", \"capacity_review\", \"summary\"];\n\nfunction limpaParaString(valor) {\n  if (valor == null) return valor;\n\n  let obj = (typeof valor === \"object\") ? valor : null;\n  if (obj === null && typeof valor === \"string\") {\n    try { obj = JSON.parse(valor.trim()); } catch (e) { return valor; } // não parseou: devolve como veio\n  }\n  if (!obj) return valor;\n\n  // desembrulha {action:\"parse\", text:\"{...}\"}\n  if (obj.text && (obj.action || obj.resultado === undefined)) {\n    try {\n      const inner = JSON.parse(obj.text);\n      if (inner && (inner.resultado !== undefined || inner.id !== undefined)) obj = inner;\n    } catch (e) {}\n  }\n\n  // re-serializa como string JSON limpa { id, resultado }\n  return JSON.stringify({\n    id: obj.id ?? null,\n    resultado: obj.resultado ?? null\n  });\n}\n\nconst out = [];\nfor (const item of $input.all()) {\n  const novo = { ...item.json };\n  for (const campo of CAMPOS) {\n    if (novo[campo] !== undefined) {\n      novo[campo] = limpaParaString(novo[campo]);\n    }\n  }\n  out.push({ json: novo });\n}\nreturn out;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2608,
+        1200
+      ],
+      "id": "dd007094-6fc1-467e-a98f-acb661e6d048",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ ['aprovado','aprovado_ressalvas','parcial'].includes($json.status_codigo) }}",
+                    "rightValue": "aprovado",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "74641e61-0305-451b-806a-f768284bf47e"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "aprovado"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "4235a134-3f7a-4482-9318-0ad0b76ce2d5",
+                    "leftValue": "={{ ['insatisfatorio','reprovado','reprovado_hard','indeterminado'].includes($json.status_codigo) }}",
+                    "rightValue": "aprovado",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "reprovado"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        416,
+        1232
+      ],
+      "id": "9831f640-a72e-42c1-a141-e49669bd2669",
+      "name": "Switch13"
+    }
+  ],
+  "connections": {
+    "Price to value review5": {
+      "main": [
+        [
+          {
+            "node": "Merge30",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Space review6": {
+      "main": [
+        [
+          {
+            "node": "Merge30",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "service_review5": {
+      "main": [
+        [
+          {
+            "node": "Merge30",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge30": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "capacity_review": {
+      "main": [
+        [
+          {
+            "node": "Merge30",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Switch13",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent3",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model4": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent4",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent4": {
+      "main": [
+        [
+          {
+            "node": "Space review6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent3": {
+      "main": [
+        [
+          {
+            "node": "Price to value review5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent2": {
+      "main": [
+        [
+          {
+            "node": "service_review5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "capacity_review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "summary": {
+      "main": [
+        [
+          {
+            "node": "Merge30",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    },
+    "Organizer1": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge10": {
+      "main": [
+        [
+          {
+            "node": "Organizer1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge3": {
+      "main": [
+        [
+          {
+            "node": "Organizer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "image organizer1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge5",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Create a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Organizer": {
+      "main": [
+        [
+          {
+            "node": "média1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "média1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript4": {
+      "main": [
+        [
+          {
+            "node": "organizer2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "organizer2": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "image split1": {
+      "main": [
+        [
+          {
+            "node": "STORAGE1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "image organizer1": {
+      "main": [
+        [
+          {
+            "node": "image split1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "STORAGE1": {
+      "main": [
+        [
+          {
+            "node": "Organizador1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Organizador1": {
+      "main": [
+        [
+          {
+            "node": "Merge5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge5": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript5": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript6": {
+      "main": [
+        [
+          {
+            "node": "Create a row2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fotos": {
+      "main": [
+        [
+          {
+            "node": "Fotos organizer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fotos organizer": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Automatic rejection",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Indexer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Indexer": {
+      "main": [
+        [
+          {
+            "node": "organizer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Automatic rejection": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Picasso": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Picasso",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Automatic rejection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "organizer": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a row": {
+      "main": [
+        [
+          {
+            "node": "Update a row1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a row2": {
+      "main": [
+        [
+          {
+            "node": "Update a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "AI Agent2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "AI Agent3",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "AI Agent4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Merge10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch13": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fotos",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge10",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "id": "f4e356a1-5876-4fb0-9713-703e85366712",
+          "nome": "Resort em Porto Seguro - Nauticomar All Inclusive",
+          "subsegmento": "Resort hotel, Hotel, Tourist attraction",
+          "endereco": "Resort em Porto Seguro - Nauticomar All Inclusive - R. do Telégrafo, 1965 - Taperapuan, Porto Seguro - BA, 45810-000, Brazil",
+          "bairro": "Taperapuan",
+          "cep": "45810-000",
+          "cidade": "Porto Seguro",
+          "estado": "BA",
+          "telefone": "+5573988232694",
+          "website": "https://www.nauticomar.com.br/",
+          "nota": 4.3,
+          "qtd_avaliacoes": 5406,
+          "distribuicao_notas": [
+            296,
+            187,
+            497,
+            1092,
+            3334
+          ],
+          "status": "ativo",
+          "horarios": [],
+          "faixa_preco": null,
+          "qtd_fotos": 20,
+          "fotos": [
+            {
+              "url": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAFKcoT-1UMa5SWUln4Tmgp2J50TZi6kyyEgSywfBKmd3aX28g6rXstXMqWvlV-MN69Oivs6LGTMNIBR0YgO0CfGJhFD8XE-Tsjw7EBeTYjzsMr680d_si9rC7knBCsHc6pRXHgyEtFEXkwN=s800-k-no",
+              "description": "All"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAHt8EtcaBAecHeFY6mv7iDzi6B61RBgosf6mgOHY0-iglLX9ZxDVkHaCTwTfJxSPoX4zg31F2mM17kfTsUjRd7XixQzmRz4gKdTQdWDZIh3HmZZBnscsOZchtKuk52vR1MYHZ3rtrESHal2=s800-k-no",
+              "description": "Latest"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAGxIvvsYjYZ0FEMqo4HzX5lHAas6xIs8Fb2w67PdRtEOFFATOtxYrTOH-2Zd9d_XujObwflFpyGuF9V9Afn0vSnX7vOGVbUPKLOKXr7K8UFFQsIwmcf2Pbz7TwwdN4hS6iXGEezbA=s800-k-no",
+              "description": "Videos"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAGjR2UzYhknmnzUjUjAe4_h50k0ch1eTD9E51tFUo9rz49CNfDQo8cxb4Ld6H-mQiMVNmPiwUijJ_6s8XaZgVeHVxqNX-zCRc-gqzpHOz8ZWGFN-1eOtUg4UShuynz2Peo4EJS2=s800-k-no",
+              "description": "Rooms"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAEvimMMMwXBsOyozb6xd078qF0LEmSr5OFdL6ah8gFX7vXZjHiYUKEgQ5UaoAH6s6RUtabq1MYqUZJUGJQZZFv88QRLgYOyIzNLOXfgTs9-0wcDkC-ilcoCnbidFs0JaNT6srY=s800-k-no",
+              "description": "Exterior"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAHbdPH6zynJpHYe5xPYeBV-IxCZK-nMwLtuWHHMo7DJ4sfeIDYBbMMTxEAZ7XckKa92M7FdU2RiP0nmawqDeMwRwavPpqg7lXyhE5I-Pw6YlIziK56wAkHitJ13iEOW_Fv6GTnuoGPfTjg=s800-k-no",
+              "description": "Amenities"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAFADNNlpliIdSaxSaa8oVUSFdOgWQXrw9BqXHuEl8bkPwQfQXEbeHDphIr3-SlTpC7XMNqtaz-CPPoBZxXcbqXnzEWMIz_1rECbc1hvuUkVqThtFTiECaXAhAgDS0aeIMc2C_lYHyDFlqX9=s800-k-no",
+              "description": "Food & drink"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAH6XWJLLwBKY-TMM1RV6oRb0F10_Z1FrHxmt_W1GRGb90Q144PKPCMqF5wYucb18cZKEyFqkInkzcIKDKPg-tOWu57YiPfnpIbZ7j2vmVG1wpvRT-QWQRzl9LsPrpXqErVcjS9Iyomj5a2Q=s800-k-no",
+              "description": "Beach"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAHGiK3nhmQbVO-4Xq2wFpyXlkD6vcMgcur2SsULpOtGWsiWs_V-EMfGK798l7zsoC5kJzJsgA5btb9LyOu_cdH6IXA4cs8gsbLgWjJ1Lcg1I1JkjgY2yo1saeRQCNv3ujvgytc-cg=s800-k-no",
+              "description": "From visitors"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAEoQeQ8xUF8lKV4hO4Jodwjf5MOHTcr3NrxThfx29eqsAfDX_rUOzxiiMOvQdacqlRcF5PL02NJrOIXYeSWAqlqOedU4kX5pVLw1o1o_RZuErT10cHB1jFGG_bsV8INd84r_NRtPcNFf2C8=s800-k-no",
+              "description": "By owner"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAH5JcIfHLZVQrM8iJODCJVNLHKNpJ11QZ_qf4YdtPvtW5F6UKdo9VHOfscTWjC7cb30cDS6r-OSHfoSS4QKt0fhz8mF4A3T_Om5HJuLW3zPki5XAf7cU8QZ6gpNumBYWMGFCXfVFA=w224-h298-k-no-pi-0-ya41.881023-ro-0-fo100",
+              "description": "Street View & 360°"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/grass-cs/ANxoTn3ALhbxmKvkSIiGyy2O_ag4NNTlwyGZZGwb-rjKhrzlI7uSr38WpVjA4EYZ8XJ3T7gltWt1WHW4nrtWsWPo3DMpdWPctq9YMD6gxuDdu-dIOKZTEUHdoPUkMp4fCxQwLpEXsZMSTOfXgNij=s800-k-no",
+              "description": "review"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/grass-cs/ANxoTn3mlmZ3oFuiXnSshYwtvwN-aqNva2ORINbNvjfqjjZeHQ8QiNhQpa6Wmg1bSbqX2eqB_K1d0pq3EV1E3y_RVGIC0hiUuaZB4NhVb_Na6tlxKPZsz-9bxF5sacdL5A0YxM48xL2e8ejjckyh=s800-k-no",
+              "description": "review"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/grass-cs/ANxoTn03kXsdXTClj8qqgs9I8L8_Za0XvMBgFNv7Al7T0Ly2n_3isOdLLTmVEqD6cQvQOZsgMlHsKkis8KpGug2t9ON6hrEkBlOkVARVk14opao_itzuyJP4Mfg634PeWsL1zIhbn2awIZ6i3GI=s800-k-no",
+              "description": "review"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/grass-cs/ANxoTn2U2NUnfienrjXa7Ekiybg_C1AitQyOG6JL3bpxIfSjPKDkesL_kcIsiO_tkXFUx4GbnzWWC5hd0lPkdqHayn8wRZ03cHNrPRDq_69Qi62l_Qi4-asg4b7K1GprSibRhyxVTZbP7vplKvc=s800-k-no",
+              "description": "review"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/grass-cs/ANxoTn271kB-LWjtHKyJLeN2lHhV2BDiWCefsQ1Qq9IVE_fUiXdisdVPuJOr_FPnVVB2FTW-QRuuyWLpXhuHpVG4B6XHTwQnuEnL1Tf2kyFZ-RaSJSwBw3NWceVpQb2733Pya97-5fI5duBiBjIO=s800-k-no",
+              "description": "review"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/grass-cs/ANxoTn3_-S-fYOvMUi5lGdLPo-PJ6gDoU7UptPrpYNfSduv4hsNyAgV6EAldmdeLGBSDSeQ3aoAxKt5q_4USd-LfselnWszOQtYkTAsMNMitZMOl04o8fk6_7K6yuBRYsSl8zJ2lbSmwFztidZpU=s800-k-no",
+              "description": "review"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/grass-cs/ANxoTn1affPmH5kSwrPBowUW6hFQrx5hRKYhk1xxLR7JWXVksYb8RUKMzyHunqB9ZMLr7RV9yV04Kde6fpQdDztWFU1yTdLSLSJIC2kr4-y3SQsKohHWOJqEWVI8SUPMlHZaRHPLDh6lBAt01YXB=s800-k-no",
+              "description": "review"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/grass-cs/ANxoTn0haAifqXdhlsb20ebufEPWPaC6NY3sQotIznoSZNZZq3wFs-toRKWxK6uTTR7iRYJtbEUxgfUld68JDpEiQ5MWwj_KqJTQnRtfQfTL__z-01FZPXRfuJ3RXJPnD_JB62TcfleJSm3zaGiP=s800-k-no",
+              "description": "review"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/grass-cs/ANxoTn2_oVA-C5Zzvzgv2KesdY8tPQLvX6GkTLky0g0L1FEG40ThwP2WxH2RLJGmllFnPgNrShv49Z9JGwN7j4f-tavcXUdjFOcqmVFWazxKIBVvaR0sTYjW7cO-krmoxKVpO7DPh3XPCEMTht3K=s800-k-no",
+              "description": "review"
+            }
+          ],
+          "resumo": "Upscale hotel with a pool & a beach club",
+          "acessibilidade": null,
+          "email": null,
+          "telefone_extra": null,
+          "instagram": null,
+          "facebook": null,
+          "link_google_maps": "https://www.google.com/maps/place/data=!3m1!4b1!4m2!3m1!1s0x73694ee3ce8ab75:0x71727fe98326f82d",
+          "google_id": "0x73694ee3ce8ab75:0x71727fe98326f82d",
+          "place_id": "ChIJdavoPO6UNgcRLfgmg-l_cnE",
+          "verificado": "true",
+          "timezone": "America/Bahia",
+          "created_at": "2026-06-25T18:38:13.608796+00:00",
+          "atualizacoes": null,
+          "reviews": [
+            {
+              "iso_date": "2026-06-25 12:04:51",
+              "review_id": "Ci9DQUlRQUNvZENodHljRjlvT2pWbGVEWjBiMGRtVkZkelpHOVBTalE0TUUwMlRWRRAB",
+              "user_link": "https://www.google.com/maps/contrib/104617576448822892289?hl=en-GB",
+              "user_name": "Regis Barros",
+              "review_link": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2pWbGVEWjBiMGRtVkZkelpHOVBTalE0TUUwMlRWRRAB!2m1!1s0x0:0x71727fe98326f82d!3m1!1s2@1:CAIQACodChtycF9oOjVleDZ0b0dmVFdzZG9PSjQ4ME02TVE%7C%7C?hl=en",
+              "review_rate": 4,
+              "review_text": null,
+              "review_time": "6 hours ago",
+              "user_avatar": "https://lh3.googleusercontent.com/a/ACg8ocLc9n73pNOo8ofZrGEnqhAI8apU8TA1tS8JWo4LytEgPg5dJg=s120-c-rp-mo-br100",
+              "review_cursor": "Ci8IARInCgoAP72GEBVNaC__EhCpzyBqixEyzUFG1joAAAAAGgf_AmEBVNaCGAAiAA:1",
+              "review_photos": [],
+              "review_services": {
+                "Rooms": 5,
+                "Service": 5,
+                "Location": 5,
+                "Trip type": "Holiday",
+                "Travel group": "Family"
+              },
+              "review_timestamp": 1782389090685897,
+              "user_total_photos": 0,
+              "iso_date_timestamp": 1782389090685897,
+              "user_total_reviews": 6,
+              "iso_date_of_last_edit": "2026-06-25 12:04:51",
+              "business_response_text": null,
+              "iso_date_of_last_edit_timestamp": 1782389090685897
+            },
+            {
+              "iso_date": "2026-06-25 09:27:44",
+              "review_id": "Ci9DQUlRQUNvZENodHljRjlvT25Cb1kzWmlZME5CUmtadU5tZElRMG8xYVU1UVMyYxAB",
+              "user_link": "https://www.google.com/maps/contrib/112782222280637947099?hl=en-GB",
+              "user_name": "Matheus Nascimento",
+              "review_link": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT25Cb1kzWmlZME5CUmtadU5tZElRMG8xYVU1UVMyYxAB!2m1!1s0x0:0x71727fe98326f82d!3m1!1s2@1:CAIQACodChtycF9oOnBoY3ZiY0NBRkZuNmdIQ0o1aU5QS2c%7C%7C?hl=en",
+              "review_rate": 5,
+              "review_text": null,
+              "review_time": "9 hours ago",
+              "user_avatar": "https://lh3.googleusercontent.com/a-/ALV-UjXCe4VgGYyc-IYmb_Kd5L0-LmHlqXsSC-SX7cO0i7gclDz_bNa-sQ=s120-c-rp-mo-ba12-br100",
+              "review_cursor": "Ci8IARInCgoAP72GEB5KzK__EhAj_Yh9wyep_rxXo6gAAAAAGgf_AmEB5KzKGAAiAA:2",
+              "review_photos": [],
+              "review_services": [],
+              "review_timestamp": 1782379664181619,
+              "user_total_photos": 0,
+              "iso_date_timestamp": 1782379664181619,
+              "user_total_reviews": 12,
+              "iso_date_of_last_edit": "2026-06-25 09:27:44",
+              "business_response_text": null,
+              "iso_date_of_last_edit_timestamp": 1782379664181619
+            },
+            {
+              "iso_date": "2026-06-24 02:05:53",
+              "review_id": "Ci9DQUlRQUNvZENodHljRjlvT25KNFJYaGhaUzFUTWxBeFozRXpjSEpOTkMxUVQxRRAB",
+              "user_link": "https://www.google.com/maps/contrib/114023968475981917373?hl=en-GB",
+              "user_name": "Patty Angel",
+              "review_link": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT25KNFJYaGhaUzFUTWxBeFozRXpjSEpOTkMxUVQxRRAB!2m1!1s0x0:0x71727fe98326f82d!3m1!1s2@1:CAIQACodChtycF9oOnJ4RXhhZS1TMlAxZ3EzcHJNNC1QT1E%7C%7C?hl=en",
+              "review_rate": 5,
+              "review_text": null,
+              "review_time": "a day ago",
+              "user_avatar": "https://lh3.googleusercontent.com/a-/ALV-UjVhOOj6niHs_x7TFpSTwqLaGvfzoEwysMvSoFYl2Rd_gWeGbwIa=s120-c-rp-mo-ba12-br100",
+              "review_cursor": "Ci8IARInCgoAP72GEIn5BU__EhDzyU6rUaJcJc4sTYQAAAAAGgf_AmEIn5BUGAAiAA:3",
+              "review_photos": [],
+              "review_services": [],
+              "review_timestamp": 1782266752939070,
+              "user_total_photos": 0,
+              "iso_date_timestamp": 1782266752939070,
+              "user_total_reviews": 1,
+              "iso_date_of_last_edit": "2026-06-24 02:05:53",
+              "business_response_text": null,
+              "iso_date_of_last_edit_timestamp": 1782266752939070
+            },
+            {
+              "iso_date": "2026-06-22 23:55:37",
+              "review_id": "Ci9DQUlRQUNvZENodHljRjlvT2t4SlJ6RXlVa1JQU25OQ01YTkRiblJYVFV4aVFVRRAB",
+              "user_link": "https://www.google.com/maps/contrib/111786959110788615599?hl=en-GB",
+              "user_name": "Amanda Corvino",
+              "review_link": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2t4SlJ6RXlVa1JQU25OQ01YTkRiblJYVFV4aVFVRRAB!2m1!1s0x0:0x71727fe98326f82d!3m1!1s2@1:CAIQACodChtycF9oOkxJRzEyUkRPSnNCMXNDbnRXTUxiQUE%7C%7C?hl=en",
+              "review_rate": 3,
+              "review_text": "O resort possui instalações bem limpas, a cerveja era sempre servida bem gelada e os funcionários da recepção foram muito educados e prestativos durante toda a estadia.\nNo entanto, alguns pontos deixaram a desejar. Não havia água com gás disponível livremente no sistema all inclusive, sendo vendida apenas na loja interna, que nem sempre estava aberta. Também senti falta de um varal ou estrutura para secar roupas no quarto.\nNo beach club, as atrações previstas na programação não aconteceram no dia em que fomos. Além disso, às 8h da manhã bateram na porta do quarto e entraram mesmo com hóspedes ainda dormindo, o que foi bastante desconfortável.\nA alimentação apresentou alguns problemas. Os picolés eram servidos sem qualquer identificação de procedência, rótulo ou data de fabricação. O hambúrguer tinha aparência e qualidade abaixo do esperado. O café da tarde, anunciado até às 18h, frequentemente já estava sendo recolhido antes desse horário.\nTambém houve pouca preocupação com restrições alimentares. No jantar temático espanhol, praticamente todos os pratos continham camarão. Como sou alérgica, tive ainda uma situação preocupante ao pedir peixe empanado nos petiscos da manhã: senti gosto de camarão e encontrei uma antena na porção, indicando possível contaminação cruzada, provavelmente pelo uso do mesmo óleo de fritura.\nOutro problema foram as constantes quedas de energia, que chegaram a ocorrer cinco vezes em um único dia. A água servida em jarras tinha gosto semelhante à água de torneira. Os copos e taças plásticos reutilizáveis ficavam empilhados ainda molhados, recebendo a bebida enquanto permaneciam com gotas da lavagem.\nNo geral, o atendimento da recepção e a limpeza foram pontos positivos, mas a estrutura, a alimentação e os cuidados com segurança alimentar precisam de melhorias.",
+              "review_time": "2 days ago",
+              "user_avatar": "https://lh3.googleusercontent.com/a/ACg8ocKEVCtggNCbTS6aT2_xMKIa8-y9-OczcPTns9nB-Nlk_AGvDJqY=s120-c-rp-mo-br100",
+              "review_cursor": "Ci8IARInCgoAP72GEOPTE5__EhD902WM7NDivtXefngAAAAAGgf_AmEOPTE5GAAiAA:4",
+              "review_photos": [],
+              "review_services": {
+                "Rooms": null,
+                "Safety": null,
+                "Service": 3,
+                "Location": 4,
+                "Trip type": "Holiday",
+                "Walkability": null,
+                "Travel group": "Couple",
+                "Food and drinks": null,
+                "Hotel highlights": "Great value",
+                "Nearby activities": null,
+                "Noteworthy details": null
+              },
+              "review_timestamp": 1782172536518409,
+              "user_total_photos": 0,
+              "iso_date_timestamp": 1782172536518409,
+              "user_total_reviews": 2,
+              "iso_date_of_last_edit": "2026-06-22 23:55:37",
+              "business_response_text": null,
+              "iso_date_of_last_edit_timestamp": 1782172536518409
+            },
+            {
+              "iso_date": "2026-06-20 10:40:12",
+              "review_id": "Ci9DQUlRQUNvZENodHljRjlvT2padVYwdEtRV3hCYlRsNk5tVkZRbTE2VDIxUFluYxAB",
+              "user_link": "https://www.google.com/maps/contrib/116750164804698262828?hl=en-GB",
+              "user_name": "Alessandro Vaz",
+              "review_link": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2padVYwdEtRV3hCYlRsNk5tVkZRbTE2VDIxUFluYxAB!2m1!1s0x0:0x71727fe98326f82d!3m1!1s2@1:CAIQACodChtycF9oOjZuV0tKQWxBbTl6NmVFQm16T21PYnc%7C%7C?hl=en",
+              "review_rate": 5,
+              "review_text": "Lugar excelente",
+              "review_time": "5 days ago",
+              "user_avatar": "https://lh3.googleusercontent.com/a/ACg8ocJ5VVESX4z-9Rxo79UStlKhQ4c0JDAGufUJVNshFfWzFuuexw=s120-c-rp-mo-br100",
+              "review_cursor": "Ci8IARInCgoAP72GEbYiBe__EhD2zVbrCv5GPkosi-4AAAAAGgf_AmEbYiBeGAAiAA:5",
+              "review_photos": [
+                "https://lh3.googleusercontent.com/grass-cs/ANxoTn3ALhbxmKvkSIiGyy2O_ag4NNTlwyGZZGwb-rjKhrzlI7uSr38WpVjA4EYZ8XJ3T7gltWt1WHW4nrtWsWPo3DMpdWPctq9YMD6gxuDdu-dIOKZTEUHdoPUkMp4fCxQwLpEXsZMSTOfXgNij=k-no"
+              ],
+              "review_services": [],
+              "review_timestamp": 1781952012193006,
+              "user_total_photos": 0,
+              "iso_date_timestamp": 1781952012193006,
+              "user_total_reviews": 1,
+              "iso_date_of_last_edit": "2026-06-20 10:40:12",
+              "business_response_text": null,
+              "iso_date_of_last_edit_timestamp": 1781952012193006
+            },
+            {
+              "iso_date": "2026-06-20 05:34:35",
+              "review_id": "Ci9DQUlRQUNvZENodHljRjlvT21od2RHdG9lSFpEVlRGNVFXMW5OVFF0ZVhoblNuYxAB",
+              "user_link": "https://www.google.com/maps/contrib/116017944880000103765?hl=en-GB",
+              "user_name": "Dilermano Celp",
+              "review_link": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT21od2RHdG9lSFpEVlRGNVFXMW5OVFF0ZVhoblNuYxAB!2m1!1s0x0:0x71727fe98326f82d!3m1!1s2@1:CAIQACodChtycF9oOmhwdGtoeHZDVTF5QW1nNTQteXhnSnc%7C%7C?hl=en",
+              "review_rate": 4,
+              "review_text": "Foi uma boa experiência, pequenos detalhes não deixou a experiência ser ótima.",
+              "review_time": "5 days ago",
+              "user_avatar": "https://lh3.googleusercontent.com/a-/ALV-UjUtoTPCnaYyUjg_jf7So7DDw1UgCjOZgh0VFmatRGe0wB4CSlQ1Gg=s120-c-rp-mo-ba12-br100",
+              "review_cursor": "Ci8IARInCgoAP72GEcee9P__EhCYIxchPPc1KQ6NvQ8AAAAAGgf_AmEcee9PGAAiAA:6",
+              "review_photos": [],
+              "review_services": {
+                "Trip type": "Holiday",
+                "Travel group": "Friends",
+                "Hotel highlights": "Quiet, Great value"
+              },
+              "review_timestamp": 1781933674672237,
+              "user_total_photos": 12,
+              "iso_date_timestamp": 1781933674672237,
+              "user_total_reviews": 35,
+              "iso_date_of_last_edit": "2026-06-20 05:34:35",
+              "business_response_text": null,
+              "iso_date_of_last_edit_timestamp": 1781933674672237
+            },
+            {
+              "iso_date": "2026-06-18 23:13:36",
+              "review_id": "Ci9DQUlRQUNvZENodHljRjlvT2tWWVZUbDRVV3Q0Y0RGTGFHTTVZbTVpVW1oWE0wRRAB",
+              "user_link": "https://www.google.com/maps/contrib/106490475670329137948?hl=en-GB",
+              "user_name": "Kenia Nunes",
+              "review_link": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2tWWVZUbDRVV3Q0Y0RGTGFHTTVZbTVpVW1oWE0wRRAB!2m1!1s0x0:0x71727fe98326f82d!3m1!1s2@1:CAIQACodChtycF9oOkVYVTl4UWt4cDFLaGM5Ym5iUmhXM0E%7C%7C?hl=en",
+              "review_rate": 5,
+              "review_text": "Estava com medo pelos comentários , mas estou surpreendida. Comida é excelente, ambiente limpinho. Pelo valor como eu de mais",
+              "review_time": "6 days ago",
+              "user_avatar": "https://lh3.googleusercontent.com/a-/ALV-UjWhqoo6MyzHE-0bV0zdjRcjACzTJVm_dNZTj_QZnXQBQKwh9NTx1g=s120-c-rp-mo-br100",
+              "review_cursor": "Ci8IARInCgoAP72GEi_Rdp__EhD8p1YtQ_w9CCXSLYMAAAAAGgf_AmEi_RdpGAAiAA:7",
+              "review_photos": [],
+              "review_services": {
+                "Rooms": 3,
+                "Service": 5,
+                "Location": 4,
+                "Trip type": "Holiday",
+                "Travel group": "Family",
+                "Food and drinks": null,
+                "Hotel highlights": "Great value"
+              },
+              "review_timestamp": 1781824415894399,
+              "user_total_photos": 0,
+              "iso_date_timestamp": 1781824415894399,
+              "user_total_reviews": 4,
+              "iso_date_of_last_edit": "2026-06-18 23:13:36",
+              "business_response_text": null,
+              "iso_date_of_last_edit_timestamp": 1781824415894399
+            },
+            {
+              "iso_date": "2026-06-15 20:49:22",
+              "review_id": "Ci9DQUlRQUNvZENodHljRjlvT2tjeE4yVkllSEl0TVVveWFFMW9RVmRtT1RScVMwRRAB",
+              "user_link": "https://www.google.com/maps/contrib/101205046913376319412?hl=en-GB",
+              "user_name": "William Soares",
+              "review_link": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2tjeE4yVkllSEl0TVVveWFFMW9RVmRtT1RScVMwRRAB!2m1!1s0x0:0x71727fe98326f82d!3m1!1s2@1:CAIQACodChtycF9oOkcxN2VIeHItMUoyaE1oQVdmOTRqS0E%7C%7C?hl=en",
+              "review_rate": 1,
+              "review_text": "Para um resort ALL inclusive tem muita limitação e pouca opção.",
+              "review_time": "a week ago",
+              "user_avatar": "https://lh3.googleusercontent.com/a-/ALV-UjXxMetNcZUYcCWrjGNCfPnHuki7KrprOpl-ToDcstU-RhPTFxo=s120-c-rp-mo-br100",
+              "review_cursor": "Ci8IARInCgoAP72GEuHkds__EhBJ4AMmRe5_ymE5IioAAAAAGgf_AmEuHkdsGAAiAA:8",
+              "review_photos": [],
+              "review_services": {
+                "Rooms": null,
+                "Trip type": "Holiday",
+                "Walkability": null,
+                "Travel group": "Family",
+                "Food and drinks": null,
+                "Noteworthy details": null
+              },
+              "review_timestamp": 1781637691539185,
+              "user_total_photos": 0,
+              "iso_date_timestamp": 1781556562017549,
+              "user_total_reviews": 9,
+              "iso_date_of_last_edit": "2026-06-16 19:21:32",
+              "business_response_text": null,
+              "iso_date_of_last_edit_timestamp": 1781637691539185
+            },
+            {
+              "iso_date": "2026-06-14 01:14:19",
+              "review_id": "Ci9DQUlRQUNvZENodHljRjlvT2pGS2RVTkhSSGxpTWpWc2Myd3lVa1ZXWkRaT2VFRRAB",
+              "user_link": "https://www.google.com/maps/contrib/102251199235945412866?hl=en-GB",
+              "user_name": "Kassia Kah",
+              "review_link": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2pGS2RVTkhSSGxpTWpWc2Myd3lVa1ZXWkRaT2VFRRAB!2m1!1s0x0:0x71727fe98326f82d!3m1!1s2@1:CAIQACodChtycF9oOjFKdUNHRHliMjVsc2wyUkVWZDZOeEE%7C%7C?hl=en",
+              "review_rate": 2,
+              "review_text": "A minha maior crítica e por que você só toma cerveja choca, toda cerveja fica aberta dentro do freezer e eles te servem, a cerveja vem choca e com gosto de freezer, o álcool já evaporou, o refri sem gás, tudo fica aberto no freezer horrível!!!!!!!!, não existe deixar cerveja aberta no freezer pra servir, os brinquedos precisam de manutenção, tudo está funcionando mal!",
+              "review_time": "a week ago",
+              "user_avatar": "https://lh3.googleusercontent.com/a-/ALV-UjULRqP82Fu5vlZSjhwHwet3ihDhkow-9YjDmH_h0xuTkDJy_OA=s120-c-rp-mo-br100",
+              "review_cursor": "Ci8IARInCgoAP72GE8Tl18__EhCickyPWCaX6xF3WCAAAAAAGgf_AmE8Tl18GAAiAA:9",
+              "review_photos": [],
+              "review_services": {
+                "Rooms": 3,
+                "Service": 4,
+                "Location": 3
+              },
+              "review_timestamp": 1781399659139943,
+              "user_total_photos": 0,
+              "iso_date_timestamp": 1781399659139943,
+              "user_total_reviews": 3,
+              "iso_date_of_last_edit": "2026-06-14 01:14:19",
+              "business_response_text": null,
+              "iso_date_of_last_edit_timestamp": 1781399659139943
+            },
+            {
+              "iso_date": "2026-06-11 08:07:04",
+              "review_id": "Ci9DQUlRQUNvZENodHljRjlvT2sxSk1YWkNaM0Y0ZW5WamRETnBXRkUzWkdSWU9YYxAB",
+              "user_link": "https://www.google.com/maps/contrib/108480952560979701607?hl=en-GB",
+              "user_name": "Ivanilda Danziger",
+              "review_link": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2sxSk1YWkNaM0Y0ZW5WamRETnBXRkUzWkdSWU9YYxAB!2m1!1s0x0:0x71727fe98326f82d!3m1!1s2@1:CAIQACodChtycF9oOk1JMXZCZ3F4enVjdDNpWFE3ZGRYOXc%7C%7C?hl=en",
+              "review_rate": 5,
+              "review_text": "Maravilhoso!!!",
+              "review_time": "2 weeks ago",
+              "user_avatar": "https://lh3.googleusercontent.com/a-/ALV-UjU-27M95GuYYzIm86ZO2NagJVUYJ6GlXZgPctStfNTA48BBAqOEDQ=s120-c-rp-mo-ba12-br100",
+              "review_cursor": "CjEIARIpCgoAP72GFKR5An__EhDOM5MKb_6hjU5izKcAAAAAGgn96EYCYUpHkCcYACIA:10",
+              "review_photos": [
+                "https://lh3.googleusercontent.com/grass-cs/ANxoTn3mlmZ3oFuiXnSshYwtvwN-aqNva2ORINbNvjfqjjZeHQ8QiNhQpa6Wmg1bSbqX2eqB_K1d0pq3EV1E3y_RVGIC0hiUuaZB4NhVb_Na6tlxKPZsz-9bxF5sacdL5A0YxM48xL2e8ejjckyh=k-no",
+                "https://lh3.googleusercontent.com/grass-cs/ANxoTn03kXsdXTClj8qqgs9I8L8_Za0XvMBgFNv7Al7T0Ly2n_3isOdLLTmVEqD6cQvQOZsgMlHsKkis8KpGug2t9ON6hrEkBlOkVARVk14opao_itzuyJP4Mfg634PeWsL1zIhbn2awIZ6i3GI=k-no",
+                "https://lh3.googleusercontent.com/grass-cs/ANxoTn2U2NUnfienrjXa7Ekiybg_C1AitQyOG6JL3bpxIfSjPKDkesL_kcIsiO_tkXFUx4GbnzWWC5hd0lPkdqHayn8wRZ03cHNrPRDq_69Qi62l_Qi4-asg4b7K1GprSibRhyxVTZbP7vplKvc=k-no",
+                "https://lh3.googleusercontent.com/grass-cs/ANxoTn271kB-LWjtHKyJLeN2lHhV2BDiWCefsQ1Qq9IVE_fUiXdisdVPuJOr_FPnVVB2FTW-QRuuyWLpXhuHpVG4B6XHTwQnuEnL1Tf2kyFZ-RaSJSwBw3NWceVpQb2733Pya97-5fI5duBiBjIO=k-no",
+                "https://lh3.googleusercontent.com/grass-cs/ANxoTn3_-S-fYOvMUi5lGdLPo-PJ6gDoU7UptPrpYNfSduv4hsNyAgV6EAldmdeLGBSDSeQ3aoAxKt5q_4USd-LfselnWszOQtYkTAsMNMitZMOl04o8fk6_7K6yuBRYsSl8zJ2lbSmwFztidZpU=k-no"
+              ],
+              "review_services": [],
+              "review_timestamp": 1781165223896863,
+              "user_total_photos": 624,
+              "iso_date_timestamp": 1781165223896863,
+              "user_total_reviews": 213,
+              "iso_date_of_last_edit": "2026-06-11 08:07:04",
+              "business_response_text": null,
+              "iso_date_of_last_edit_timestamp": 1781165223896863
+            },
+            {
+              "iso_date": "2026-06-08 17:17:45",
+              "review_id": "Ci9DQUlRQUNvZENodHljRjlvT2psWk5tRnZUbWN4YkVGbVowaExRa3RET1RKVFZuYxAB",
+              "user_link": "https://www.google.com/maps/contrib/102630509855593532162?hl=en-GB",
+              "user_name": "Alline Pereira",
+              "review_link": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2psWk5tRnZUbWN4YkVGbVowaExRa3RET1RKVFZuYxAB!2m1!1s0x0:0x71727fe98326f82d!3m1!1s2@1:CAIQACodChtycF9oOjlZNmFvTmcxbEFmZ0hLQktDOTJTVnc%7C%7C?hl=en",
+              "review_rate": 5,
+              "review_text": "Ficamos 5 dias e amamos o atendimento e cordialidade dos funcionários é um diferencial, o Patrick é muito atencioso deu várias dicas para gente de locais para ir visitar, e é muito atencioso. A Cris é muito simpática, conseguiu resolver um problema que deu no nosso check in e sempre disposta a dar dicas, os dois sem dúvida foram um diferencial para nossa estádia.\nMeu filho amou o espaço kids e as Tia Mel, Tia Bombom e a Tia Moana.\nO que deixou um pouco a desejar foi a questão de comidas nas noites temáticas, mas depois que conversei vi que era possível pedir alguma alteração no cardápio, mas que não foram feitas pois só fiquei sabendo depois.",
+              "review_time": "2 weeks ago",
+              "user_avatar": "https://lh3.googleusercontent.com/a-/ALV-UjX4QwOnf-zJgE-jA8AVUNeTHHLmqozSGG2lSBZw7fjzRAHPoOlbyA=s120-c-rp-mo-ba12-br100",
+              "review_cursor": "Ci8IARInCgoAP72GFXwnrd__EhDR52S4H4J5P3CgLRcAAAAAGgf_AmFXwnrdGAAiAA:11",
+              "review_photos": [],
+              "review_services": {
+                "Trip type": "Holiday",
+                "Travel group": "Family",
+                "Hotel highlights": "Quiet, Child-friendly"
+              },
+              "review_timestamp": 1780939064610055,
+              "user_total_photos": 0,
+              "iso_date_timestamp": 1780939064610055,
+              "user_total_reviews": 6,
+              "iso_date_of_last_edit": "2026-06-08 17:17:45",
+              "business_response_text": null,
+              "iso_date_of_last_edit_timestamp": 1780939064610055
+            },
+            {
+              "iso_date": "2026-06-07 21:26:35",
+              "review_id": "Ci9DQUlRQUNvZENodHljRjlvT25oMVVHdzRURXhZUlVRMVozbFJlV3hQWm5kck9YYxAB",
+              "user_link": "https://www.google.com/maps/contrib/118396880860258193440?hl=en-GB",
+              "user_name": "Dani Molon",
+              "review_link": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT25oMVVHdzRURXhZUlVRMVozbFJlV3hQWm5kck9YYxAB!2m1!1s0x0:0x71727fe98326f82d!3m1!1s2@1:CAIQACodChtycF9oOnh1UGw4TExYRUQ1Z3lReWxPZndrOXc%7C%7C?hl=en",
+              "review_rate": 5,
+              "review_text": "Passamos dias incríveis aqui. A comida é simplesmente maravilhosa, com muita variedade e sabor. Outro ponto alto, com certeza, é a equipe: pessoas maravilhosas, atenciosas e sempre prontas para ajudar. Além disso, a programação de lazer (e os funcionários sempre muito animados) é incrível, garantindo muita diversão para todas as idades. Recomendo de olhos fechados e com certeza voltarei!",
+              "review_time": "2 weeks ago",
+              "user_avatar": "https://lh3.googleusercontent.com/a-/ALV-UjX7r_9S0w-4XPkY7bE4gjAaz8nrGVbx3ORrAU1OPsl_xJ2DW4-B9Q=s120-c-rp-mo-br100",
+              "review_cursor": "CjEIARIpCgoAP72GFcBQPc__EhCyl054DDtjiWP2vkIAAAAAGgn92QkCYVwFA9wYACIA:12",
+              "review_photos": [
+                "https://lh3.googleusercontent.com/grass-cs/ANxoTn1affPmH5kSwrPBowUW6hFQrx5hRKYhk1xxLR7JWXVksYb8RUKMzyHunqB9ZMLr7RV9yV04Kde6fpQdDztWFU1yTdLSLSJIC2kr4-y3SQsKohHWOJqEWVI8SUPMlHZaRHPLDh6lBAt01YXB=k-no",
+                "https://lh3.googleusercontent.com/grass-cs/ANxoTn0haAifqXdhlsb20ebufEPWPaC6NY3sQotIznoSZNZZq3wFs-toRKWxK6uTTR7iRYJtbEUxgfUld68JDpEiQ5MWwj_KqJTQnRtfQfTL__z-01FZPXRfuJ3RXJPnD_JB62TcfleJSm3zaGiP=k-no"
+              ],
+              "review_services": {
+                "Rooms": null,
+                "Service": 5,
+                "Location": 5,
+                "Trip type": "Holiday",
+                "Travel group": "Family",
+                "Food and drinks": null,
+                "Hotel highlights": "Great view, Quiet"
+              },
+              "review_timestamp": 1780867595299558,
+              "user_total_photos": 2,
+              "iso_date_timestamp": 1780867595299558,
+              "user_total_reviews": 10,
+              "iso_date_of_last_edit": "2026-06-07 21:26:35",
+              "business_response_text": null,
+              "iso_date_of_last_edit_timestamp": 1780867595299558
+            },
+            {
+              "iso_date": "2026-06-07 12:14:50",
+              "review_id": "Ci9DQUlRQUNvZENodHljRjlvT25KUVkwTndUbGxRTVRaMWNsTjFjMXBPTkcxdldWRRAB",
+              "user_link": "https://www.google.com/maps/contrib/101289040873134499192?hl=en-GB",
+              "user_name": "Marcos Favarão",
+              "review_link": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT25KUVkwTndUbGxRTVRaMWNsTjFjMXBPTkcxdldWRRAB!2m1!1s0x0:0x71727fe98326f82d!3m1!1s2@1:CAIQACodChtycF9oOnJQY0NwTllQMTZ1clN1c1pONG1vWVE%7C%7C?hl=en",
+              "review_rate": 5,
+              "review_text": "excelente",
+              "review_time": "2 weeks ago",
+              "user_avatar": "https://lh3.googleusercontent.com/a-/ALV-UjUs1ZOdiz_sQY8zmIsJIEdvCpHr09oNd5rKLxtdJFZJI7HetMEZ=s120-c-rp-mo-ba12-br100",
+              "review_cursor": "Ci8IARInCgoAP72GFd9hx6__EhB-Tr_7UPwnN93NYgwAAAAAGgf_AmFd9hx6GAAiAA:13",
+              "review_photos": [],
+              "review_services": {
+                "Trip type": "Holiday",
+                "Travel group": "Family",
+                "Hotel highlights": "Luxury"
+              },
+              "review_timestamp": 1780835017605020,
+              "user_total_photos": 45,
+              "iso_date_timestamp": 1780834490050723,
+              "user_total_reviews": 131,
+              "iso_date_of_last_edit": "2026-06-07 12:23:38",
+              "business_response_text": null,
+              "iso_date_of_last_edit_timestamp": 1780835017605020
+            },
+            {
+              "iso_date": "2026-06-05 00:00:00",
+              "review_id": "ChdDSUhNMG9nS0VNaXQ0OV9JOXFMQ2lBRRAB",
+              "user_link": "https://www.tripadvisor.com.br/ShowUserReviews-g303270-d622800-r1062944881?m=68573&staydates=2026_07_05_2026_07_06&uguests=1_2_0&supdv=desktop&supuc=US&supul=en",
+              "user_name": "V5537HSmariad",
+              "review_link": "https://www.tripadvisor.com.br/ShowUserReviews-g303270-d622800-r1062944881?m=68573&staydates=2026_07_05_2026_07_06&uguests=1_2_0&supdv=desktop&supuc=US&supul=en",
+              "review_rate": null,
+              "review_text": "Foi maravilhosa nossa hospedagem |Desde a recepção todos os funcionários nota 1000 ... Adoramos tudooooo",
+              "review_time": "2 weeks ago",
+              "user_avatar": "https://lh3.googleusercontent.com/local-reviews/AJMZ0QewvQXK08PhtQgCu1fT7TcdWcgcaXdOmFk48xW5xlmLo-Eqy0UOp2YqveGvl0etYz5BzA=s120-c-br100",
+              "review_cursor": "CjEIARIpCgoAP72GFq66QA__EhBPlPWSjoqh6qfahXcAAAAAGgn92VUCYWrrpAAYACIA:14",
+              "review_photos": [],
+              "review_services": [],
+              "review_timestamp": 1780617599999999,
+              "user_total_photos": null,
+              "iso_date_timestamp": 1780617599999999,
+              "user_total_reviews": null,
+              "iso_date_of_last_edit": "2026-06-05 00:00:00",
+              "business_response_text": null,
+              "iso_date_of_last_edit_timestamp": 1780617599999999
+            },
+            {
+              "iso_date": "2026-06-04 17:53:04",
+              "review_id": "Ci9DQUlRQUNvZENodHljRjlvT2tGWWFuUnlTMjlRVVd4VU9WRnVkMFp5ZVhZMlYyYxAB",
+              "user_link": "https://www.google.com/maps/contrib/110284937170890928598?hl=en-GB",
+              "user_name": "Nayara Brangioni",
+              "review_link": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2tGWWFuUnlTMjlRVVd4VU9WRnVkMFp5ZVhZMlYyYxAB!2m1!1s0x0:0x71727fe98326f82d!3m1!1s2@1:CAIQACodChtycF9oOkFYanRyS29QUWxUOVFud0ZyeXY2V2c%7C%7C?hl=en",
+              "review_rate": 1,
+              "review_text": "Comida péssima, atendimento fraco. Sei que a experiência de cada um é muito relativa, pois considera os parâmetros que essa pessoa tem como aquele tipo de situação. Eu já fiz outras viagens para resorts com atendimentos e comidas muito melhores, aqui precisa melhorar muito. Parque aquático não funciona, praia suja pra caramba em frente ao beach clube. Não volto nem de graça.",
+              "review_time": "3 weeks ago",
+              "user_avatar": "https://lh3.googleusercontent.com/a-/ALV-UjWsPiebdLzUchiC_AgS4iT1B1IsD4yfi9bG4NO8pjLcPV4NW1md=s120-c-rp-mo-br100",
+              "review_cursor": "CjEIARIpCgoAP72GFsO5Xn__EhALFBa9hGMKPF4pJh8AAAAAGgn92Q4CYWw7lecYACIA:15",
+              "review_photos": [],
+              "review_services": {
+                "Rooms": 3,
+                "Service": 1,
+                "Location": 3
+              },
+              "review_timestamp": 1780595583512861,
+              "user_total_photos": 0,
+              "iso_date_timestamp": 1780595583512861,
+              "user_total_reviews": 4,
+              "iso_date_of_last_edit": "2026-06-04 17:53:04",
+              "business_response_text": null,
+              "iso_date_of_last_edit_timestamp": 1780595583512861
+            },
+            {
+              "iso_date": "2026-06-04 00:00:00",
+              "review_id": "ChZDSUhNMG9nS0VLQ1VsdDZEMzZMNEVnEAE",
+              "user_link": "https://www.tripadvisor.com.br/ShowUserReviews-g303270-d622800-r1062866391?m=68573&staydates=2026_07_05_2026_07_06&uguests=1_2_0&supdv=desktop&supuc=US&supul=en",
+              "user_name": "Venture45851754040",
+              "review_link": "https://www.tripadvisor.com.br/ShowUserReviews-g303270-d622800-r1062866391?m=68573&staydates=2026_07_05_2026_07_06&uguests=1_2_0&supdv=desktop&supuc=US&supul=en",
+              "review_rate": null,
+              "review_text": "Faltou opção de petiscos. Atendimento top! Especial Willis, vitória e panda",
+              "review_time": "3 weeks ago",
+              "user_avatar": "https://lh3.googleusercontent.com/local-reviews/AJMZ0QewvQXK08PhtQgCu1fT7TcdWcgcaXdOmFk48xW5xlmLo-Eqy0UOp2YqveGvl0etYz5BzA=s120-c-br100",
+              "review_cursor": "CjEIARIpCgoAP72GFwEgAA__EhAaLN2CaNVKUlOzZZwAAAAAGgn92c8CYXASAAAYACIA:16",
+              "review_photos": [],
+              "review_services": [],
+              "review_timestamp": 1780531199999999,
+              "user_total_photos": null,
+              "iso_date_timestamp": 1780531199999999,
+              "user_total_reviews": null,
+              "iso_date_of_last_edit": "2026-06-04 00:00:00",
+              "business_response_text": null,
+              "iso_date_of_last_edit_timestamp": 1780531199999999
+            },
+            {
+              "iso_date": "2026-06-03 14:03:01",
+              "review_id": "Ci9DQUlRQUNvZENodHljRjlvT214cGVHNTVVMEpKU0VKSlRGWmtTV0Z3VGtOQk1rRRAB",
+              "user_link": "https://www.google.com/maps/contrib/109874772028650000340?hl=en-GB",
+              "user_name": "Maria Helena Carnevale",
+              "review_link": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT214cGVHNTVVMEpKU0VKSlRGWmtTV0Z3VGtOQk1rRRAB!2m1!1s0x0:0x71727fe98326f82d!3m1!1s2@1:CAIQACodChtycF9oOmxpeG55U0JJSEJJTFZkSWFwTkNBMkE%7C%7C?hl=en",
+              "review_rate": 5,
+              "review_text": "Experiência maravilhosa, comida muito saborosa e muita variedade, limpeza impecável, mas o melhor do Nauticomar sem dúvida sao os seus colaboradores, muito educados, prestativos e sempre com um sorriso no rosto, amei nossa estadia e com certeza voltaremos muitas vezes e indicarei aos amigos e família🌷",
+              "review_time": "3 weeks ago",
+              "user_avatar": "https://lh3.googleusercontent.com/a-/ALV-UjWkivvet_xhTLaBEZfO03y3hurzbEZxMCMSLzH8MQF402ttczrxzQ=s120-c-rp-mo-ba12-br100",
+              "review_cursor": "CjEIARIpCgoAP72GFyNI1P__EhDCamgHCmZ69Xtq6yQAAAAAGgn92RoCYXI0jU8YACIA:17",
+              "review_photos": [
+                "https://lh3.googleusercontent.com/grass-cs/ANxoTn2_oVA-C5Zzvzgv2KesdY8tPQLvX6GkTLky0g0L1FEG40ThwP2WxH2RLJGmllFnPgNrShv49Z9JGwN7j4f-tavcXUdjFOcqmVFWazxKIBVvaR0sTYjW7cO-krmoxKVpO7DPh3XPCEMTht3K=k-no"
+              ],
+              "review_services": {
+                "Rooms": 5,
+                "Service": 5,
+                "Location": 5
+              },
+              "review_timestamp": 1780495381168593,
+              "user_total_photos": 1,
+              "iso_date_timestamp": 1780495381168593,
+              "user_total_reviews": 20,
+              "iso_date_of_last_edit": "2026-06-03 14:03:01",
+              "business_response_text": null,
+              "iso_date_of_last_edit_timestamp": 1780495381168593
+            },
+            {
+              "iso_date": "2026-05-29 21:03:19",
+              "review_id": "Ci9DQUlRQUNvZENodHljRjlvT2twcmFWTlNOM0pVVVhWcWMxa3RaWGhIUjJ4d01FRRAB",
+              "user_link": "https://www.google.com/maps/contrib/104303182684504632586?hl=en-GB",
+              "user_name": "José Marcos",
+              "review_link": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2twcmFWTlNOM0pVVVhWcWMxa3RaWGhIUjJ4d01FRRAB!2m1!1s0x0:0x71727fe98326f82d!3m1!1s2@1:CAIQACodChtycF9oOkpraVNSN3JUUXVqc1ktZXhHR2xwMEE%7C%7C?hl=en",
+              "review_rate": 5,
+              "review_text": null,
+              "review_time": "3 weeks ago",
+              "user_avatar": "https://lh3.googleusercontent.com/a-/ALV-UjXj9qDW-693KKkTighPBbqQgmP329YrlN3xf4jvNOad_PNBdAp0Zg=s120-c-rp-mo-ba12-br100",
+              "review_cursor": "CjEIARIpCgoAP72GGKc4-Z__EhAZjAPt85VL25bgeUsAAAAAGgn9-scCYYpzj5kYACIA:18",
+              "review_photos": [],
+              "review_services": {
+                "Rooms": 5,
+                "Service": 5,
+                "Location": 5
+              },
+              "review_timestamp": 1780088598630832,
+              "user_total_photos": 3,
+              "iso_date_timestamp": 1780088598630832,
+              "user_total_reviews": 12,
+              "iso_date_of_last_edit": "2026-05-29 21:03:19",
+              "business_response_text": null,
+              "iso_date_of_last_edit_timestamp": 1780088598630832
+            },
+            {
+              "iso_date": "2026-05-28 00:00:00",
+              "review_id": "ChZDSUhNMG9nS0VPZkVvWXlzdHRTa1pREAE",
+              "user_link": "https://www.tripadvisor.com.br/ShowUserReviews-g303270-d622800-r1061902460?m=68573&staydates=2026_07_05_2026_07_06&uguests=1_2_0&supdv=desktop&supuc=US&supul=en",
+              "user_name": "claudiasS4780KZ",
+              "review_link": "https://www.tripadvisor.com.br/ShowUserReviews-g303270-d622800-r1061902460?m=68573&staydates=2026_07_05_2026_07_06&uguests=1_2_0&supdv=desktop&supuc=US&supul=en",
+              "review_rate": null,
+              "review_text": "O atendimento da Vitoria, foi top muito atenciosa e prestativa, o Hotel só precisa activar a hidromassagem, a banana boat, e uma piscina aquecida, com chuva não tem como nadar na agua fría.",
+              "review_time": "4 weeks ago",
+              "user_avatar": "https://lh3.googleusercontent.com/local-reviews/AJMZ0QejddW0yoGeT8LnCjh-OGQgsf6YKqhof3HZA5-um4yCkQej85oCdMUmKPJmnowcu5Ag5w=s120-c-br100",
+              "review_cursor": "CjEIARIpCgoAP72GGUHoQA__EhDBxcMuX4UuP4FU4mUAAAAAGgn92VUCYZQehAAYACIA:19",
+              "review_photos": [],
+              "review_services": [],
+              "review_timestamp": 1779926399999999,
+              "user_total_photos": null,
+              "iso_date_timestamp": 1779926399999999,
+              "user_total_reviews": null,
+              "iso_date_of_last_edit": "2026-05-28 00:00:00",
+              "business_response_text": null,
+              "iso_date_of_last_edit_timestamp": 1779926399999999
+            },
+            {
+              "iso_date": "2026-05-28 00:00:00",
+              "review_id": "ChZDSUhNMG9nS0VNRHZtYTNobjV6VFNREAE",
+              "user_link": "https://www.tripadvisor.com.br/ShowUserReviews-g303270-d622800-r1061903614?m=68573&staydates=2026_07_05_2026_07_06&uguests=1_2_0&supdv=desktop&supuc=US&supul=en",
+              "user_name": "B7237DVsarahr",
+              "review_link": "https://www.tripadvisor.com.br/ShowUserReviews-g303270-d622800-r1061903614?m=68573&staydates=2026_07_05_2026_07_06&uguests=1_2_0&supdv=desktop&supuc=US&supul=en",
+              "review_rate": null,
+              "review_text": "Hotel impecável,organização excelente ,agradável em tudo ,a primeira impressão é a que fica,a minha é dez,super obrigada a super equipe super preparada, parabéns .Vitória atenciosissima por tudo em tudo .",
+              "review_time": "4 weeks ago",
+              "user_avatar": "https://lh3.googleusercontent.com/local-reviews/AJMZ0QfHhPp0vyvo1Wo3WY4NH1G5QOPAHGBMv_XiebXLZtHzVwVa3wkRhb3dykyKrUCZPlawDA=s120-c-br100",
+              "review_cursor": "CjEIARIpCgoAP72GGUHoQA__EhDltGdzh2auFxrh1agAAAAAGgn92XQCYZQehAAYACIA:20",
+              "review_photos": [],
+              "review_services": [],
+              "review_timestamp": 1779926399999999,
+              "user_total_photos": null,
+              "iso_date_timestamp": 1779926399999999,
+              "user_total_reviews": null,
+              "iso_date_of_last_edit": "2026-05-28 00:00:00",
+              "business_response_text": null,
+              "iso_date_of_last_edit_timestamp": 1779926399999999
+            }
+          ],
+          "Segmento": null,
+          "details_google": null,
+          "crated_at": "2026-06-25T18:38:13.608796+00:00",
+          "nr_latitude": -16.3934961,
+          "nr_longitude": -39.0432543,
+          "pais": "Brasil",
+          "go_to_trip": false,
+          "minimum_grade": 7,
+          "categoria_principal": "Turismo e experiências",
+          "categorias": [
+            "Outros",
+            "Turismo e experiências"
+          ],
+          "subtipos_normalizados": [
+            "Resort hotel",
+            "Hotel",
+            "Tourist attraction"
+          ],
+          "subtipos_pt": [
+            "Resort hotel",
+            "Hotel",
+            "Atração turística"
+          ],
+          "subtipos_pt_str": "Resort hotel, Hotel, Atração turística",
+          "comentarios_formatados": "Comentário 1: O resort possui instalações bem limpas, a cerveja era sempre servida bem gelada e os funcionários da recepção foram muito educados e prestativos durante toda a estadia.\nNo entanto, alguns pontos deixaram a desejar. Não havia água com gás disponível livremente no sistema all inclusive, sendo vendida apenas na loja interna, que nem sempre estava aberta. Também senti falta de um varal ou estrutura para secar roupas no quarto.\nNo beach club, as atrações previstas na programação não aconteceram no dia em que fomos. Além disso, às 8h da manhã bateram na porta do quarto e entraram mesmo com hóspedes ainda dormindo, o que foi bastante desconfortável.\nA alimentação apresentou alguns problemas. Os picolés eram servidos sem qualquer identificação de procedência, rótulo ou data de fabricação. O hambúrguer tinha aparência e qualidade abaixo do esperado. O café da tarde, anunciado até às 18h, frequentemente já estava sendo recolhido antes desse horário.\nTambém houve pouca preocupação com restrições alimentares. No jantar temático espanhol, praticamente todos os pratos continham camarão. Como sou alérgica, tive ainda uma situação preocupante ao pedir peixe empanado nos petiscos da manhã: senti gosto de camarão e encontrei uma antena na porção, indicando possível contaminação cruzada, provavelmente pelo uso do mesmo óleo de fritura.\nOutro problema foram as constantes quedas de energia, que chegaram a ocorrer cinco vezes em um único dia. A água servida em jarras tinha gosto semelhante à água de torneira. Os copos e taças plásticos reutilizáveis ficavam empilhados ainda molhados, recebendo a bebida enquanto permaneciam com gotas da lavagem.\nNo geral, o atendimento da recepção e a limpeza foram pontos positivos, mas a estrutura, a alimentação e os cuidados com segurança alimentar precisam de melhorias.\n\nComentário 2: Lugar excelente\n\nComentário 3: Foi uma boa experiência, pequenos detalhes não deixou a experiência ser ótima.\n\nComentário 4: Estava com medo pelos comentários , mas estou surpreendida. Comida é excelente, ambiente limpinho. Pelo valor como eu de mais\n\nComentário 5: Para um resort ALL inclusive tem muita limitação e pouca opção.\n\nComentário 6: A minha maior crítica e por que você só toma cerveja choca, toda cerveja fica aberta dentro do freezer e eles te servem, a cerveja vem choca e com gosto de freezer, o álcool já evaporou, o refri sem gás, tudo fica aberto no freezer horrível!!!!!!!!, não existe deixar cerveja aberta no freezer pra servir, os brinquedos precisam de manutenção, tudo está funcionando mal!\n\nComentário 7: Maravilhoso!!!\n\nComentário 8: Ficamos 5 dias e amamos o atendimento e cordialidade dos funcionários é um diferencial, o Patrick é muito atencioso deu várias dicas para gente de locais para ir visitar, e é muito atencioso. A Cris é muito simpática, conseguiu resolver um problema que deu no nosso check in e sempre disposta a dar dicas, os dois sem dúvida foram um diferencial para nossa estádia.\nMeu filho amou o espaço kids e as Tia Mel, Tia Bombom e a Tia Moana.\nO que deixou um pouco a desejar foi a questão de comidas nas noites temáticas, mas depois que conversei vi que era possível pedir alguma alteração no cardápio, mas que não foram feitas pois só fiquei sabendo depois.\n\nComentário 9: Passamos dias incríveis aqui. A comida é simplesmente maravilhosa, com muita variedade e sabor. Outro ponto alto, com certeza, é a equipe: pessoas maravilhosas, atenciosas e sempre prontas para ajudar. Além disso, a programação de lazer (e os funcionários sempre muito animados) é incrível, garantindo muita diversão para todas as idades. Recomendo de olhos fechados e com certeza voltarei!\n\nComentário 10: excelente\n\nComentário 11: Foi maravilhosa nossa hospedagem |Desde a recepção todos os funcionários nota 1000 ... Adoramos tudooooo\n\nComentário 12: Comida péssima, atendimento fraco. Sei que a experiência de cada um é muito relativa, pois considera os parâmetros que essa pessoa tem como aquele tipo de situação. Eu já fiz outras viagens para resorts com atendimentos e comidas muito melhores, aqui precisa melhorar muito. Parque aquático não funciona, praia suja pra caramba em frente ao beach clube. Não volto nem de graça.\n\nComentário 13: Faltou opção de petiscos. Atendimento top! Especial Willis, vitória e panda\n\nComentário 14: Experiência maravilhosa, comida muito saborosa e muita variedade, limpeza impecável, mas o melhor do Nauticomar sem dúvida sao os seus colaboradores, muito educados, prestativos e sempre com um sorriso no rosto, amei nossa estadia e com certeza voltaremos muitas vezes e indicarei aos amigos e família🌷\n\nComentário 15: O atendimento da Vitoria, foi top muito atenciosa e prestativa, o Hotel só precisa activar a hidromassagem, a banana boat, e uma piscina aquecida, com chuva não tem como nadar na agua fría.\n\nComentário 16: Hotel impecável,organização excelente ,agradável em tudo ,a primeira impressão é a que fica,a minha é dez,super obrigada a super equipe super preparada, parabéns .Vitória atenciosissima por tudo em tudo .",
+          "qtd_comentarios_reais": 16,
+          "metadados": {
+            "subtipos": null,
+            "bairro": "Taperapuan",
+            "cidade": "Porto Seguro",
+            "estado": "BA",
+            "endereco": "Resort em Porto Seguro - Nauticomar All Inclusive - R. do Telégrafo, 1965 - Taperapuan, Porto Seguro - BA, 45810-000, Brazil",
+            "faixa_preco": null,
+            "status": "ativo",
+            "nota_google": 4.3,
+            "qtd_avaliacoes": 5406,
+            "distribuicao_notas": [
+              296,
+              187,
+              497,
+              1092,
+              3334
+            ]
+          },
+          "status_global": "🟢 Aprovado com ressalvas — 7/10 aprovadas, 2 ressalva(s) | atenção em: Forma da Distribuição, Engajamento do Proprietário",
+          "status_codigo": "aprovado_ressalvas",
+          "motivo_status": "7/10 aprovadas, 2 ressalva(s) | atenção em: Forma da Distribuição, Engajamento do Proprietário",
+          "processar_qualitativo": true,
+          "regras_hard_violadas": [],
+          "leitura_rapida": "4.29 ★ (IC 95%: 4.2497–4.3311, n=5406, confiança muito alta)",
+          "score_composto_estatistico": 6.81,
+          "score_categorias_ponderado": 6.46,
+          "classificacao": "🟡 Bom",
+          "confianca_nivel": "muito alta",
+          "proxima_acao": "Aceitável — verificar pontos de ressalva antes",
+          "tags": [
+            "público-dividido",
+            "muito-positivo",
+            "NPS-alto",
+            "dados-robustos"
+          ],
+          "highlights": [
+            "🟢 Aprovado com ressalvas — 7/10 aprovadas, 2 ressalva(s) | atenção em: Forma da Distribuição, Engajamento do Proprietário — 7/10 categorias aprovadas (score categorias 6.46/10)",
+            "✚ Mais forte: Precisão da Estimativa (score 9.8, aprovado)",
+            "✗ Mais fraco: Engajamento do Proprietário (score 0, reprovado)"
+          ],
+          "resumo_categorias": {
+            "status_global": "🟢 Aprovado com ressalvas — 7/10 aprovadas, 2 ressalva(s) | atenção em: Forma da Distribuição, Engajamento do Proprietário",
+            "status_base": "🟢 Aprovado com ressalvas",
+            "status_codigo": "aprovado_ressalvas",
+            "motivo_status": "7/10 aprovadas, 2 ressalva(s) | atenção em: Forma da Distribuição, Engajamento do Proprietário",
+            "processar_qualitativo": true,
+            "regras_hard_violadas": [],
+            "aprovadas": 7,
+            "reprovadas": 2,
+            "neutras": 1,
+            "total_categorias": 10,
+            "score_categorias_ponderado": 6.46,
+            "confiabilidade_media_pct": 89.4,
+            "leitura_rapida": "7/10 aprovadas — score categorias 6.46/10 (confiabilidade 89.4%)"
+          },
+          "cat_tendencia": {
+            "nome": "Tendência Central",
+            "status": "aprovado",
+            "score": 8.23,
+            "confiabilidade_pct": 97,
+            "criterio": "Aprovado: média ≥ 3.5★. Reprovado: < 3.0★.",
+            "valor_observado": "média=4.29, truncada=4.54",
+            "observacao": "Média de 4.29★ com consistência boa (|Δ truncada|=0.25)"
+          },
+          "cat_dispersao": {
+            "nome": "Dispersão / Consenso",
+            "status": "aprovado",
+            "score": 4.4,
+            "confiabilidade_pct": 68.5,
+            "criterio": "Aprovado: σ < 1.2★. Reprovado: σ ≥ 1.7★.",
+            "valor_observado": "σ=1.12, CV=0.261, entropia_norm=0.693",
+            "observacao": "Desvio de 1.12★ — forte consenso"
+          },
+          "cat_inferencia": {
+            "nome": "Precisão da Estimativa",
+            "status": "aprovado",
+            "score": 9.8,
+            "confiabilidade_pct": 97,
+            "criterio": "Aprovado: amplitude IC95% Wilson < 0.8★. Reprovado: ≥ 1.5★.",
+            "valor_observado": "IC95% Wilson=[4.2497, 4.3311], amplitude=0.0814",
+            "observacao": "Margem de incerteza de ±0.04★ — estimativa precisa"
+          },
+          "cat_sentimento": {
+            "nome": "Sentimento",
+            "status": "aprovado",
+            "score": 8.19,
+            "confiabilidade_pct": 97,
+            "criterio": "Aprovado: ≥65% positivas E ≤25% negativas. Reprovado: <45% positivas OU >40% negativas.",
+            "valor_observado": "pos=81.87%, neu=9.19%, neg=8.93%, NPS=52.74",
+            "observacao": "81.87% positivas vs. 8.93% negativas; NPS adaptado de 52.74 (muito bom)"
+          },
+          "cat_forma": {
+            "nome": "Forma da Distribuição",
+            "status": "reprovado",
+            "score": 3.5,
+            "confiabilidade_pct": 97,
+            "criterio": "Aprovado: J invertido / concentrado-positivo / predominantemente positivo. Reprovado: polarizado / negativo.",
+            "valor_observado": "formato=\"polarizado / bimodal\", índice_polarização=0.3137",
+            "observacao": "Opiniões divididas"
+          },
+          "cat_temporal": {
+            "nome": "Estabilidade Temporal",
+            "status": "aprovado",
+            "score": 7.07,
+            "confiabilidade_pct": 70,
+            "criterio": "Aprovado: sem queda + última < 180d. Reprovado: queda clara OU > 365d sem reviews.",
+            "valor_observado": "slope=-0.1704★/ano, Δ metades=-0.125, últimos=0.3d, amostra=16",
+            "observacao": "Tendência: leve queda. Última review há 0 dias."
+          },
+          "cat_credibilidade": {
+            "nome": "Credibilidade dos Avaliadores",
+            "status": "aprovado",
+            "score": 7,
+            "confiabilidade_pct": 85,
+            "criterio": "Aprovado: ≤50% novatos E |Δ exp vs nov| < 1.0. Reprovado: >60% novatos OU |Δ| > 1.5.",
+            "valor_observado": "novatos=15%, experientes=30%, Δ=0.5★, amostra=20",
+            "observacao": "15% novatos; Δ exp vs nov=0.5★"
+          },
+          "cat_engajamento": {
+            "nome": "Engajamento do Proprietário",
+            "status": "reprovado",
+            "score": 0,
+            "confiabilidade_pct": 85,
+            "criterio": "Aprovado: engajado=true OU responde ≥40% das negativas. Reprovado: <15% geral.",
+            "valor_observado": "resp_geral=0%, resp_neg=0%, engajado=false",
+            "observacao": "Dono responde 0% em geral e 0% das negativas"
+          },
+          "cat_red_flags": {
+            "nome": "Ausência de Red Flags",
+            "status": "aprovado",
+            "score": 8.4,
+            "confiabilidade_pct": 97,
+            "criterio": "Aprovado: 0 altas E ≤1 média. Reprovado: ≥2 altas OU ≥4 médias.",
+            "valor_observado": "altas=0, médias=1, baixas=1",
+            "observacao": "2 alerta(s): [média] Distribuição polarizada; [baixa] Baixa taxa de resposta às reviews negativas"
+          },
+          "cat_veredicto": {
+            "nome": "Veredicto Global",
+            "status": "neutro",
+            "score": 6.81,
+            "confiabilidade_pct": 100,
+            "criterio": "Aprovado: score ≥ 7.0. Reprovado: < 4.0.",
+            "valor_observado": "classificação=\"🟡 Bom\", score=6.81, confiança=\"muito alta\"",
+            "observacao": "Nota média de 4.29 estrelas, baseada em 5406 avaliações (confiança muito alta). IC 95% Wilson: [4.2497, 4.3311]. Distribuição: polarizado / bimodal. Tendência temporal: leve queda."
+          },
+          "analise": {
+            "veredicto": {
+              "classificacao": "🟡 Bom",
+              "score_final": 6.81,
+              "texto": "Nota média de 4.29 estrelas, baseada em 5406 avaliações (confiança muito alta). IC 95% Wilson: [4.2497, 4.3311]. Distribuição: polarizado / bimodal. Tendência temporal: leve queda.",
+              "recomendacao": "Aceitável com ressalvas"
+            },
+            "leitura_rapida": "4.29 ★ (IC 95%: 4.2497–4.3311, n=5406, confiança muito alta)",
+            "validacao_dados": {
+              "nota_google": 4.3,
+              "media_calculada": 4.2913,
+              "divergencia": 0.0087,
+              "interpretacao": "consistente"
+            },
+            "tendencia_central": {
+              "media": 4.2913,
+              "media_truncada_10": 4.5443,
+              "media_laplace": 4.289,
+              "mediana": 5,
+              "moda": 5,
+              "q1": 4,
+              "q3": 5,
+              "iqr": 1
+            },
+            "dispersao_forma": {
+              "variancia": 1.2549,
+              "desvio_padrao": 1.1202,
+              "coef_variacao": 0.261,
+              "assimetria": -1.6728,
+              "curtose_excesso": 1.9473,
+              "entropia_shannon": 1.6101,
+              "entropia_normalizada": 0.6934
+            },
+            "inferencia": {
+              "normal_95": {
+                "inferior": 4.2614,
+                "superior": 4.3212,
+                "amplitude": 0.0597
+              },
+              "normal_99": {
+                "inferior": 4.2521,
+                "superior": 4.3305,
+                "amplitude": 0.0785
+              },
+              "wilson_95": {
+                "inferior": 4.2497,
+                "superior": 4.3311,
+                "amplitude": 0.0814
+              },
+              "wilson_99": {
+                "inferior": 4.2362,
+                "superior": 4.3432,
+                "amplitude": 0.107
+              },
+              "bayes_95": {
+                "inferior": 4.2496,
+                "superior": 4.3311,
+                "amplitude": 0.0814
+              },
+              "bayes_99": {
+                "inferior": 4.2368,
+                "superior": 4.3439,
+                "amplitude": 0.107
+              },
+              "posterior_beta": {
+                "alpha": 4450.1919,
+                "beta": 959.8081,
+                "media_posterior_rescalada": 4.2903
+              }
+            },
+            "sentimento": {
+              "pct_negativas": 8.93,
+              "pct_neutras": 9.19,
+              "pct_positivas": 81.87,
+              "razao_pos_neg": 9.164,
+              "nps_adaptado": 52.74,
+              "top_box": 61.67,
+              "top_2_box": 81.87,
+              "bottom_box": 5.48,
+              "bottom_2_box": 8.93,
+              "proporcoes": [
+                0.0548,
+                0.0346,
+                0.0919,
+                0.202,
+                0.6167
+              ]
+            },
+            "diagnostico_forma": {
+              "formato": "polarizado / bimodal",
+              "distancia_uniforme": 0.4187,
+              "indice_polarizacao": 0.3137
+            },
+            "temporal": {
+              "_aviso": "Métricas baseadas APENAS na amostra de reviews — não na população completa",
+              "amostra_size": 16,
+              "ultimos_30_dias": {
+                "media": 4.063,
+                "n": 16
+              },
+              "ultimos_90_dias": {
+                "media": 4.063,
+                "n": 16
+              },
+              "ultimos_180_dias": {
+                "media": 4.063,
+                "n": 16
+              },
+              "ultimos_365_dias": {
+                "media": 4.063,
+                "n": 16
+              },
+              "comparacao_metades": {
+                "media_metade_antiga": 4.125,
+                "media_metade_recente": 4,
+                "delta": -0.125,
+                "direcao": "estável"
+              },
+              "regressao_linear": {
+                "slope_por_dia": -0.000467,
+                "slope_estrelas_por_ano": -0.1704,
+                "interpretacao": "leve queda"
+              },
+              "reviews_por_mes_amostra": 18.027,
+              "periodo_coberto_dias": 26.6,
+              "media_fim_de_semana": 4.2,
+              "media_dias_uteis": 4,
+              "dias_desde_ultima_review": 0.3
+            },
+            "credibilidade": {
+              "amostra_size": 20,
+              "media_user_total_reviews": 23.45,
+              "mediana_user_total_reviews": 5,
+              "pct_novatos": 15,
+              "pct_intermediarios": 35,
+              "pct_experientes": 30,
+              "media_nota_novatos": 4.333,
+              "media_nota_intermediarios": 3.286,
+              "media_nota_experientes": 4.833,
+              "diff_experientes_vs_novatos": 0.5,
+              "pct_com_foto": 20,
+              "pct_com_texto": 80,
+              "comprimento_medio_texto": 298.8
+            },
+            "textual": {
+              "amostra_size": 20,
+              "comprimento_medio_positivas": 198,
+              "comprimento_medio_negativas": 270,
+              "top_palavras_positivas": [
+                {
+                  "palavra": "sempre",
+                  "freq": 4
+                },
+                {
+                  "palavra": "excelente",
+                  "freq": 3
+                },
+                {
+                  "palavra": "experiencia",
+                  "freq": 3
+                },
+                {
+                  "palavra": "comida",
+                  "freq": 3
+                },
+                {
+                  "palavra": "muita",
+                  "freq": 3
+                },
+                {
+                  "palavra": "certeza",
+                  "freq": 3
+                },
+                {
+                  "palavra": "deixou",
+                  "freq": 2
+                },
+                {
+                  "palavra": "dias",
+                  "freq": 2
+                },
+                {
+                  "palavra": "funcionarios",
+                  "freq": 2
+                },
+                {
+                  "palavra": "diferencial",
+                  "freq": 2
+                }
+              ],
+              "top_palavras_negativas": [
+                {
+                  "palavra": "cerveja",
+                  "freq": 4
+                },
+                {
+                  "palavra": "freezer",
+                  "freq": 4
+                },
+                {
+                  "palavra": "choca",
+                  "freq": 2
+                },
+                {
+                  "palavra": "fica",
+                  "freq": 2
+                },
+                {
+                  "palavra": "aberta",
+                  "freq": 2
+                },
+                {
+                  "palavra": "tudo",
+                  "freq": 2
+                },
+                {
+                  "palavra": "resort",
+                  "freq": 1
+                },
+                {
+                  "palavra": "inclusive",
+                  "freq": 1
+                },
+                {
+                  "palavra": "muita",
+                  "freq": 1
+                },
+                {
+                  "palavra": "limitacao",
+                  "freq": 1
+                }
+              ],
+              "taxa_resposta_geral": 0,
+              "taxa_resposta_negativas": 0,
+              "taxa_resposta_positivas": 0,
+              "proprietario_engajado": false
+            },
+            "confianca": {
+              "nivel": "muito alta",
+              "peso": 1
+            },
+            "red_flags": [
+              {
+                "severidade": "média",
+                "flag": "Distribuição polarizada",
+                "detalhe": "Muitas notas extremas (1★ e 5★), pouco meio — opiniões divididas"
+              },
+              {
+                "severidade": "baixa",
+                "flag": "Baixa taxa de resposta às reviews negativas",
+                "detalhe": "Apenas 0% das negativas receberam resposta"
+              }
+            ]
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "versionId": "8d3ab75d-e455-4442-859a-f0122a1e3321",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-06-03T22:48:23.857Z",
+      "createdAt": "2026-06-03T22:48:23.857Z",
+      "role": "workflow:owner",
+      "workflowId": "i5zjd89NJwuhoZJU",
+      "projectId": "G6oOhMxSr8k56eQz"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
