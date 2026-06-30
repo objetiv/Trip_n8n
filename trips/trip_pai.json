@@ -1,0 +1,326 @@
+{
+  "updatedAt": "2026-06-23T00:05:15.290Z",
+  "createdAt": "2026-06-12T20:12:30.194Z",
+  "id": "eWzirQqEALpg0Ocb",
+  "name": "TRIP_PAI",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "e5718c45-e215-43ea-9437-e4bb8cb90652",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        16,
+        0
+      ],
+      "id": "f33e8f22-4603-4516-82bb-dfb2509d2cb9",
+      "name": "Webhook",
+      "webhookId": "e5718c45-e215-43ea-9437-e4bb8cb90652"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "86105c37-f694-459e-a87b-8fdd77745d59",
+      "name": "Wait",
+      "webhookId": "60dbedc2-7241-41c1-adc3-4f123e9ddacb"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "gsUOJUPjGia0fLqt",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/gsUOJUPjGia0fLqt",
+          "cachedResultName": "TRIP"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [
+            "vaca-leiteira"
+          ],
+          "schema": [
+            {
+              "id": "vaca-leiteira",
+              "displayName": "vaca-leiteira",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        416,
+        0
+      ],
+      "id": "2fbb3096-658c-4714-8ed5-80d0cd4708a6",
+      "name": "Call 'TRIP'"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://trip-n8n.3vyu0i.easypanel.host/webhook/e5718c45-e215-43ea-9437-e4bb8cb90652",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        832,
+        0
+      ],
+      "id": "f6d65114-a254-41b2-87f5-c379d518b0de",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{ json: { status: \"Filho terminou, reiniciando ciclo único\" } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        592,
+        0
+      ],
+      "id": "26561f53-bef7-4f58-a929-5338a2876dac",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Call 'TRIP'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'TRIP'": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "576dd4ad-b7d1-47de-9008-cb1bc4caa1f4",
+  "activeVersionId": "576dd4ad-b7d1-47de-9008-cb1bc4caa1f4",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-06-12T20:12:30.199Z",
+      "createdAt": "2026-06-12T20:12:30.199Z",
+      "role": "workflow:owner",
+      "workflowId": "eWzirQqEALpg0Ocb",
+      "projectId": "G6oOhMxSr8k56eQz"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-06-23T00:05:15.290Z",
+    "createdAt": "2026-06-23T00:05:15.290Z",
+    "versionId": "576dd4ad-b7d1-47de-9008-cb1bc4caa1f4",
+    "workflowId": "eWzirQqEALpg0Ocb",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "e5718c45-e215-43ea-9437-e4bb8cb90652",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          16,
+          0
+        ],
+        "id": "f33e8f22-4603-4516-82bb-dfb2509d2cb9",
+        "name": "Webhook",
+        "webhookId": "e5718c45-e215-43ea-9437-e4bb8cb90652"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          208,
+          0
+        ],
+        "id": "86105c37-f694-459e-a87b-8fdd77745d59",
+        "name": "Wait",
+        "webhookId": "60dbedc2-7241-41c1-adc3-4f123e9ddacb"
+      },
+      {
+        "parameters": {
+          "workflowId": {
+            "__rl": true,
+            "value": "gsUOJUPjGia0fLqt",
+            "mode": "list",
+            "cachedResultUrl": "/workflow/gsUOJUPjGia0fLqt",
+            "cachedResultName": "TRIP"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {},
+            "matchingColumns": [
+              "vaca-leiteira"
+            ],
+            "schema": [
+              {
+                "id": "vaca-leiteira",
+                "displayName": "vaca-leiteira",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": true
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.3,
+        "position": [
+          416,
+          0
+        ],
+        "id": "2fbb3096-658c-4714-8ed5-80d0cd4708a6",
+        "name": "Call 'TRIP'"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://trip-n8n.3vyu0i.easypanel.host/webhook/e5718c45-e215-43ea-9437-e4bb8cb90652",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          832,
+          0
+        ],
+        "id": "f6d65114-a254-41b2-87f5-c379d518b0de",
+        "name": "HTTP Request"
+      },
+      {
+        "parameters": {
+          "jsCode": "return [{ json: { status: \"Filho terminou, reiniciando ciclo único\" } }];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          592,
+          0
+        ],
+        "id": "26561f53-bef7-4f58-a929-5338a2876dac",
+        "name": "Code in JavaScript"
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Wait",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait": {
+        "main": [
+          [
+            {
+              "node": "Call 'TRIP'",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Call 'TRIP'": {
+        "main": [
+          [
+            {
+              "node": "Code in JavaScript",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code in JavaScript": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "VIBES VIBES",
+    "name": null,
+    "description": null
+  },
+  "tags": []
+}
