@@ -1,0 +1,2805 @@
+{
+  "updatedAt": "2026-06-29T23:35:32.638Z",
+  "createdAt": "2026-06-03T22:47:25.621Z",
+  "id": "EQKy28pxJ2fzty0K",
+  "name": "fazenda_e_animais",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "content": "Image analyzer\n",
+        "height": 480,
+        "width": 1984
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        576,
+        304
+      ],
+      "id": "1cca90be-3938-47cb-8308-1124f32596f6",
+      "name": "Sticky Note18"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "aeba2f1c-fd65-48c9-a892-f01247ac559e",
+              "name": "price_to_value_review",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1856,
+        1664
+      ],
+      "id": "185b499a-644d-4fc3-81bd-bba5b79a937c",
+      "name": "Price to value review6"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a7990d00-10eb-4ae3-be6c-fbd1e6f5117d",
+              "name": "space_review",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1856,
+        1936
+      ],
+      "id": "8a2f79c0-3fda-4e76-beb8-6fab18678b31",
+      "name": "Space review7"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0873695e-b19a-4fe6-b2b8-4d2cf76d61be",
+              "name": "service_review",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1856,
+        1392
+      ],
+      "id": "e78b8f7c-14d4-4b12-8854-edcf12b4b4c2",
+      "name": "service_review6"
+    },
+    {
+      "parameters": {
+        "content": "Qualitative analizer\n\n\n\n\n",
+        "height": 1360,
+        "width": 2416
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        432,
+        800
+      ],
+      "id": "7b9c8d97-6edc-458e-aa75-060bb30925a0",
+      "name": "Sticky Note19"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.status_codigo }}",
+                    "rightValue": "aprovado",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "id": "74641e61-0305-451b-806a-f768284bf47e"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "aprovado"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "4235a134-3f7a-4482-9318-0ad0b76ce2d5",
+                    "leftValue": "={{ $json.status_codigo }}",
+                    "rightValue": "aprovado",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notContains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "reprovado"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        368,
+        1392
+      ],
+      "id": "93f0e742-8440-4d63-b1bc-a2429d965697",
+      "name": "Switch15"
+    },
+    {
+      "parameters": {
+        "content": "Fazendas e animais",
+        "height": 2224,
+        "width": 3456,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "b6a324a8-04f8-4e1f-94fa-c46f8a9b9476",
+      "name": "Sticky Note20"
+    },
+    {
+      "parameters": {
+        "numberInputs": 5
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2144,
+        1360
+      ],
+      "id": "59684f82-07b6-43b6-a31e-a70f3e5b38d4",
+      "name": "Merge35"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0873695e-b19a-4fe6-b2b8-4d2cf76d61be",
+              "name": "capacity_review",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1856,
+        1072
+      ],
+      "id": "bd6e86b4-4f31-4570-a1c1-5df580db7c31",
+      "name": "capacity_review1"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        112,
+        1392
+      ],
+      "id": "81a39b34-2455-4208-9629-695f94b9d636",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-nano",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-nano"
+        },
+        "builtInTools": {},
+        "options": {
+          "temperature": 0
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1280,
+        2112
+      ],
+      "id": "38c17be3-791d-4568-9e72-aa88be304161",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "dhG0ktohViAz4N21",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-nano",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-nano"
+        },
+        "builtInTools": {},
+        "options": {
+          "temperature": 0
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1312,
+        1264
+      ],
+      "id": "1848917b-2e8f-4913-bd97-334d4dc2d032",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "dhG0ktohViAz4N21",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-nano",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-nano"
+        },
+        "builtInTools": {},
+        "options": {
+          "temperature": 0
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1312,
+        1552
+      ],
+      "id": "698932b5-5ba3-4e3c-9253-cc4b30df379d",
+      "name": "OpenAI Chat Model3",
+      "credentials": {
+        "openAiApi": {
+          "id": "dhG0ktohViAz4N21",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-nano",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-nano"
+        },
+        "builtInTools": {},
+        "options": {
+          "temperature": 0
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1280,
+        1824
+      ],
+      "id": "2f7d177f-36b6-414a-9ba4-73e974e59b8f",
+      "name": "OpenAI Chat Model4",
+      "credentials": {
+        "openAiApi": {
+          "id": "dhG0ktohViAz4N21",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-nano",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-nano"
+        },
+        "builtInTools": {},
+        "options": {
+          "temperature": 0
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1312,
+        1008
+      ],
+      "id": "8ba90fd2-dcdf-490b-a95c-5e1abf74f378",
+      "name": "OpenAI Chat Model32",
+      "credentials": {
+        "openAiApi": {
+          "id": "dhG0ktohViAz4N21",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=ID DO ESTABELECIMENTO: {{ $json.id }}\nNOME DO ESTABELECIMENTO: {{ $json.nome }}\nTIPO: {{ $json.subtipos_pt_str }}\n\nCOMENTÁRIOS A ANALISAR:\n{{ $json.comentarios_frases }}",
+        "options": {
+          "systemMessage": "Você é um especialista em análise de reviews e descrição de estabelecimentos.\nSua tarefa é analisar TODOS os comentários fornecidos sobre o local \"{nome_estabelecimento}\" (tipo: {subtipos}) e gerar um RESUMO CURTO, NATURAL E ATRATIVO do estabelecimento.\nO objetivo é produzir um texto que descreva rapidamente a experiência principal percebida pelos visitantes, usando apenas informações recorrentes e claramente presentes nos comentários.\nObjetivo do resumo\nO resumo deve:\n\nTransmitir rapidamente o que torna o local interessante\nDestacar os aspectos mais mencionados pelos visitantes\nSoar natural, humano e confiável\nFuncionar como uma descrição curta para perfil, guia ou recomendação\nRefletir a percepção geral dos reviews\n\nO que considerar\nConsidere principalmente:\n\nExperiência principal oferecida pelo local\nAmbiente e atmosfera\nAtrações mais elogiadas\nDiferenciais recorrentes\nSensação transmitida pelos visitantes\nPontos fortes mencionados repetidamente\nPerfil da experiência (tranquila, divertida, familiar, rural, aventureira, acolhedora etc.)\n\nO que EVITAR\nNÃO:\n\nInvente informações\nUse marketing exagerado\nUse frases genéricas vazias\nMencione notas, avaliações ou quantidade de reviews\nCite reclamações isoladas\nTransforme o texto em propaganda artificial\nUse listas, emojis ou hashtags\nUse linguagem robótica\n\nRegras importantes\n\nO resumo deve ser baseado SOMENTE em evidências presentes nos comentários.\nPriorize aspectos recorrentes e consistentes.\nIgnore comentários irrelevantes ou muito isolados.\nSe houver opiniões muito divididas, mantenha a descrição neutra e equilibrada.\nO texto deve parecer escrito por um humano.\nNão use adjetivos extremos sem forte evidência recorrente.\nNão invente atrações, estrutura ou experiências não mencionadas.\n\nFormato de saída (ESTRITAMENTE JSON)\nVocê deve retornar EXCLUSIVAMENTE um objeto JSON válido. Não inclua NENHUM texto antes ou depois do JSON. Não inclua marcações markdown (como ```json).\nA estrutura do JSON deve ser exatamente esta:\n{\n  \"id\": \"Copie aqui exatamente o ID DO ESTABELECIMENTO fornecido\",\n  \"resultado\": \"SEU RESUMO AQUI\"\n}\nRegras ESTRITAS para o campo \"resultado\":\n\nO texto deve ter entre 1 e 3 frases curtas.\nO texto deve possuir no MÁXIMO 320 caracteres.\nNão use aspas, quebras de linha (\\n), listas, emojis ou hashtags dentro do texto.\nSe houver menos de 3 comentários ou evidências insuficientes para criar um resumo confiável, retorne apenas \"77\" neste campo.\nExemplo ideal: \"Fazenda com ambiente tranquilo e contato próximo com animais, muito elogiada por famílias e crianças. O local é reconhecido pela experiência rural acolhedora e pela ótima estrutura para passar o dia na natureza.\"\n\nComentários a analisar\n{lista_de_comentarios}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        1312,
+        816
+      ],
+      "id": "01ed7dda-abfc-418b-9903-39866085a9ee",
+      "name": "AI Agent",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=ID DO ESTABELECIMENTO: {{ $json.id }}\nNOME DO ESTABELECIMENTO: {{ $json.nome }}\nTIPO: {{ $json.subtipos_pt_str }}\n\nCOMENTÁRIOS A ANALISAR:\n{{ $json.comentarios_frases }}",
+        "options": {
+          "systemMessage": "Você avalia reviews de uma fazenda turística ou atração rural e dá nota a UM tema só: LOTAÇÃO.\nLOTAÇÃO é o quanto o local foi percebido como tranquilo e confortável no fluxo de pessoas, ou cheio e prejudicado pelo excesso de visitantes: tranquilo, sem fila e com espaço de sobra é positivo; lotado, com filas e disputa por espaço é negativo. Popularidade não significa lotação ruim.\nOs comentários vêm quebrados em frases curtas, uma por linha, no formato \"F<n> (C<n>): texto\". Os rótulos F/C só numeram — ignore-os e julgue o texto, em qualquer idioma, pelo sentido.\nAvalie SOMENTE este ângulo. Uma mesma frase pode também servir a outro tema; isso não é problema seu. Se ela disser algo sobre o fluxo de visitantes, filas ou conforto em relação à quantidade de gente, conte aqui. Sinais indiretos contam (tínhamos o lugar quase só pra nós, nunca precisei esperar = positivo; demoramos muito pra entrar, disputa por espaço nas atividades = negativo).\n\nANTES de decidir a nota, faça internamente uma varredura de TODAS as frases, uma por uma, e marque cada uma como POSITIVA, NEGATIVA ou NÃO FALA deste tema. Só conclua 77 se, após revisar cada linha, NENHUMA frase falar do tema.\n\nPara cada frase, decida: ela fala da lotação de forma POSITIVA (tranquilo, sem fila), NEGATIVA (cheio, com fila) ou NÃO FALA deste tema?\n- Se NENHUMA frase falar deste tema → a nota é 77.\n- Se houver frases que falam, dê nota 0–10 pelo balanço:\n  só positivas: 8–9 | mais positivas que negativas: 6–7 | misturado: 5 | mais negativas: 3–4 | quase todas negativas: 1–2.\n  Uma única negativa isolada no meio de várias positivas não baixa de 6.\nResponda SÓ com um objeto JSON, sem nada antes nem depois, sem markdown, com exatamente duas chaves: \"id\" e \"resultado\".\nO valor de \"resultado\" tem SEMPRE duas partes: a nota, depois \": \", depois uma justificativa de pelo menos uma frase completa. O \"resultado\" NUNCA pode ser apenas o número — se você escrever a nota, é OBRIGATÓRIO escrever a justificativa logo depois dos dois pontos. Isso vale também para 77.\nSe a nota for 77, a justificativa NÃO pode mencionar nenhuma frase que fale do tema, nem afirmar e negar a existência dessas frases na mesma resposta — seja coerente.\nExemplos de resposta válida (siga este padrão, sempre com a justificativa preenchida):\n{\"id\": \"abc123\", \"resultado\": \"8.0: As frases descrevem um local tranquilo, sem filas e com espaço de sobra para aproveitar com calma.\"}\n{\"id\": \"abc123\", \"resultado\": \"77: nenhuma frase comentou o fluxo de visitantes ou a lotação do local.\"}\nRegras do formato, obrigatórias:\n- Exatamente duas chaves: \"id\" e \"resultado\", ambas com valor em texto entre aspas duplas.\n- \"resultado\" começa com a nota (ex.: \"8.0\") OU com 77, seguido de \": \" e a justificativa.\n- Justificativa de pelo menos uma frase completa. Nunca apenas o número.\n- Se for 77, a justificativa não pode citar nenhuma frase que fale do tema."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        1312,
+        1120
+      ],
+      "id": "1e535043-aafb-4445-a750-cfe903cb49b2",
+      "name": "AI Agent1",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=ID DO ESTABELECIMENTO: {{ $json.id }}\nNOME DO ESTABELECIMENTO: {{ $json.nome }}\nTIPO: {{ $json.subtipos_pt_str }}\n\nCOMENTÁRIOS A ANALISAR:\n{{ $json.comentarios_frases }}",
+        "options": {
+          "systemMessage": "Você avalia reviews de uma fazenda turística ou atração rural e dá nota a UM tema só: SERVIÇO.\nSERVIÇO é a qualidade da experiência humana e operacional: a cordialidade e o preparo de quem conduz e atende, a organização das atividades (horários, agendamento, logística, pontualidade), a clareza das instruções, o suporte ao visitante, a segurança operacional e o acolhimento. Um local simples pode ter ótima condução; um bonito pode ter nota baixa se for desorganizado.\nOs comentários vêm quebrados em frases curtas, uma por linha, no formato \"F<n> (C<n>): texto\". Os rótulos F/C só numeram — ignore-os e julgue o texto, em qualquer idioma, pelo sentido.\nAvalie SOMENTE este ângulo. Uma mesma frase pode também servir a outro tema; isso não é problema seu. Se ela disser algo sobre as pessoas que conduzem ou atendem, ou sobre como a experiência foi organizada e orientada, conte aqui. Sinais indiretos contam (fomos bem recebidos e orientados o tempo todo, monitor paciente, atividades bem organizadas = positivo; ninguém sabia informar nada, tudo desorganizado, ninguém pra explicar = negativo).\n\nANTES de decidir a nota, faça internamente uma varredura de TODAS as frases, uma por uma, e marque cada uma como POSITIVA, NEGATIVA ou NÃO FALA deste tema. Só conclua 77 se, após revisar cada linha, NENHUMA frase falar do tema.\n\nPara cada frase, decida: ela fala do serviço/condução de forma POSITIVA (bem atendido, bem organizado, bem orientado), NEGATIVA (mal atendido, desorganizado, sem suporte) ou NÃO FALA deste tema?\n- Se NENHUMA frase falar deste tema → a nota é 77.\n- Se houver frases que falam, dê nota 0–10 pelo balanço:\n  só positivas: 8–9 | mais positivas que negativas: 6–7 | misturado: 5 | mais negativas: 3–4 | quase todas negativas: 1–2.\n  Uma única negativa isolada no meio de várias positivas não baixa de 6.\nResponda SÓ com um objeto JSON, sem nada antes nem depois, sem markdown, com exatamente duas chaves: \"id\" e \"resultado\".\nO valor de \"resultado\" tem SEMPRE duas partes: a nota, depois \": \", depois uma justificativa de pelo menos uma frase completa. O \"resultado\" NUNCA pode ser apenas o número — se você escrever a nota, é OBRIGATÓRIO escrever a justificativa logo depois dos dois pontos. Isso vale também para 77.\nSe a nota for 77, a justificativa NÃO pode mencionar nenhuma frase que fale do tema, nem afirmar e negar a existência dessas frases na mesma resposta — seja coerente.\nExemplos de resposta válida (siga este padrão, sempre com a justificativa preenchida):\n{\"id\": \"abc123\", \"resultado\": \"7.0: As frases elogiam os monitores atenciosos e as atividades bem organizadas, com uma ressalva sobre atraso no início.\"}\n{\"id\": \"abc123\", \"resultado\": \"77: nenhuma frase comentou o atendimento ou a condução das atividades.\"}\nRegras do formato, obrigatórias:\n- Exatamente duas chaves: \"id\" e \"resultado\", ambas com valor em texto entre aspas duplas.\n- \"resultado\" começa com a nota (ex.: \"8.0\") OU com 77, seguido de \": \" e a justificativa.\n- Justificativa de pelo menos uma frase completa. Nunca apenas o número.\n- Se for 77, a justificativa não pode citar nenhuma frase que fale do tema."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        1312,
+        1376
+      ],
+      "id": "2ad81924-3bd8-4ec6-937b-1a15e8b7a44f",
+      "name": "AI Agent2",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=ID DO ESTABELECIMENTO: {{ $json.id }}\nNOME DO ESTABELECIMENTO: {{ $json.nome }}\nTIPO: {{ $json.subtipos_pt_str }}\n\nCOMENTÁRIOS A ANALISAR:\n{{ $json.comentarios_frases }}",
+        "options": {
+          "systemMessage": "Você avalia reviews de uma fazenda turística ou atração rural e dá nota a UM tema só: INFRAESTRUTURA.\nINFRAESTRUTURA é o estado físico e as condições do local: limpeza e conservação, organização e circulação dos espaços e das áreas que abrigam o que o local mantém, conforto físico (acomodações, descanso, sombra, climatização), acessibilidade e segurança estrutural, e os recursos físicos de apoio. Contexto rural: \"simples\", \"rústico\" ou \"básico\" não são defeitos por si só. Sujeira, mau cheiro, pragas ou degradação pesam forte. Um local simples e limpo pode ir bem; um bonito pode ir mal com sujeira ou desconforto.\nOs comentários vêm quebrados em frases curtas, uma por linha, no formato \"F<n> (C<n>): texto\". Os rótulos F/C só numeram — ignore-os e julgue o texto, em qualquer idioma, pelo sentido.\nAvalie SOMENTE este ângulo. Uma mesma frase pode também servir a outro tema; isso não é problema seu. Se ela disser algo sobre o estado físico, a conservação, a limpeza, o conforto ou os recursos de apoio do local, conte aqui — mesmo no meio de uma frase sobre outro assunto. Sinais indiretos contam (tudo muito limpo e bem cuidado, dava gosto de ficar = positivo; mau cheiro, banheiros caindo aos pedaços, terreno impossível de andar = negativo).\n\nANTES de decidir a nota, faça internamente uma varredura de TODAS as frases, uma por uma, e marque cada uma como POSITIVA, NEGATIVA ou NÃO FALA deste tema. Só conclua 77 se, após revisar cada linha, NENHUMA frase falar do tema.\n\nPara cada frase, decida: ela fala do estado físico/conservação/conforto de forma POSITIVA (limpo, bem conservado, confortável), NEGATIVA (sujo, precário, desconfortável) ou NÃO FALA deste tema?\n- Se NENHUMA frase falar deste tema → a nota é 77.\n- Se houver frases que falam, dê nota 0–10 pelo balanço:\n  só positivas: 8–9 | mais positivas que negativas: 6–7 | misturado: 5 | mais negativas: 3–4 | quase todas negativas: 1–2.\n  Uma única negativa isolada no meio de várias positivas não baixa de 6.\nResponda SÓ com um objeto JSON, sem nada antes nem depois, sem markdown, com exatamente duas chaves: \"id\" e \"resultado\".\nO valor de \"resultado\" tem SEMPRE duas partes: a nota, depois \": \", depois uma justificativa de pelo menos uma frase completa. O \"resultado\" NUNCA pode ser apenas o número — se você escrever a nota, é OBRIGATÓRIO escrever a justificativa logo depois dos dois pontos. Isso vale também para 77.\nSe a nota for 77, a justificativa NÃO pode mencionar nenhuma frase que fale do tema, nem afirmar e negar a existência dessas frases na mesma resposta — seja coerente.\nExemplos de resposta válida (siga este padrão, sempre com a justificativa preenchida):\n{\"id\": \"abc123\", \"resultado\": \"7.0: As frases descrevem um local limpo e bem cuidado, com uma ressalva sobre o terreno difícil de andar em alguns trechos.\"}\n{\"id\": \"abc123\", \"resultado\": \"77: nenhuma frase comentou o estado físico ou as condições do local.\"}\nRegras do formato, obrigatórias:\n- Exatamente duas chaves: \"id\" e \"resultado\", ambas com valor em texto entre aspas duplas.\n- \"resultado\" começa com a nota (ex.: \"8.0\") OU com 77, seguido de \": \" e a justificativa.\n- Justificativa de pelo menos uma frase completa. Nunca apenas o número.\n- Se for 77, a justificativa não pode citar nenhuma frase que fale do tema."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        1280,
+        1936
+      ],
+      "id": "b9e13b49-8730-42cc-8798-d6baf20de084",
+      "name": "AI Agent3",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=ID DO ESTABELECIMENTO: {{ $json.id }}\nNOME DO ESTABELECIMENTO: {{ $json.nome }}\nTIPO: {{ $json.subtipos_pt_str }}\n\nCOMENTÁRIOS A ANALISAR:\n{{ $json.comentarios_frases }}",
+        "options": {
+          "systemMessage": "Você avalia reviews de uma fazenda turística ou atração rural e dá nota a UM tema só: CUSTO-BENEFÍCIO.\nCUSTO-BENEFÍCIO é o juízo sobre dinheiro: se o que o visitante pagou foi compatível com a experiência recebida — preço sentido como justo, vantajoso ou abusivo, cobranças inesperadas ou taxas escondidas, comparações com locais semelhantes e a relação entre o que se paga e o que se leva. Um local simples pode entregar muito valor pelo preço; um sofisticado pode ter custo-benefício ruim se for caro demais pelo que oferece.\nOs comentários vêm quebrados em frases curtas, uma por linha, no formato \"F<n> (C<n>): texto\". Os rótulos F/C só numeram — ignore-os e julgue o texto, em qualquer idioma, pelo sentido.\nAvalie SOMENTE este ângulo. Uma mesma frase pode também servir a outro tema; isso não é problema seu. Conte aqui apenas as frases que envolvem dinheiro, preço, diária, valor pago, cobrança ou gratuidade. Sinais indiretos de valor contam (valeu cada centavo, ótimo custo-benefício pelo que oferece = positivo; paguei caro e não entregou quase nada, diária abusiva = negativo). Elogio que não fala de dinheiro NÃO entra neste tema.\n\nANTES de decidir a nota, faça internamente uma varredura de TODAS as frases, uma por uma, e marque cada uma como POSITIVA, NEGATIVA ou NÃO FALA deste tema. Só conclua 77 se, após revisar cada linha, NENHUMA frase falar do tema.\n\nPara cada frase, decida: ela fala de preço/valor de forma POSITIVA (compensa o que custou), NEGATIVA (não compensou, caro demais) ou NÃO FALA deste tema?\n- Se NENHUMA frase falar deste tema → a nota é 77.\n- Se houver frases que falam, dê nota 0–10 pelo balanço:\n  só positivas: 8–9 | mais positivas que negativas: 6–7 | misturado: 5 | mais negativas: 3–4 | quase todas negativas: 1–2.\n  Uma única negativa isolada no meio de várias positivas não baixa de 6.\nResponda SÓ com um objeto JSON, sem nada antes nem depois, sem markdown, com exatamente duas chaves: \"id\" e \"resultado\".\nO valor de \"resultado\" tem SEMPRE duas partes: a nota, depois \": \", depois uma justificativa de pelo menos uma frase completa. O \"resultado\" NUNCA pode ser apenas o número — se você escrever a nota, é OBRIGATÓRIO escrever a justificativa logo depois dos dois pontos. Isso vale também para 77.\nSe a nota for 77, a justificativa NÃO pode mencionar nenhuma frase que fale do tema, nem afirmar e negar a existência dessas frases na mesma resposta — seja coerente.\nExemplos de resposta válida (siga este padrão, sempre com a justificativa preenchida):\n{\"id\": \"abc123\", \"resultado\": \"8.0: As frases dizem que valeu cada centavo e que o custo-benefício é ótimo pelo que o local oferece.\"}\n{\"id\": \"abc123\", \"resultado\": \"77: nenhuma frase comentou preço ou valor em dinheiro.\"}\nRegras do formato, obrigatórias:\n- Exatamente duas chaves: \"id\" e \"resultado\", ambas com valor em texto entre aspas duplas.\n- \"resultado\" começa com a nota (ex.: \"8.0\") OU com 77, seguido de \": \" e a justificativa.\n- Justificativa de pelo menos uma frase completa. Nunca apenas o número.\n- Se for 77, a justificativa não pode citar nenhuma frase que fale do tema."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        1280,
+        1648
+      ],
+      "id": "6f86ec71-882b-4058-9d78-774b23f47228",
+      "name": "AI Agent4",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0873695e-b19a-4fe6-b2b8-4d2cf76d61be",
+              "name": "capacity_review",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1856,
+        832
+      ],
+      "id": "10b86b4d-81da-4ff8-9cce-f9e8bfd54220",
+      "name": "summary"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Mode: Run Once for All Items\nconst items = $input.all().map(i => i.json).flat();\n\nconst parseReview = (texto) => {\n  if (!texto || typeof texto !== 'string') {\n    return { nota: null, justificativa: null };\n  }\n  if (texto.trim() === '77') {\n    return { nota: 'insuficiente', justificativa: null };\n  }\n  const idx = texto.indexOf(':');\n\n  // SEM dois-pontos: pode ser nota seca tipo \"8.0\" -> trata como nota\n  if (idx === -1) {\n    const soNota = texto.trim().replace(',', '.');\n    if (/^\\d{1,2}(\\.\\d+)?$/.test(soNota)) {\n      const n = parseFloat(soNota);\n      return { nota: isNaN(n) ? null : n, justificativa: null };\n    }\n    return { nota: null, justificativa: texto.trim() };\n  }\n\n  // COM dois-pontos\n  const notaRaw = texto.slice(0, idx).trim().replace(',', '.');\n\n  // \"77: justificativa\" -> insuficiente, preservando a justificativa\n  if (notaRaw === '77') {\n    return { nota: 'insuficiente', justificativa: texto.slice(idx + 1).trim() };\n  }\n\n  const nota = parseFloat(notaRaw);\n  return {\n    nota: isNaN(nota) ? null : nota,\n    justificativa: texto.slice(idx + 1).trim(),\n  };\n};\n\nconst estabelecimentos = items.filter(i => i && i.nome !== undefined);\nconst reviewItems = items.filter(i => {\n  if (!i || i.nome !== undefined) return false;\n  const k = Object.keys(i)[0];\n  return k && k.endsWith('_review');\n});\n\nconst reviewsPorId = /** @type {Record<string, any>} */ ({});\nfor (const item of reviewItems) {\n  const [chave, valorBruto] = Object.entries(item)[0];\n  const nomeAtributo = chave.replace(/_review$/, '');\n  try {\n    const dadosIA = JSON.parse(valorBruto);\n    const idEstabelecimento = dadosIA.id;\n    const resultadoIA = String(dadosIA.resultado || '');\n    if (!idEstabelecimento) continue;\n    if (!reviewsPorId[idEstabelecimento]) {\n      reviewsPorId[idEstabelecimento] = { notasNum: [] };\n    }\n    const { nota, justificativa } = parseReview(resultadoIA);\n    const alvo = reviewsPorId[idEstabelecimento];\n    const chaveNota = `${nomeAtributo}_nota`;\n    const chaveJust = `${nomeAtributo}_justificativa`;\n    const jaTemNota = typeof alvo[chaveNota] === 'number' || alvo[chaveNota] === 'insuficiente';\n    const novaTemNota = typeof nota === 'number' || nota === 'insuficiente';\n    // Só grava se a chave ainda não existe OU se o novo registro traz nota.\n    // Nunca deixa um item SEM nota apagar um que já tinha nota válida.\n    if (!(chaveNota in alvo) || novaTemNota) {\n      if (!(jaTemNota && !novaTemNota)) {\n        alvo[chaveNota] = nota;\n        alvo[chaveJust] = justificativa;\n        if (typeof nota === 'number') {\n          if (!alvo.notasNum.includes(nota)) alvo.notasNum.push(nota);\n        }\n      }\n    }\n  } catch (error) {\n    continue;\n  }\n}\n\nconst summaryPorId = /** @type {Record<string, string>} */ ({});\nfor (const item of items) {\n  if (!item || !item.summary) continue;\n  try {\n    const dados = JSON.parse(item.summary);\n    if (dados.id && dados.resultado) {\n      summaryPorId[dados.id] = dados.resultado;\n    }\n  } catch (error) {\n    continue;\n  }\n}\n\nreturn estabelecimentos.map(est => {\n  const idAtual = est.id;\n  const dadosDoEstabelecimento = reviewsPorId[idAtual] || { notasNum: [] };\n  const arrayDeNotas = dadosDoEstabelecimento.notasNum;\n  const media = arrayDeNotas.length\n    ? Math.round((arrayDeNotas.reduce((a, b) => a + b, 0) / arrayDeNotas.length) * 100) / 100\n    : null;\n  delete dadosDoEstabelecimento.notasNum;\n  return {\n    json: {\n      ...est,\n      ...dadosDoEstabelecimento,\n      resumo: summaryPorId[idAtual] || est.resumo || null,\n      media_reviews: media,\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2688,
+        1408
+      ],
+      "id": "06a31168-d0aa-4cd9-ac7f-8cdc615e4ce6",
+      "name": "Organizer1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2448,
+        1408
+      ],
+      "id": "bf739a42-7a5c-4596-a9a8-31aa5a864a2a",
+      "name": "Merge10"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Run Once for All Items\n\nconst all = $input.all().map(item => item.json);\n\nconst agrupados = {};\n\nfor (const item of all) {\n  const id = item.id;\n\n  if (!id) continue;\n\n  if (!agrupados[id]) {\n    agrupados[id] = {\n      id\n    };\n  }\n\n  for (const [key, value] of Object.entries(item)) {\n\n    // ignora campos vazios\n    if (\n      value === undefined ||\n      value === null ||\n      value === ''\n    ) {\n      continue;\n    }\n\n    // mantém arrays completos\n    if (Array.isArray(value)) {\n      agrupados[id][key] = value;\n      continue;\n    }\n\n    // mantém objetos completos\n    if (typeof value === 'object') {\n      agrupados[id][key] = value;\n      continue;\n    }\n\n    // mantém valores simples\n    agrupados[id][key] = value;\n  }\n}\n\nreturn Object.values(agrupados).map(item => ({\n  json: item\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3392,
+        1392
+      ],
+      "id": "be458489-b107-416d-8a87-2fbff98d8a02",
+      "name": "Organizer2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        3232,
+        1392
+      ],
+      "id": "dd971e26-781f-47c8-b9dc-809eca6c1224",
+      "name": "Merge3"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Mode: Run Once for Each Item — GERAL (qualquer segmento)\n//\n// CORREÇÃO PRINCIPAL:\n// As notas chegam como STRING \"insuficiente\" (não como o número 77).\n// O código antigo só reconhecia === 77, então \"insuficiente\" escapava\n// da média E do tally de não-avaliadas. Agora tudo passa por normalizar():\n//   - \"insuficiente\" / \"77\" / 77   -> SENTINELA (77) = sem dados\n//   - número (ou \"7,5\" / \"7.5\")     -> número\n//   - null / undefined / \"\"         -> null = não se aplica ao segmento (não conta)\n//\n// MÍNIMOS:\n//   - food e fun  => MIN_FOOD_FUN (6 fixo)\n//   - média       => MIN (vem de minimum_grade; fallback 6)\n// FOOD é portão crítico: insuficiente OU nota < MIN_FOOD_FUN => reprova.\n//   - PORÉM: se já reprovou por >2 insuficientes, a justificativa fica só a dos insuficientes.\n\nconst e = $input.item.json;\n\nconst SENTINELA = 77;\nconst MAX_NAO_AVALIADAS = 2; // acima disso (>2 => 3+) reprova\nconst MIN_FOOD_FUN = 6;      // mínimo fixo para comida e diversão\n\nconst ehNotaValida = (v) =>\n  typeof v === \"number\" && Number.isFinite(v) && v !== SENTINELA;\n\nconst MIN = ehNotaValida(e.minimum_grade) ? e.minimum_grade : 6; // mínimo da média\n\nconst round = (x, d = 2) => {\n  if (x === null || x === undefined || Number.isNaN(x) || !Number.isFinite(x)) {\n    return null;\n  }\n  const f = Math.pow(10, d);\n  return Math.round(x * f) / f;\n};\n\n// --------------------\n// NORMALIZAÇÃO (a peça que faltava)\n// --------------------\nconst normalizar = (v) => {\n  if (v === null || v === undefined) return null;          // ausente\n  if (typeof v === \"number\") return Number.isFinite(v) ? v : null;\n  if (typeof v === \"string\") {\n    const s = v.trim().toLowerCase();\n    if (s === \"\") return null;                             // vazio => ausente\n    if (s === \"insuficiente\") return SENTINELA;            // insuficiente\n    const n = Number(s.replace(\",\", \".\"));\n    if (Number.isFinite(n)) return n;                      // \"77\"->77, \"7,5\"->7.5\n    return SENTINELA;                                      // texto inesperado => insuficiente\n  }\n  return null;\n};\n\n// Todas as notas possíveis, JÁ normalizadas\nconst candidatas = {\n  variety: normalizar(e.variety_nota),\n  service: normalizar(e.service_nota),\n  price_to_value: normalizar(e.price_to_value_nota),\n  capacity: normalizar(e.capacity_nota),\n  beauty: normalizar(e.beauty_nota),\n  space: normalizar(e.space_nota),\n  fun: normalizar(e.fun_nota),\n  food: normalizar(e.food_nota),\n};\n\nconst rotulos = {\n  variety: \"variedade\",\n  service: \"atendimento\",\n  price_to_value: \"custo-benefício\",\n  capacity: \"capacidade\",\n  beauty: \"beleza\",\n  space: \"espaço\",\n  fun: \"diversão\",\n  food: \"comida\",\n};\n\n// --------------------\n// MÉDIA\n// --------------------\nconst presentes = Object.entries(candidatas).filter(([, v]) => ehNotaValida(v));\nconst notasUsadas = presentes.map(([, v]) => v);\nconst media = notasUsadas.length\n  ? notasUsadas.reduce((a, b) => a + b, 0) / notasUsadas.length\n  : null;\n\n// --------------------\n// NÃO AVALIADAS (insuficientes) — agora pega \"insuficiente\"/77 igual\n// --------------------\nconst notasNaoAvaliadas = Object.entries(candidatas)\n  .filter(([, v]) => v === SENTINELA)\n  .map(([k]) => k);\n\nconst reprovaPorInsuficientes = notasNaoAvaliadas.length > MAX_NAO_AVALIADAS;\n\n// --------------------\n// REGRAS\n// --------------------\nconst motivos = [];\nconst observacoes = [];\n\n// FOTOS (crítico)\nconst temFotoAnalise = Array.isArray(e.fotos_analise) && e.fotos_analise.length > 0;\nif (!temFotoAnalise) {\n  motivos.push(\"Sem fotos analisadas (fotos_analise ausente ou vazio)\");\n}\n\n// FOOD (crítico) — insuficiente REPROVA; mínimo = MIN_FOOD_FUN\n// Se já reprovou por >2 insuficientes, NÃO duplica o motivo de comida insuficiente.\nconst foodN = candidatas.food;\nif (foodN !== null) {\n  if (foodN === SENTINELA) {\n    if (!reprovaPorInsuficientes) {\n      motivos.push(\"Comida não pôde ser avaliada (insuficiente)\");\n    }\n  } else if (foodN < MIN_FOOD_FUN) {\n    motivos.push(`Nota de comida abaixo de ${MIN_FOOD_FUN} (food_nota=${round(foodN)})`);\n  }\n}\n\n// FUN (crítico) — mínimo = MIN_FOOD_FUN\nconst funN = candidatas.fun;\nif (funN !== null) {\n  if (funN === SENTINELA) {\n    if (!reprovaPorInsuficientes) {\n      observacoes.push(\"diversão não pôde ser avaliada (insuficiente)\");\n    }\n  } else if (funN < MIN_FOOD_FUN) {\n    motivos.push(`Nota de diversão abaixo de ${MIN_FOOD_FUN} (fun_nota=${round(funN)})`);\n  }\n}\n\n// NÃO AVALIADAS (crítico) — mais de 2 insuficientes => reprova\nif (reprovaPorInsuficientes) {\n  const nomes = notasNaoAvaliadas.map((k) => rotulos[k] || k);\n  motivos.push(\n    `Notas insuficientes: ${notasNaoAvaliadas.length} notas sem dados ` +\n    `— máximo permitido é ${MAX_NAO_AVALIADAS} (${nomes.join(\", \")})`\n  );\n}\n\n// MÉDIA — não repete \"sem notas válidas\" se já reprovou por excesso de insuficientes\nif (media === null) {\n  if (!reprovaPorInsuficientes) {\n    motivos.push(\"Sem notas qualitativas válidas para calcular a média\");\n  }\n} else if (media < MIN) {\n  motivos.push(`media das notas qualitativas abaixo do corte (${MIN})`);\n}\n\nconst aprovado = motivos.length === 0;\n\n// --------------------\n// JUSTIFICATIVA\n// --------------------\nlet motivo;\n\nif (aprovado) {\n  const partes = [`Média das notas qualitativas ${round(media)} (≥ ${MIN})`];\n  if (ehNotaValida(foodN)) partes.push(`comida ${round(foodN)} (≥ ${MIN_FOOD_FUN})`);\n  if (ehNotaValida(funN)) partes.push(`diversão ${round(funN)} (≥ ${MIN_FOOD_FUN})`);\n  if (observacoes.length) partes.push(...observacoes);\n  if (notasNaoAvaliadas.length) {\n    const nomes = notasNaoAvaliadas.map((k) => rotulos[k] || k);\n    partes.push(`não avaliadas: ${nomes.join(\", \")}`);\n  }\n  motivo = \"Aprovado — \" + partes.join(\"; \");\n} else {\n  let txt = \"Reprovado — \" + motivos.join(\" | \");\n  if (observacoes.length) txt += \" | (obs: \" + observacoes.join(\"; \") + \")\";\n  motivo = txt;\n}\n\n// --------------------\n// OUTPUT\n// --------------------\nreturn {\n  json: {\n    ...e,\n    minimum_grade_usado: MIN,\n    min_food_fun_usado: MIN_FOOD_FUN,\n    media_qualitativa: round(media),\n    notas_consideradas: notasUsadas.length,\n    notas_usadas: presentes.map(([k]) => k),\n    notas_nao_avaliadas: notasNaoAvaliadas,\n    qtd_notas_nao_avaliadas: notasNaoAvaliadas.length,\n    tem_fotos_analise: temFotoAnalise,\n    aprovado_notas: aprovado,\n    motivo_notas: motivo,\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3600,
+        1392
+      ],
+      "id": "744c4352-1b1b-4ab3-9526-813586c3b271",
+      "name": "média"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nfor (const item of items) {\n  if (!Array.isArray(item.json.fotos_analise)) {\n    continue;\n  }\n  item.json.fotos_analise = item.json.fotos_analise\n    .filter(foto => {\n      const nota = Number(foto.nota_capa ?? 0);\n      const inutil = foto.eh_inutil === true;\n      return !inutil && nota >= 6;\n    })\n    .sort((a, b) => Number(b.nota_capa ?? 0) - Number(a.nota_capa ?? 0));\n}\nreturn items;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3808,
+        1392
+      ],
+      "id": "7bf5b611-bbe8-463c-b4cb-3e53f99d5151",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Run Once for All Items\nconst items = $input.all().map(i => i.json ?? {});\n\nreturn items.map(item => {\n  return {\n    json: {\n      id: item.id ?? null,\n      nome: item.nome ?? null,\n      subtipos: item.subtipos_pt_str ?? null,\n      endereco: item.endereco ?? null,\n      bairro: item.bairro ?? null,\n      cep: item.cep ?? null,\n      cidade: item.cidade ?? null,\n      estado: item.estado ?? null,\n      pais: item.pais ?? null,\n      telefone: item.telefone ?? null,\n      telefone_extra: item.telefone_extra ?? null,\n      email: item.email ?? null,\n      website: item.website ?? null,\n      instagram: item.instagram ?? null,\n      facebook: item.facebook ?? null,\n      link_google_maps: item.link_google_maps ?? null,\n      nota: item.nota ?? null,\n      qtd_avaliacoes: item.qtd_avaliacoes ?? null,\n      distribuicao_notas: item.distribuicao_notas != null ? JSON.stringify(item.distribuicao_notas) : null,\n      status: item.status ?? null,\n      horarios: item.horarios != null ? JSON.stringify(item.horarios) : null,\n      faixa_preco: item.faixa_preco ?? null,\n      qtd_fotos: item.qtd_fotos ?? null,\n      fotos: item.fotos_analise != null ? JSON.stringify(item.fotos_analise) : null,\n      resumo: item.resumo ?? null,\n      details_google: item.details_google ?? null,\n      google_id: item.google_id ?? null,\n      place_id: item.place_id ?? null,\n      verificado: item.verificado ?? null,\n      timezone: item.timezone ?? null,\n      reviews: item.reviews ?? null,          // jsonb -> objeto cru, SEM stringify\n      par1: item.capacity_nota ?? null,\n      just1: item.capacity_justificativa ?? null,\n      par2: item.service_nota ?? null,\n      just2: item.service_justificativa ?? null,\n      par3: item.space_nota ?? null,\n      just3: item.space_justificativa ?? null,\n      par4: item.price_to_value_nota ?? null,\n      just4: item.price_to_value_justificativa ?? null,\n      par5: null,\n      just5: null,\n      média: item.media_qualitativa ?? null,\n      aproved: item.aprovado_notas ?? null,\n      reason: item.motivo_notas ?? null,\n      segmento: item.categoria_principal ?? null,\n      subsegmento: item.subsegmento ?? null,\n      nr_latitude: item.nr_latitude ?? null,\n      nr_longitude: item.nr_longitude ?? null,\n      minimum_grade: item.minimum_grade ?? null,\n      go_to_reevaluation: true,\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4016,
+        1392
+      ],
+      "id": "d846a93b-78ca-410a-9d58-15c8e07bd7a8",
+      "name": "organizer1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Mode: Run Once for All Items\n// Extrai as URLs das imagens, 1 imagem por row, com id e foto_index.\nconst rows = [];\nconst items = $input.all();\n\nfor (const item of items) {\n  const e = item.json || {};\n  const idEstabelecimento = e.id || null;\n\n  let fotos = [];\n  try {\n    fotos = typeof e.fotos === \"string\" ? JSON.parse(e.fotos) : (e.fotos || []);\n  } catch (err) {\n    fotos = [];\n  }\n  if (!Array.isArray(fotos)) fotos = [];\n\n  const urlsProcessadas = new Set();\n\n  for (const foto of fotos) {\n    const url = (foto && foto.url_original) || \"\";\n    if (!url || urlsProcessadas.has(url)) continue;\n    urlsProcessadas.add(url);\n\n    rows.push({\n      json: {\n        id: idEstabelecimento,\n        foto_index: foto.foto_index ?? null,\n        url: url\n      }\n    });\n  }\n}\n\nreturn rows;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4672,
+        944
+      ],
+      "id": "bc3374c2-c140-45e7-b23d-9389b102c83f",
+      "name": "image split"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Mode: Run Once for All Items\nconst items = $input.all();\nreturn items.map((item) => {\n  const e = item.json || {};\n\n  let fotos = [];\n  try {\n    fotos = typeof e.fotos === \"string\" ? JSON.parse(e.fotos) : (e.fotos || []);\n  } catch (err) {\n    fotos = [];\n  }\n  if (!Array.isArray(fotos)) fotos = [];\n\n  const fotosOrdenadas = [...fotos].sort((a, b) => {\n    const na = (a && typeof a.nota_capa === \"number\") ? a.nota_capa : -Infinity;\n    const nb = (b && typeof b.nota_capa === \"number\") ? b.nota_capa : -Infinity;\n\n    // Primeiro: nota decrescente\n    if (nb !== na) return nb - na;\n\n    // Desempate: foto_index crescente (menor index primeiro)\n    const ia = (a && typeof a.foto_index === \"number\") ? a.foto_index : Infinity;\n    const ib = (b && typeof b.foto_index === \"number\") ? b.foto_index : Infinity;\n    return ia - ib;\n  });\n\n  return {\n    json: {\n      ...e,\n      fotos: fotosOrdenadas,\n    },\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4464,
+        944
+      ],
+      "id": "7d241311-95e7-4a4c-9677-d4080ff3e259",
+      "name": "image organizer"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Mode: Run Once for All Items\n\nconst SUPABASE_URL = \"https://veedrfffsquvyypjrquh.supabase.co\";\nconst BUCKET = \"TRIP\";\nconst KEY = \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZWRyZmZmc3F1dnl5cGpycXVoIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODg2OTQyMSwiZXhwIjoyMDk0NDQ1NDIxfQ.0Z341oGGbmFl2ce8TLVTs55F2667wdug0aF1iFNSNVw\";\n\nconst MAX_RETRIES = 3;\nconst RETRY_DELAY_MS = 1500;\n\nconst sleep = (ms) => new Promise((r) => setTimeout(r, ms));\n\nconst extPorContentType = (ct) => {\n  if (!ct) return \"jpg\";\n  if (ct.includes(\"png\")) return \"png\";\n  if (ct.includes(\"webp\")) return \"webp\";\n  if (ct.includes(\"gif\")) return \"gif\";\n  return \"jpg\";\n};\n\nconst items = $input.all();\nconst contadorPorId = {};\nconst resultados = [];\n\nfor (const item of items) {\n  const e = item.json || {};\n\n  let url = e.url || e.url_original;\n  const id = e.id || \"sem_id\";\n\n  if (!url) continue;\n\n  // Tenta obter uma versão de boa qualidade sem ficar pesada\n  if (url.includes(\"googleusercontent.com\")) {\n    url = url.replace(\n      /=w\\d+-h\\d+.*$/i,\n      \"=w1600-h1600-k-no\"\n    );\n  }\n\n  const idx = contadorPorId[id] ?? 0;\n  contadorPorId[id] = idx + 1;\n\n  // 1. Download da imagem\n  let img = null;\n  let lastErr = null;\n\n  for (let tentativa = 1; tentativa <= MAX_RETRIES; tentativa++) {\n    try {\n      img = await this.helpers.httpRequest({\n        method: \"GET\",\n        url,\n        encoding: \"arraybuffer\",\n        returnFullResponse: true,\n        timeout: 20000,\n        headers: {\n          \"User-Agent\":\n            \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36\",\n          Accept: \"image/webp,image/apng,image/*,*/*;q=0.8\",\n        },\n      });\n\n      break;\n    } catch (err) {\n      lastErr = err;\n\n      const status =\n        err.response?.statusCode || err.statusCode;\n\n      if (status === 403 || status === 404) {\n        break;\n      }\n\n      if (tentativa < MAX_RETRIES) {\n        await sleep(RETRY_DELAY_MS * tentativa);\n      }\n    }\n  }\n\n  if (!img || !img.body || img.body.length === 0) {\n    const status =\n      lastErr?.response?.statusCode ||\n      lastErr?.statusCode ||\n      \"vazio\";\n\n    resultados.push({\n      json: {\n        id,\n        foto_index: idx,\n        url,\n        sucesso: false,\n        erro: `download_falhou_${status}`,\n      },\n    });\n\n    continue;\n  }\n\n  const contentType =\n    img.headers[\"content-type\"] || \"image/jpeg\";\n\n  const ext = extPorContentType(contentType);\n\n  const path = `${id}/${idx}.${ext}`;\n\n  // 2. Upload para Supabase Storage\n  let uploadOk = false;\n  let uploadErr = null;\n\n  for (let tentativa = 1; tentativa <= MAX_RETRIES; tentativa++) {\n    try {\n      await this.helpers.httpRequest({\n        method: \"POST\",\n        url: `${SUPABASE_URL}/storage/v1/object/${BUCKET}/${path}`,\n        timeout: 30000,\n        headers: {\n          Authorization: `Bearer ${KEY}`,\n          \"Content-Type\": contentType,\n          \"x-upsert\": \"true\",\n        },\n        body: Buffer.from(img.body),\n      });\n\n      uploadOk = true;\n      break;\n    } catch (err) {\n      uploadErr = err;\n\n      if (tentativa < MAX_RETRIES) {\n        await sleep(RETRY_DELAY_MS * tentativa);\n      }\n    }\n  }\n\n  if (!uploadOk) {\n    resultados.push({\n      json: {\n        id,\n        foto_index: idx,\n        url,\n        path,\n        sucesso: false,\n        erro:\n          \"upload_falhou: \" +\n          JSON.stringify(\n            uploadErr?.response?.body ??\n              uploadErr?.response?.data ??\n              uploadErr?.message\n          ),\n      },\n    });\n\n    continue;\n  }\n\n  resultados.push({\n    json: {\n      id,\n      foto_index: idx,\n      path,\n      sucesso: true,\n      public_url: `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${path}`,\n    },\n  });\n}\n\nreturn resultados;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4880,
+        944
+      ],
+      "id": "d096412d-e89c-4c5f-aa03-77ee58e24cfa",
+      "name": "STORAGE"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Mode: Run Once for All Items\n// Agrupa as imagens por estabelecimento (id), montando uma lista de URLs por id.\n\nconst items = $input.all();\nconst porId = {};\n\nfor (const item of items) {\n  const e = item.json || {};\n  const id = e.id;\n  if (!id) continue;\n\n  if (!porId[id]) {\n    porId[id] = {\n      id,\n      qtd_fotos: 0,\n      capa: null,\n      _temp: [],   // guarda index+url para ordenar depois\n    };\n  }\n\n  porId[id]._temp.push({ foto_index: e.foto_index, url: e.public_url });\n\n  if (e.foto_index === 0) {\n    porId[id].capa = e.public_url;\n  }\n}\n\nreturn Object.values(porId).map((grupo) => {\n  // ordena por foto_index e extrai só a URL\n  grupo._temp.sort((a, b) => a.foto_index - b.foto_index);\n  const fotos = grupo._temp.map((f) => f.url);\n  delete grupo._temp;\n\n  return {\n    json: {\n      id: grupo.id,\n      qtd_fotos: fotos.length,\n      capa: grupo.capa,\n      fotos, // array só com as URLs, em ordem\n    },\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5120,
+        944
+      ],
+      "id": "c605a5e7-01e3-4005-b404-3658d28e3505",
+      "name": "Organizador"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        5504,
+        1360
+      ],
+      "id": "01dd9fb7-2c3e-47d3-9007-5cb637d8a5e8",
+      "name": "Merge4"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all().map(i => i.json);\n\n// Separa uploads de estabelecimentos\nconst uploads = {};\nconst estabelecimentos = {};\n\nfor (const item of items) {\n  const id = item.id;\n  if (!id) continue;\n\n  // É um item de upload se tiver capa e não tiver nome\n  if (item.capa && !item.nome) {\n    uploads[id] = item;\n  } else if (item.nome) {\n    estabelecimentos[id] = item;\n  }\n}\n\n// Mescla upload + estabelecimento pelo id\nreturn Object.keys(estabelecimentos).map(id => {\n  const est = estabelecimentos[id];\n  const upload = uploads[id] || {};\n\n  return {\n    json: {\n      ...est,\n      capa: upload.capa ?? null,\n      fotos_salvas: upload.fotos ?? [],\n      qtd_fotos_salvas: upload.qtd_fotos ?? 0,\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5712,
+        1360
+      ],
+      "id": "f59b4c4e-2146-4063-80a1-4ad1eeaccd14",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all().map(i => i.json);\n\nreturn items.map(item => {\n  return {\n    json: {\n      id: item.id ?? null,\n      nome: item.nome ?? null,\n      subtipos: item.subtipos ?? null,\n      endereco: item.endereco ?? null,\n      bairro: item.bairro ?? null,\n      cep: item.cep ?? null,\n      cidade: item.cidade ?? null,\n      estado: item.estado ?? null,\n      pais: item.pais ?? null,\n      telefone: item.telefone ?? null,\n      telefone_extra: item.telefone_extra ?? null,\n      email: item.email ?? null,\n      website: item.website ?? null,\n      instagram: item.instagram ?? null,\n      facebook: item.facebook ?? null,\n      link_google_maps: item.link_google_maps ?? null,\n      nota: item.nota ?? null,\n      qtd_avaliacoes: item.qtd_avaliacoes ?? null,\n      distribuicao_notas: item.distribuicao_notas ?? null,\n      status: item.status ?? null,\n      horarios: item.horarios ?? null,\n      faixa_preco: item.faixa_preco ?? null,\n\n      qtd_fotos: item.qtd_fotos_salvas ?? item.qtd_fotos ?? null,\n      gallery: item.fotos_salvas ?? item.gallery ?? [],\n      capa: item.capa ?? null,\n\n      fotos: item.fotos ?? null,\n      resumo: item.resumo ?? null,\n      details_google: item.details_google ?? null,\n      google_id: item.google_id ?? null,\n      place_id: item.place_id ?? null,\n      verificado: item.verificado ?? null,\n      timezone: item.timezone ?? null,\n\n      reviews: typeof item.reviews === 'string'\n        ? JSON.parse(item.reviews)\n        : (item.reviews ?? null),\n\n      par1: item.par1 ?? null,\n      just1: item.just1 ?? null,\n      par2: item.par2 ?? null,\n      just2: item.just2 ?? null,\n      par3: item.par3 ?? null,\n      just3: item.just3 ?? null,\n      par4: item.par4 ?? null,\n      just4: item.just4 ?? null,\n      par5: item.par5 ?? null,\n      just5: item.just5 ?? null,\n      \"média\": item[\"média\"] ?? null,\n      aproved: item.aproved ?? null,\n      reason: item.reason ?? null,\n      segmento: item.segmento ?? null,\n      subsegmento: item.subsegmento ?? null,\n      nr_latitude: item.nr_latitude ?? null,\n      nr_longitude: item.nr_longitude ?? null,\n      minimum_grade: item.minimum_grade ?? null,\n      go_to_reevaluation: true,\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5920,
+        1360
+      ],
+      "id": "6766441e-c2da-478f-ab71-eb0de6305dd1",
+      "name": "Code in JavaScript3"
+    },
+    {
+      "parameters": {
+        "tableId": "geral_estabelecimentos_avaliados",
+        "dataToSend": "autoMapInputData"
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        6096,
+        1360
+      ],
+      "id": "1946d56d-24e7-48ea-b14c-b3760b20b8e6",
+      "name": "Create a row1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "U4InZOJsE9hnMgS6",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "cb30c38e-ad3c-458a-8342-7d67e0a8c747",
+              "leftValue": "={{ $json.aproved }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        4224,
+        1392
+      ],
+      "id": "82de4e1f-1cc0-4777-885d-19ef15cd2560",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "tableId": "geral_estabelecimentos_avaliados",
+        "dataToSend": "autoMapInputData"
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        4624,
+        1664
+      ],
+      "id": "aa9ff0d1-0afc-4544-ac53-64296b1ea158",
+      "name": "Create a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "U4InZOJsE9hnMgS6",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "40dba803-f2ac-4b82-8650-dbe40562f84d",
+              "name": "fotos",
+              "value": "={{ $json.fotos }}",
+              "type": "array"
+            },
+            {
+              "id": "64e70dac-1ff7-483b-8812-4ab5621c8e33",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        592,
+        448
+      ],
+      "id": "8069aa01-3444-4de5-bea6-afa32aea895f",
+      "name": "Fotos"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Mode: Run Once for All Items\n// Gera UMA row por foto (para o Switch funcionar), sem duplicatas e COM O ID do restaurante.\nconst categoriasInuteis = [\"Street View & 360°\", \"Videos\", \"Menu\"];\nconst rows = [];\n// 1. Pega TODOS os restaurantes que entraram no nó\nconst items = $input.all();\nfor (const item of items) {\n  const e = item.json || {};\n  const idEstabelecimento = e.id || null;\n  const fotos = Array.isArray(e.fotos) ? e.fotos : [];\n  const urlsProcessadas = new Set();\n  // 2. Transforma cada foto em um item isolado\n  for (let i = 0; i < fotos.length; i++) {\n    const foto = fotos[i] || {};\n    const url = foto.url || \"\";\n    const description = foto.description || \"\";\n    if (!url || urlsProcessadas.has(url)) {\n      continue;\n    }\n    const ehInutil = categoriasInuteis.includes(description) || url.includes(\"streetviewpixels\");\n    urlsProcessadas.add(url);\n    // 3. Joga a foto na lista final\n    rows.push({\n      json: {\n        id: idEstabelecimento,\n        foto_index: i,\n        description: description,\n        url_original: url,\n        eh_inutil: ehInutil\n      }\n    });\n  }\n}\n// Retorna uma lista plana (1 item = 1 foto)\nreturn rows;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        448
+      ],
+      "id": "e76d8df9-0880-4689-9e53-716288b62ecf",
+      "name": "Fotos organizer"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.eh_inutil }}",
+                    "rightValue": "=",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "6a82029b-4182-4a2f-8e4f-432cc4ec6a3e"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "5bf04c1e-a46b-49ae-a66a-7982239aa9ed",
+                    "leftValue": "={{ $json.eh_inutil }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "false",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        992,
+        448
+      ],
+      "id": "cc456347-1b4e-4f72-936f-75c7cacf6aa8",
+      "name": "Switch"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2192,
+        496
+      ],
+      "id": "44bb7132-d333-44cc-a382-190163aadb30",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Mode: Run Once for All Items\nconst items = $input.all().map(i => i.json);\n\n// Uma FOTO tem url_original. Uma RESPOSTA da IA tem o JSON com \"resultado\".\n// Um mesmo item nunca é os dois ao mesmo tempo, então separamos com prioridade\n// para a resposta: se parece resposta, é resposta; senão, se tem url, é foto.\nfunction looksLikeResposta(i) {\n  if (!i) return false;\n  if (i.choices !== undefined) return true;\n  if (i.message?.content !== undefined) return true;\n  if (typeof i.content === 'string') return true;\n  if (typeof i.resultado === 'string') return true;\n  return false;\n}\n\nconst respostasRaw = items.filter(i => looksLikeResposta(i));\nconst fotos = items.filter(i => !looksLikeResposta(i) && i.url_original !== undefined);\n\nfunction parseResposta(aiOutput) {\n  if (!aiOutput) return null;\n\n  // 1) Extrai o texto bruto de onde quer que ele esteja\n  let rawText = \"\";\n  if (aiOutput.choices && aiOutput.choices[0] && aiOutput.choices[0].message) {\n    rawText = aiOutput.choices[0].message.content;\n  } else if (typeof aiOutput.content === 'string') {\n    rawText = aiOutput.content;\n  } else if (typeof aiOutput === 'string') {\n    rawText = aiOutput;\n  } else if (typeof aiOutput.resultado === 'string') {\n    // caso o item já venha \"achatado\" com resultado/id/foto_index no topo\n    rawText = JSON.stringify(aiOutput);\n  }\n  if (!rawText) return null;\n\n  // 2) Tenta parsear o JSON da IA\n  let parsedJson = null;\n  try {\n    let fixedText = rawText.trim();\n    // tira cercas de markdown se a IA escapou e mandou ```json ... ```\n    fixedText = fixedText.replace(/^```(?:json)?\\s*/i, '').replace(/\\s*```$/i, '').trim();\n    if (!fixedText.endsWith('}')) fixedText += '\\n}';\n    parsedJson = JSON.parse(fixedText);\n  } catch (e) {\n    parsedJson = null;\n  }\n\n  // 3) Se parseou, extrai pelos campos; senão cai no regex\n  let id = null;\n  let foto_index = null;\n  let resultado = \"\";\n\n  if (parsedJson) {\n    id = parsedJson.id ?? null;\n    foto_index = parsedJson.foto_index ?? null;\n    resultado = parsedJson.resultado || \"\";\n  } else {\n    const idMatch = rawText.match(/\"id\"\\s*:\\s*\"([^\"]+)\"/);\n    const fiMatch = rawText.match(/\"foto_index\"\\s*:\\s*(\\d+)/);\n    const resMatch = rawText.match(/\"resultado\"\\s*:\\s*\"([^\"]*(?:\\\\.[^\"]*)*)\"/);\n    id = idMatch ? idMatch[1] : null;\n    foto_index = fiMatch ? parseInt(fiMatch[1], 10) : null;\n    resultado = resMatch ? resMatch[1].replace(/\\\\\"/g, '\"') : \"\";\n  }\n\n  // normaliza foto_index para número inteiro quando possível\n  if (foto_index !== null && foto_index !== undefined) {\n    const fiNum = parseInt(foto_index, 10);\n    foto_index = isNaN(fiNum) ? null : fiNum;\n  }\n\n  // 4) Separa nota e justificativa de \"N.N: justificativa\"\n  let nota = null;\n  let justificativa = null;\n  if (resultado && resultado.trim() !== \"\") {\n    const idx = resultado.indexOf(\":\");\n    if (idx !== -1) {\n      const notaNum = parseFloat(resultado.slice(0, idx).trim().replace(\",\", \".\"));\n      nota = isNaN(notaNum) ? null : notaNum;\n      justificativa = resultado.slice(idx + 1).trim();\n    } else {\n      justificativa = resultado.trim();\n    }\n  }\n\n  return {\n    id,\n    foto_index,\n    nota,\n    justificativa,\n    resposta_bruta: rawText,\n  };\n}\n\n// Indexa as respostas por chave \"id__foto_index\".\n// Se houver vários ids diferentes e/ou vários foto_index, cada par é único.\nconst respMap = new Map();\nfor (const r of respostasRaw) {\n  const p = parseResposta(r);\n  if (!p || p.id === null || p.foto_index === null) continue;\n  const key = `${p.id}__${p.foto_index}`;\n  // não sobrescreve uma resposta já casada (mantém a primeira válida)\n  if (!respMap.has(key)) respMap.set(key, p);\n}\n\n// Casa cada foto com sua resposta pela chave id+foto_index (não por posição)\nconst rows = fotos.map((foto) => {\n  const key = `${foto.id}__${foto.foto_index}`;\n  const parsed = respMap.get(key) || { nota: null, justificativa: null, resposta_bruta: null };\n  return {\n    id: foto.id,\n    foto_index_original: foto.foto_index, // guarda o original pra desempate\n    description: foto.description,\n    url_original: foto.url_original,\n    eh_inutil: foto.eh_inutil,\n    nota_capa: parsed.nota,\n    justificativa_capa: parsed.justificativa,\n    resposta_bruta: parsed.resposta_bruta,\n    serve_como_capa: parsed.nota !== null && parsed.nota >= 7,\n  };\n});\n\n// Agrupa por id: o ranking/reindex de foto_index é feito DENTRO de cada id,\n// para funcionar quando o batch traz vários estabelecimentos misturados.\nconst porId = new Map();\nfor (const row of rows) {\n  if (!porId.has(row.id)) porId.set(row.id, []);\n  porId.get(row.id).push(row);\n}\n\nconst out = [];\nfor (const grupo of porId.values()) {\n  // Ordena por nota decrescente; empate: foto_index_original crescente\n  grupo.sort((a, b) => {\n    const na = a.nota_capa ?? -Infinity;\n    const nb = b.nota_capa ?? -Infinity;\n    if (nb !== na) return nb - na;\n    return (a.foto_index_original ?? Infinity) - (b.foto_index_original ?? Infinity);\n  });\n\n  // Reatribui foto_index em ordem crescente conforme a posição pós-sort,\n  // por estabelecimento (0 = melhor foto daquele id)\n  grupo.forEach((row, i) => {\n    out.push({\n      json: {\n        id: row.id,\n        foto_index: i, // 0 = melhor foto deste id, 1 = segunda melhor, etc.\n        description: row.description,\n        url_original: row.url_original,\n        eh_inutil: row.eh_inutil,\n        nota_capa: row.nota_capa,\n        justificativa_capa: row.justificativa_capa,\n        resposta_bruta: row.resposta_bruta,\n        serve_como_capa: row.serve_como_capa,\n      }\n    });\n  });\n}\n\nreturn out;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2352,
+        496
+      ],
+      "id": "3c51aa80-db52-4adb-8a49-d40f0b8967a3",
+      "name": "Indexer"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Mode: Run Once for All Items\n// Adiciona campos de avaliação de capa em cada foto.\n// Fotos marcadas como eh_inutil recebem valores padrão de rejeição automática.\n\nconst items = $input.all().map(i => i.json);\n\nconst rows = items.map(foto => {\n  if (foto.eh_inutil) {\n    return {\n      json: {\n        ...foto,\n        nota_capa: 0,\n        justificativa_capa: \"Imagem do Google Street View (ou outras), inadequada como capa de perfil profissional.\",\n        resposta_bruta: \"Imagem do Google Street View (ou outras), inadequada como capa de perfil profissional.\",\n        serve_como_capa: false,\n      }\n    };\n  }\n\n  // Foto útil: campos vazios, prontos para serem preenchidos pela IA depois\n  return {\n    json: {\n      ...foto,\n      nota_capa: null,\n      justificativa_capa: null,\n      resposta_bruta: null,\n      serve_como_capa: null,\n    }\n  };\n});\n\nreturn rows;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1952,
+        352
+      ],
+      "id": "0d42d92b-75b0-4858-b8c2-caa9faff43c7",
+      "name": "Automatic rejection"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "=gpt-4.1-mini",
+          "mode": "id"
+        },
+        "text": "=ID DO ESTABELECIMENTO: {{ $json.id }}\n\nÍNDICE DA FOTO: {{ $json.foto_index }}\n\nVocê é um avaliador de qualidade de imagens. Antes de qualquer coisa, você faz uma VARREDURA DE PESSOAS. Depois aplica o filtro de eliminação. Só então, se a imagem sobreviver, avalia a qualidade.\n\n==================================================\nPASSO 0 — VARREDURA DE PESSOAS (FAÇA ISSO ANTES DE TUDO)\n==================================================\n\nAntes de pensar em qualidade, beleza ou nota, responda mentalmente a UMA pergunta, olhando a imagem inteira com atenção: HÁ ALGUM SER HUMANO NA IMAGEM?\n\nProcure ativamente por: rostos (inteiros ou parciais), cabeças, corpos, mãos segurando a câmera, pessoas em pé, sentadas, ao fundo, de lado, de costas, refletidas em espelho/vidro, ou parcialmente cortadas pela borda.\n\nSe você encontrar QUALQUER ser humano, classifique-o em uma de duas categorias:\n\n(A) HUMANO EM DESTAQUE → ELIMINAÇÃO OBRIGATÓRIA (nota 0.0). Enquadra-se aqui se:\n    • é uma selfie (rosto próximo, braço esticado, alguém segurando a câmera);\n    • há QUALQUER rosto humano reconhecível em foco em qualquer parte do quadro, mesmo que pequeno;\n    • há uma pessoa posando, olhando ou sorrindo para a câmera;\n    • uma pessoa está no centro, no primeiro plano, ou ocupa parte relevante do quadro;\n    • uma pessoa divide o destaque com o ambiente;\n    • há um grupo de pessoas.\n  Se a pessoa tem rosto visível e dá pra reconhecer que é uma pessoa, ela está EM DESTAQUE. Na dúvida entre \"destaque\" e \"acidental\", é SEMPRE destaque → ELIMINE.\n\n(B) HUMANO ACIDENTAL → não elimina por esse motivo. SÓ se enquadra aqui se a pessoa é inequivocamente irrelevante: minúscula ao fundo, totalmente desfocada, de costas e sem rosto visível, ou claramente só parte do movimento do ambiente. Esta categoria é a EXCEÇÃO RARA, não a regra.\n\nREGRA DE DECISÃO: se há humano e você não tem CERTEZA ABSOLUTA de que é categoria (B), trate como (A) e dê 0.0. É melhor eliminar uma foto boa do que aprovar uma foto com rosto.\n\nO resultado desta varredura vai OBRIGATORIAMENTE para o campo \"pessoas\" do JSON final. Você não pode dar nota alta e ao mesmo tempo admitir um humano em destaque — isso é uma contradição proibida.\n\n==================================================\nPASSO 1 — FILTRO DE ELIMINAÇÃO\n==================================================\n\nTRAVA ABSOLUTA: assim que identificar que a foto se enquadra em uma condição de eliminação, a nota é 0.0 e ESSA NOTA NÃO MUDA. Não reconsidere, não compense com qualidade técnica, não arredonde para cima. Qualidade NUNCA cancela uma eliminação. Na dúvida, ELIMINE.\n\nPRINCÍPIO ANTI-ALUCINAÇÃO: avalie SOMENTE o que está visível. Não suponha nem invente. Na dúvida sobre um detalhe, trate-o como ausente e NÃO dê o benefício da dúvida.\n\nO QUE NÃO É MOTIVO DE ELIMINAÇÃO: fotografar um ambiente fechado, objeto, vitrine, aquário, terrário, tela de TV/monitor exibindo conteúdo, ou qualquer cena com elementos artificiais CONTINUA SENDO uma fotografia real. O que elimina é a imagem SER uma renderização/arte/print — não o ASSUNTO ser artificial. Um aquário fotografado é uma foto real e legítima.\n\nCondições de eliminação (qualquer uma = 0.0):\n\n- HÁ HUMANO EM DESTAQUE (categoria A do Passo 0). Motivo: \"pessoa em destaque / rosto visível\".\n- NÃO é fotografia real: logo, ícone, ilustração, desenho, pintura digital, render 3D, arte gráfica, cartaz, flyer, banner, peça publicitária, print de tela (screenshot), mapa, ou imagem gerada/desenhada/montada por computador. Arte gráfica elimina mesmo que seja bonita e bem feita.\n- É um PRINT de app/rede social: interface, barra de status, ícones de sistema (bateria, wifi, hora) ou UI de Instagram/WhatsApp/Google Maps, mesmo que haja foto real dentro do print.\n- É majoritariamente TEXTO: cardápio, tabela de preços, horário, ou imagem em que o texto cobre a maior parte do quadro.\n- É COLAGEM/MONTAGEM: várias fotos em grade, painéis ou faixas numa única imagem.\n- Tem tarja preta larga, moldura decorativa ou bordas artificiais ocupando parte relevante do quadro.\n- Tem marca d'água invasiva, logo de terceiros dominante ou texto promocional cobrindo a imagem.\n- É tecnicamente imprestável: muito borrada, escura demais ou estourada a ponto de não dar pra distinguir o que é.\n\nSe NENHUMA condição se aplicar, vá para o PASSO 2.\n\n==================================================\nPASSO 2 — NOTA DE QUALIDADE (0.0 a 10.0)\n==================================================\n\nSó execute se a imagem sobreviveu aos passos 0 e 1. NÃO escolha uma nota redonda primeiro. Avalie as quatro dimensões SEPARADAMENTE, atribua valores conforme a EVIDÊNCIA visual, e SOME.\n\n- NITIDEZ / FOCO (0.0 a 3.0)\n- ILUMINAÇÃO (0.0 a 2.5)\n- ENQUADRAMENTO / COMPOSIÇÃO (0.0 a 2.5)\n- CLAREZA DO ASSUNTO / APELO (0.0 a 2.0)\n\nREGRA DECIMAL OBRIGATÓRIA: para CADA dimensão, escolha um valor com decimal \"quebrada\" que reflita exatamente aquela foto (ex.: 2.7, 1.8, 2.2, 1.3). NÃO use máximos redondos (3.0, 2.5, 2.0) nem meios redondos (1.5) salvo em casos extremos e inquestionáveis. É esperado que quase nenhuma sub-nota seja redonda.\n\nSome as quatro para a nota base. A maioria das fotos boas soma entre 6.5 e 8.0; passar de 9.0 exige as quatro dimensões quase no máximo.\n\nTETO: se é close extremo de um único prato/bebida sem contexto do ambiente, OU tem filtro/saturação artificial muito evidente, a nota não passa de 6.5.\n\n==================================================\nPASSO 3 — PEQUENO BÔNUS DE CAPA\n==================================================\n\nSome +0.7 SOMENTE se TODAS forem verdadeiras: (a) mostra com clareza a FACHADA do estabelecimento — vista externa com entrada, letreiro ou estrutura reconhecível; (b) você tem CERTEZA de que é a vista externa, sem inferir; (c) a nota base do PASSO 2 já é ≥ 5.0. Faltando qualquer uma, não some nada. A nota final nunca passa de 10.0. O bônus nunca se aplica se houve eliminação.\n\nArredonde a nota final para UMA casa decimal.\n\n==================================================\nFORMATO DA RESPOSTA\n==================================================\n\nResponda SÓ com este objeto JSON, sem nada antes nem depois, sem markdown:\n\n{\n\n\"id\": \"<copie exatamente o ID DO ESTABELECIMENTO do topo>\",\n\n\"foto_index\": <copie exatamente o ÍNDICE DA FOTO do topo, como número inteiro>,\n\n\"pessoas\": \"<um de: 'nenhuma' | 'acidental' | 'em destaque'>\",\n\n\"resultado\": \"N.N: justificativa\"\n\n}\n\nRegras do formato, obrigatórias:\n\n- Copie \"id\" e \"foto_index\" EXATAMENTE como vieram no topo. \"foto_index\" é número inteiro, sem aspas.\n- \"pessoas\" registra o resultado do PASSO 0. Se for \"em destaque\", \"resultado\" TEM que começar com 0.0. É proibido \"pessoas\":\"em destaque\" com nota acima de 0.0.\n- \"resultado\" SEMPRE começa com a nota (0.0 a 10.0, UMA casa decimal), seguida de \": \" e a justificativa. Nunca escreva só o número.\n- A justificativa é UMA frase curta (máx ~20 palavras) citando só os fatores DECISIVOS. Quando houver eliminação, nomeie o motivo (ex.: \"0.0: pessoa em destaque / rosto visível.\" ou \"0.0: arte gráfica, não é fotografia.\").\n- NUNCA escreva que NÃO houve eliminação, que não há pessoas, ou qualquer frase sobre o que NÃO aconteceu (exceto o campo \"pessoas\", que é obrigatório).\n- Evite os valores \"ímã\" 7.4, 8.0 e 8.2 como nota final. Se cair neles, reavalie as sub-notas com mais precisão decimal.\n- Nunca escreva \"insuficiente\" nem nada fora do formato. Toda imagem recebe uma nota.",
+        "imageUrls": "={{ $json.url_original }}",
+        "simplify": false,
+        "options": {}
+      },
+      "id": "29ac0ffe-0fc6-465c-8b47-fc2bcbdfae28",
+      "name": "Picasso",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.4,
+      "position": [
+        1936,
+        608
+      ],
+      "retryOnFail": true,
+      "credentials": {
+        "openAiApi": {
+          "id": "dhG0ktohViAz4N21",
+          "name": "OpenAi account"
+        }
+      },
+      "notes": "TEMPLATE DESENVOLVIDO POR NOCODE STARTUP\nhttps://nocodestartup.io/\n\nFORMAÇÃO GESTOR DE AGENTES DE IA:\nhttps://nocodestartup.io/formacao-gestor-agentes-ia/"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all().map(i => i.json);\n\nconst fotosPorId = /** @type {Record<string, any[]>} */ ({});\n\nfor (const item of items) {\n  if (item && item.id && item.foto_index !== undefined && !item.eh_inutil && item.nota_capa >= 6) {\n    if (!fotosPorId[item.id]) {\n      fotosPorId[item.id] = [];\n    }\n    fotosPorId[item.id].push(item);\n  }\n}\n\nconst resultados = Object.keys(fotosPorId).map(id => {\n  const fotosDoEstabelecimento = fotosPorId[id];\n  \n  fotosDoEstabelecimento.sort((a, b) => a.foto_index - b.foto_index);\n  \n  return {\n    json: {\n      id: id,\n      fotos_analise: fotosDoEstabelecimento\n    }\n  };\n});\n\nreturn resultados;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2768,
+        480
+      ],
+      "id": "4b6ed4e5-725e-4e85-8daf-9348c68d4030",
+      "name": "organizer"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url_original }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1184,
+        624
+      ],
+      "id": "46157583-37c5-479b-b54f-86ef2c1f7d91",
+      "name": "HTTP Request",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const inputItems = $input.all();\nconst previousItems = $('Switch').all();\n\nconst vistos = new Set();\n\nreturn inputItems.map((item, index) => {\n  const original = previousItems[index].json;\n\n  // Erro de download/processamento → inútil\n  if (item.json.error) {\n    return {\n      json: {\n        ...original,        // url_original preservada\n        eh_inutil: true\n      }\n    };\n  }\n\n  // Chave SÓ para comparação (não afeta o que sai no fluxo)\n  const chaveComparacao = (original.url_original || '')\n    .split('?')[0]\n    .replace(/=s\\d+-k-no$/, '')\n    .replace(/=s\\d+.*$/, '');\n\n  const ehDuplicata = Boolean(chaveComparacao) && vistos.has(chaveComparacao);\n  if (chaveComparacao && !ehDuplicata) {\n    vistos.add(chaveComparacao);\n  }\n\n  return {\n    json: {\n      ...original,          // url_original sai exatamente como entrou\n      eh_inutil: original.eh_inutil || ehDuplicata\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1408,
+        624
+      ],
+      "id": "51cbf13b-8c8a-4534-8502-ccef98f1a2b4",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "43a74f54-74c7-4a59-8c4b-a53157c929dc",
+              "leftValue": "={{ $json.eh_inutil }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1632,
+        624
+      ],
+      "id": "3745195d-1db6-448b-ad2a-2680fe55c5f1",
+      "name": "If"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2160,
+        352
+      ],
+      "id": "1672299b-f608-4c81-b654-907bb302250e",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "geral_estabelecimentos_desc",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json.id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "go_to_trip",
+              "fieldValue": "TRUE"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        4816,
+        1664
+      ],
+      "id": "c5fc2a9c-ab4c-4138-813a-b303b35a8d18",
+      "name": "Update a row1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "U4InZOJsE9hnMgS6",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "geral_estabelecimentos_desc",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json.id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "go_to_trip",
+              "fieldValue": "TRUE"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        6272,
+        1360
+      ],
+      "id": "162d0ae8-7299-4952-bc5d-4fb59c814fd7",
+      "name": "Update a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "U4InZOJsE9hnMgS6",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Lê o campo existente SEM alterá-lo, e adiciona um campo novo com frases numeradas.\nconst texto = $json.comentarios_formatados || \"\";\n\n// 1) separa cada \"Comentário N: ...\" preservando o número original\nconst blocos = texto\n  .split(/\\n\\s*\\n/)            // comentários são separados por linha em branco\n  .map(b => b.trim())\n  .filter(Boolean);\n\nconst linhas = [];\nlet contadorFrase = 0;\n\nfor (const bloco of blocos) {\n  // remove o rótulo \"Comentário N:\" do início, guardando o número\n  const m = bloco.match(/^Coment[áa]rio\\s+(\\d+)\\s*:\\s*([\\s\\S]*)$/i);\n  const numComentario = m ? m[1] : \"?\";\n  const corpo = m ? m[2] : bloco;\n\n  // 2) quebra o corpo em frases (fim de frase ou quebra de linha)\n  const frases = corpo\n    .split(/(?<=[.!?])\\s+|\\n+/)\n    .map(f => f.trim())\n    .filter(f => f.length > 0);\n\n  // se o comentário não tiver pontuação, ele inteiro vira uma \"frase\"\n  const lista = frases.length ? frases : [corpo.trim()].filter(Boolean);\n\n  for (const f of lista) {\n    contadorFrase++;\n    // formato: \"F12 (C10): frase isolada\"\n    linhas.push(`F${contadorFrase} (C${numComentario}): ${f}`);\n  }\n}\n\n// adiciona o campo novo, mantém todo o resto do item intacto\n$json.comentarios_frases = linhas.join(\"\\n\");\n\nreturn $input.item;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        608,
+        1376
+      ],
+      "id": "658eabdc-ed34-4f2b-9c2b-3d6acd2e4654",
+      "name": "Code in JavaScript4"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Limpa a saída dos agentes mas MANTÉM cada campo de review como STRING JSON,\n// e MANTÉM os itens separados (é o que o Organizer espera receber).\n// Só desembrulha {action,text} e normaliza, sem mudar a estrutura.\n// Detecta automaticamente qualquer campo \"*_review\" + \"summary\", então\n// funciona em qualquer fluxo (service, food, fun, beauty, etc.).\n\nfunction ehCampoReview(chave) {\n  return chave === \"summary\" || chave.endsWith(\"_review\");\n}\n\nfunction limpaParaString(valor) {\n  if (valor == null) return valor;\n  let obj = (typeof valor === \"object\") ? valor : null;\n  if (obj === null && typeof valor === \"string\") {\n    try { obj = JSON.parse(valor.trim()); } catch (e) { return valor; } // não parseou: devolve como veio\n  }\n  if (!obj) return valor;\n  // desembrulha {action:\"parse\", text:\"{...}\"}\n  if (obj.text && (obj.action || obj.resultado === undefined)) {\n    try {\n      const inner = JSON.parse(obj.text);\n      if (inner && (inner.resultado !== undefined || inner.id !== undefined)) obj = inner;\n    } catch (e) {}\n  }\n  // re-serializa como string JSON limpa { id, resultado }\n  return JSON.stringify({\n    id: obj.id ?? null,\n    resultado: obj.resultado ?? null\n  });\n}\n\nconst out = [];\nfor (const item of $input.all()) {\n  const novo = { ...item.json };\n  for (const campo of Object.keys(novo)) {\n    if (ehCampoReview(campo) && novo[campo] !== undefined) {\n      novo[campo] = limpaParaString(novo[campo]);\n    }\n  }\n  out.push({ json: novo });\n}\nreturn out;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2304,
+        1376
+      ],
+      "id": "22b46438-3e1e-4eb4-bbe6-c709aed87fea",
+      "name": "Code in JavaScript5"
+    }
+  ],
+  "connections": {
+    "Price to value review6": {
+      "main": [
+        [
+          {
+            "node": "Merge35",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Space review7": {
+      "main": [
+        [
+          {
+            "node": "Merge35",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "service_review6": {
+      "main": [
+        [
+          {
+            "node": "Merge35",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch15": {
+      "main": [
+        [
+          {
+            "node": "Merge10",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "Fotos",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code in JavaScript4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Merge35": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "capacity_review1": {
+      "main": [
+        [
+          {
+            "node": "Merge35",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Switch15",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent3",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model4": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent4",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model32": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "capacity_review1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent2": {
+      "main": [
+        [
+          {
+            "node": "service_review6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent4": {
+      "main": [
+        [
+          {
+            "node": "Price to value review6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent3": {
+      "main": [
+        [
+          {
+            "node": "Space review7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "summary": {
+      "main": [
+        [
+          {
+            "node": "Merge35",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    },
+    "Organizer1": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge10": {
+      "main": [
+        [
+          {
+            "node": "Organizer1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Organizer2": {
+      "main": [
+        [
+          {
+            "node": "média",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge3": {
+      "main": [
+        [
+          {
+            "node": "Organizer2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "média": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "organizer1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "organizer1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "image split": {
+      "main": [
+        [
+          {
+            "node": "STORAGE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "image organizer": {
+      "main": [
+        [
+          {
+            "node": "image split",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "STORAGE": {
+      "main": [
+        [
+          {
+            "node": "Organizador",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Organizador": {
+      "main": [
+        [
+          {
+            "node": "Merge4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge4": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript3": {
+      "main": [
+        [
+          {
+            "node": "Create a row1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "image organizer",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge4",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Create a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fotos": {
+      "main": [
+        [
+          {
+            "node": "Fotos organizer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fotos organizer": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Automatic rejection",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Indexer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Indexer": {
+      "main": [
+        [
+          {
+            "node": "organizer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Automatic rejection": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Picasso": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Picasso",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Automatic rejection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "organizer": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a row": {
+      "main": [
+        [
+          {
+            "node": "Update a row1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a row1": {
+      "main": [
+        [
+          {
+            "node": "Update a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript4": {
+      "main": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "AI Agent4",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "AI Agent3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript5": {
+      "main": [
+        [
+          {
+            "node": "Merge10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "id": "a512f24c-135b-44e7-a93c-e6a5c7e8b754",
+          "nome": "Aquáticus Design",
+          "subsegmento": "Aquarium, Aquarium shop",
+          "endereco": "Aquáticus Design - Praça Filogomiro Lanes, 78 - Jardim da Penha, Vitória - ES, 29060-740, Brazil",
+          "bairro": "Jardim da Penha",
+          "cep": "29060-740",
+          "cidade": "Vitória",
+          "estado": "ES",
+          "telefone": "+552730296682",
+          "website": null,
+          "nota": 4.8,
+          "qtd_avaliacoes": 296,
+          "distribuicao_notas": [
+            4,
+            1,
+            6,
+            29,
+            256
+          ],
+          "status": "ativo",
+          "horarios": {
+            "Friday": "9 AM–12 PM",
+            "Monday": "Closed",
+            "Sunday": "Closed",
+            "Tuesday": "9 AM–12 PM",
+            "Saturday": "9 AM–1 PM",
+            "Thursday": "9 AM–12 PM",
+            "Wednesday": "9 AM–12 PM"
+          },
+          "faixa_preco": null,
+          "qtd_fotos": 23,
+          "fotos": [
+            {
+              "url": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAGDzcJmAsVohSRQdfLkhRXaXNX5I52nIC2HYAGUGNTnl8hWanGyDAAL-Y_eYljM-EwF6qOzl8A5lPYHvne5XrFIWFb4Bde9X4SyzUUBT6vSg2KrZSccgVcSRr2u2wTknJzYaFQ=s800-k-no",
+              "description": "All"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAGg-WqzmmU5Ebf8cbf82CcwX6MCAcHu1EIi4QP0w5SvOGQJrcBuLwdOEAS57pohufLNGYScL86tPHBN6zcEnPxg7lZirBAW5SwpH16_OVHld9KpwpmrHdNlIhN1CqJrVBWP3nDm=s800-k-no",
+              "description": "By owner"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAFCj0Udm_NEtZoYtp2DSGrGJX-KFKraCcyjpYpo3ayCW46aMTGKJLNKZb6tXI9h4-r_MYTBuPIiefa-wSdJcA1MKH5Zdszdy-VEB2g5QEmR3XnhIj3NoUFoHS6Byz1RJVYMFMS1oA=s800-k-no",
+              "description": "Videos"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAH2blI0V3Xq_H4027r4pulK5iXRgvDs_IeWBUoRBmsAE_rPr5lB_gIUcY--HUXKXhs3yKpCGvyaJWLGMttX_EZ0FmCfaypoJ9XxwVMuRk3ldmSOgxVFxn2frbW0k_nG0ZYyAy_v=w224-h298-k-no-pi-0-ya19.899998-ro-0-fo100",
+              "description": "Street View & 360°"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/grass-cs/ANxoTn1QTIr-2ysTRC-x9ACfTX44g2pCwbauMLhmeBCqk3OhHRE4AxIsRr-t6TPXN7VuBeFjig6atICVzdBfJVHIvE1PyYfHD53TUXDbU9qgWl4r3CCD0SoRweSeR3vrqzB2EdeA2qp7TbnMrL26=s800-k-no",
+              "description": "review"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/grass-cs/ANxoTn0ytRk0pJ2M5wHXCoUEPevkucOAxPLmzSdt9r45Be9NwDvYn-0ke8s0c-SUsEODRjpkrzd66LD8NujnVRlltOBu-jKOw99T8z0h4huS1kgtn0sRnmmcgggVEUiOiJhhFbK9KohqBJjP_BSc=s800-k-no",
+              "description": "review"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/grass-cs/ANxoTn1p4nWiACWF4SA5c2FL6fuP8uqrtTdzjSstNNupEfOCd5_IuQdv2wDgCF_srg6SLArLlyZPnPPnQA1R0ndKduDWFb1XIX5DbVLPHIYz7BNqWBL2_XBwK4E3U5HjpaSvSTDJG95Mb2IRpGI4=s800-k-no",
+              "description": "review"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/grass-cs/ANxoTn1URglnZgseeiNJDBZXuz_UTc6osoapePHBozsyfo4Sd3wryzhj6hmFudcY-VbKx75RzYo0sQ0x13T3mcoD_hSCnl6SDxyEJ2HgXSglIED7l9REwzVgXycWX4M2rD6tZPUz0qZubCGxqYE=s800-k-no",
+              "description": "review"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/grass-cs/ANxoTn3BejFizauyXHAY8YHb_CtdRsX9gwhbmr3BJDoeq5Rl43ElDz4wyJ8ULSVTq38IJHqU1_DtxjgIkVEoVX0Oi_9KcRtKNrM8a4I6YLISZvb49LsY2xidOp7PCnlLik1cpRYJOMbI3LVQmHw=s800-k-no",
+              "description": "review"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/grass-cs/ANxoTn1mEUPlkNXjIQCnFQc5NnQfneIym6iMBWVpCAllpAdH82ZUK3GM36TQBvuUlTwwv4NZKeuyc1guTFygdjnb5esblSNlAj9l-ImtoNMKplVDNBpr8aT9DsRlDKPKXZ0V6AHVbC6uVA_uHFsz=s800-k-no",
+              "description": "review"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/grass-cs/ANxoTn2lRdTXH_EvivVv31k620Kyv7wIcUBy_N9xnhVobeZX_xm-9Y2u5eIhAGL7eTyDpJ4IbSNP-HCj64m-1F5COEhhsa4KPviTwInGGk1FT4Uj5IsJWHinGiA0JsMKf-MyCu_1QBShOF4JCVY=s800-k-no",
+              "description": "review"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/grass-cs/ANxoTn0pLUCdJLrFmv1Cbd-xOjOk-eAGuC9M1W6mr-2z-fBlq3yLih0nBLHqlqjCloWjmOEp1AE51O-IhkUmn2oTQmY7z1SyqPHwXxA9PCy9qd28MkvB-ZCT5WP8jWyR_VSZnNOXUTE1Ts24zLA=s800-k-no",
+              "description": "review"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/grass-cs/ANxoTn0oZ_7OzhujRvAKshirZhKmTE9DVIU1bQMi_XG4CDqmA4-fAEyABQsppipdo0BNLO1mMSBsOz-wk3vp-OpH1OkFk1X6e_8M-aKMv8FUeMWJf6qdEiGPrd5-rc99UXHYCyvhvVKrvKd4wR6o=s800-k-no",
+              "description": "review"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/grass-cs/ANxoTn3Zi_Led7Y0xPKq5o7bEsA76qEP1RA6-7n3ZQOsRuI5wFHYE0pLd23LjcY3lWeU6XAy235WEUgqMMj2UnM16b6yx-AZ-p2mwlEYISKz6WIXhhnqqMnYpN3_AHVdxCjQNx6B88br-zdpGbxQ=s800-k-no",
+              "description": "review"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/grass-cs/ANxoTn0pC4ojOiUQ1oBObsRNrXHybLB_CrtSTX8wEnhDIjR8uRNqTKUaeVq90EzEd6w2MkxAD_uLCaol4CSBpMJ_VhGY9ayzbBoNyVOzgJjnSDRQrM6iwivyYq92f7yO5u4VrVGMZnVs3XeNpr6J=s800-k-no",
+              "description": "review"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/grass-cs/ANxoTn1imYblB7CEQ-zG9wdnCAS5TAk69X5Iga8JedW0vo95VMkIXUPeLJce83n8PUwOb-GBbF0iGUPVhiW6xai7hvBvE3y2pmBy2nJuH-Kvdt2zqaYHw-tAJnlJNoyKNCP5CsNl3cDKuj0m_-s=s800-k-no",
+              "description": "review"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/grass-cs/ANxoTn1q7dRIVJ5JYjuvGDc1F9DgaRFOE_-9u33JhnRViVIjB20h9TLusZNneFB7J-Y0PQ1c6LhHDcqVHQRVbO1wVWAVLRsUh5wx2awoTh6KRsZcgj1qXGb5-KQUu_bfJfY3MCMmOnp3-SwwvMA=s800-k-no",
+              "description": "review"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/grass-cs/ANxoTn1LygL6_ppOARI17jCE0l2bagErifBDc3xQFdaQkpPgqogaJZRlDJSyRHSAl8IJF9kxTpTJWjQMXNZoWGQ_gd86dWNp6xQpTTX6WmocuX3FCSgBPUyP6mGnN3xB-6usRg3K2IwKdYMIVawo=s800-k-no",
+              "description": "review"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/grass-cs/ANxoTn3bDLKV15-swf4qGZbZ3Dn2tc5WyRGUl0_wAq-X6-Dd2komyWZIVtI6GgOHFgd8nH1QrD1Cd1xYb3wWpxjhWUbQ72s3XtBBwfZhSZDSVfks_hvSA01sno6IOSSSwNb-JXYvH4IIWHah6YGa=s800-k-no",
+              "description": "review"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/grass-cs/ANxoTn31X8uNEoyg8dW_g6eyBRZu8U8MMT0CfvCP4nVKPwOenT-j_iLvGbIqDSLPmjPxdXz4jJBcBUn3AS0sqx9H5lvWGgZ7OTZ1TUUcUxLVnYb7AmWtnhT-6Yke-KYyWSSgnW74RvmmiRe95ZE=s800-k-no",
+              "description": "review"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/grass-cs/ANxoTn28q5wVbJf7bevLLpAlg-GtgGQUQmhdZC9uGJ0jgm5jYl2eihDjY9PVR9ZDr5Pcy2CEPYQqU0RT1vaXOwvAEF1h1JkwiZMXpCPOHwiuwzzNII6p8y60OKxpg_5nNfxHg-0sLdR6xNdc3OQ=s800-k-no",
+              "description": "review"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/grass-cs/ANxoTn2xsMeILsdGrYlHvwlkCB-I2T73lvXwYzCbtAZ5ANXupQdh5xAisuX0OmoyLXrTaGo1Abn6LnR7HByfc2V28jPY1Insf4ccNUauYx2yY7E7LSo3JQj0DvmjIFd5-gw4-aRln9N6eAnJmks=s800-k-no",
+              "description": "review"
+            },
+            {
+              "url": "https://lh3.googleusercontent.com/grass-cs/ANxoTn38VYGScZhpHrRkx-v8wK5ZUs7VJaur5TNYTVCcBx5zyuDFafDUZJwtIEbGu87lGThg1zjme8NswzKeQexePiLGepw3GlCAC22vjNMaI9IA8nmZu1qQ4VY_L2-6_m20POsS2IqhuwQ9JSW8=s800-k-no",
+              "description": "review"
+            }
+          ],
+          "resumo": null,
+          "acessibilidade": "Wheelchair accessible entrance, Wheelchair accessible parking lot",
+          "email": null,
+          "telefone_extra": null,
+          "instagram": null,
+          "facebook": null,
+          "link_google_maps": "https://www.google.com/maps/place/data=!3m1!4b1!4m2!3m1!1s0xb817f69fd0fba3:0x12a60e2299b13d65",
+          "google_id": "0xb817f69fd0fba3:0x12a60e2299b13d65",
+          "place_id": "ChIJo_vQn_YXuAARZT2xmSIOphI",
+          "verificado": "true",
+          "timezone": "America/Sao_Paulo",
+          "created_at": "2026-06-24T18:37:39.344501+00:00",
+          "atualizacoes": null,
+          "reviews": [
+            {
+              "iso_date": "2026-05-26 09:02:17",
+              "review_id": "Ci9DQUlRQUNvZENodHljRjlvT2poQlpVbzNUMDU0TlMxTlRIWldVVll4Y2tGelVXYxAB",
+              "user_link": "https://www.google.com/maps/contrib/114835216961463744812?hl=en-GB",
+              "user_name": "Joelson Passos",
+              "review_link": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2poQlpVbzNUMDU0TlMxTlRIWldVVll4Y2tGelVXYxAB!2m1!1s0x0:0x12a60e2299b13d65!3m1!1s2@1:CAIQACodChtycF9oOjhBZUo3T054NS1NTHZWUVYxckFzUWc%7C%7C?hl=en",
+              "review_rate": 5,
+              "review_text": null,
+              "review_time": "4 weeks ago",
+              "user_avatar": "https://lh3.googleusercontent.com/a-/ALV-UjVaoOh5dhwH0rf4WRVrnthR86yjI0oB914pgB8NCEtX2zEI-e1pzQ=s120-c-rp-mo-ba12-br100",
+              "review_cursor": "Ci8IARInCgoAP72GGcesJP__EhBwmXtJnj_72EiJ0XYAAAAAGgf_AmGcesJPGAAiAA:1",
+              "review_photos": [],
+              "review_services": [],
+              "review_timestamp": 1779786137008426,
+              "user_total_photos": 118,
+              "iso_date_timestamp": 1779786137008426,
+              "user_total_reviews": 1,
+              "iso_date_of_last_edit": "2026-05-26 09:02:17",
+              "business_response_text": null,
+              "iso_date_of_last_edit_timestamp": 1779786137008426
+            },
+            {
+              "iso_date": "2026-05-17 01:13:07",
+              "review_id": "Ci9DQUlRQUNvZENodHljRjlvT21OM01FUnNWRmRxT0VwWE1DMTZUMlprTTJaaE1uYxAB",
+              "user_link": "https://www.google.com/maps/contrib/112588121339516991708?hl=en-GB",
+              "user_name": "Edson Delatorre",
+              "review_link": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT21OM01FUnNWRmRxT0VwWE1DMTZUMlprTTJaaE1uYxAB!2m1!1s0x0:0x12a60e2299b13d65!3m1!1s2@1:CAIQACodChtycF9oOmN3MERsVFdqOEpXMC16T2ZkM2ZhMnc%7C%7C?hl=en",
+              "review_rate": 5,
+              "review_text": null,
+              "review_time": "a month ago",
+              "user_avatar": "https://lh3.googleusercontent.com/a-/ALV-UjW1y1JfVTgTTlssh1hdREnelqpal7zyEUlg08dd10VFHuLa3xJcnw=s120-c-rp-mo-ba12-br100",
+              "review_cursor": "CjEIARIpCgoAP72GHMgYcS__EhBDDFTYN-Zs7os0RGQAAAAAGgn9-tsCYcyBhxIYACIA:2",
+              "review_photos": [],
+              "review_services": {
+                "Wait time": "No wait",
+                "Visited on": "Weekday",
+                "Reservation recommended": "No"
+              },
+              "review_timestamp": 1778980387053692,
+              "user_total_photos": 11,
+              "iso_date_timestamp": 1778980387053692,
+              "user_total_reviews": 34,
+              "iso_date_of_last_edit": "2026-05-17 01:13:07",
+              "business_response_text": null,
+              "iso_date_of_last_edit_timestamp": 1778980387053692
+            },
+            {
+              "iso_date": "2026-04-14 01:15:47",
+              "review_id": "Ci9DQUlRQUNvZENodHljRjlvT2xGQmIwOVBWMkl4ZVdNM1ZrY3pWbFJwWTNJNU1FRRAB",
+              "user_link": "https://www.google.com/maps/contrib/100852284424062194158?hl=en-GB",
+              "user_name": "sandra sandra",
+              "review_link": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2xGQmIwOVBWMkl4ZVdNM1ZrY3pWbFJwWTNJNU1FRRAB!2m1!1s0x0:0x12a60e2299b13d65!3m1!1s2@1:CAIQACodChtycF9oOlFBb09PV2IxeWM3VkczVlRpY3I5MEE%7C%7C?hl=en",
+              "review_rate": 5,
+              "review_text": null,
+              "review_time": "2 months ago",
+              "user_avatar": "https://lh3.googleusercontent.com/a/ACg8ocKG13W5W5okIgwEUkbu5-5sIRomR3zKXgINLLgjVWfrbg6whg=s120-c-rp-mo-ba12-br100",
+              "review_cursor": "CjEIARIpCgoAP72GJ2cPN___EhCB6PJJXqa4ulkRi5EAAAAAGgn9-x4CYnZw838YACIA:3",
+              "review_photos": [],
+              "review_services": {
+                "Wait time": "No wait",
+                "Visited on": "Weekend",
+                "Reservation recommended": "Not sure"
+              },
+              "review_timestamp": 1776129346688442,
+              "user_total_photos": 181,
+              "iso_date_timestamp": 1776129346688442,
+              "user_total_reviews": 30,
+              "iso_date_of_last_edit": "2026-04-14 01:15:47",
+              "business_response_text": null,
+              "iso_date_of_last_edit_timestamp": 1776129346688442
+            },
+            {
+              "iso_date": "2026-04-13 23:23:14",
+              "review_id": "Ci9DQUlRQUNvZENodHljRjlvT2w5MGFFTkRYMVF6T1dvellUbDBPRVZtVlZjMFFsRRAB",
+              "user_link": "https://www.google.com/maps/contrib/115508322023822934418?hl=en-GB",
+              "user_name": "Lenita Denadai",
+              "review_link": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2w5MGFFTkRYMVF6T1dvellUbDBPRVZtVlZjMFFsRRAB!2m1!1s0x0:0x12a60e2299b13d65!3m1!1s2@1:CAIQACodChtycF9oOl90aENDX1QzOWozYTl0OEVmVVc0QlE%7C%7C?hl=en",
+              "review_rate": 5,
+              "review_text": null,
+              "review_time": "2 months ago",
+              "user_avatar": "https://lh3.googleusercontent.com/a-/ALV-UjVL9ArQ_2s0YgPT1MhBVUtbnHmqNa4WDjFqPV-Lf4bs0-ezXtBU=s120-c-rp-mo-ba12-br100",
+              "review_cursor": "CjEIARIpCgoAP72GJ21_7Q__EhBHfDv9-0b1wmaG9dkAAAAAGgn9-yYCYnbX_tAYACIA:4",
+              "review_photos": [],
+              "review_services": {
+                "Visited on": "Weekend"
+              },
+              "review_timestamp": 1776122593583389,
+              "user_total_photos": 43,
+              "iso_date_timestamp": 1776122593583389,
+              "user_total_reviews": 35,
+              "iso_date_of_last_edit": "2026-04-13 23:23:14",
+              "business_response_text": null,
+              "iso_date_of_last_edit_timestamp": 1776122593583389
+            },
+            {
+              "iso_date": "2026-04-01 19:08:22",
+              "review_id": "Ci9DQUlRQUNvZENodHljRjlvT210Nk5UQnphMmhoU1RKNlREUnZUbk00VXpaNmJuYxAB",
+              "user_link": "https://www.google.com/maps/contrib/107887576420145728557?hl=en-GB",
+              "user_name": "Leonardo Francisco",
+              "review_link": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT210Nk5UQnphMmhoU1RKNlREUnZUbk00VXpaNmJuYxAB!2m1!1s0x0:0x12a60e2299b13d65!3m1!1s2@1:CAIQACodChtycF9oOmt6NTBza2hhSTJ6TDRvTnM4UzZ6bnc%7C%7C?hl=en",
+              "review_rate": 5,
+              "review_text": "Loja bem arrumada, tem bastante coisas, principalmente para Aquário d água doce",
+              "review_time": "2 months ago",
+              "user_avatar": "https://lh3.googleusercontent.com/a/ACg8ocIBtc37gS83iMRys-CVIM8IRvZ4AzQQPXlMTHncXG7_9J_qTW4=s120-c-rp-mo-br100",
+              "review_cursor": "Ci8IARInCgoAP72GK1jaKg__EhDWLRSjhsaDAlPEhkQAAAAAGgf_AmK1jaKgGAAiAA:5",
+              "review_photos": [],
+              "review_services": [],
+              "review_timestamp": 1775070502239041,
+              "user_total_photos": 0,
+              "iso_date_timestamp": 1775070502239041,
+              "user_total_reviews": 3,
+              "iso_date_of_last_edit": "2026-04-01 19:08:22",
+              "business_response_text": null,
+              "iso_date_of_last_edit_timestamp": 1775070502239041
+            },
+            {
+              "iso_date": "2026-03-24 22:01:25",
+              "review_id": "Ci9DQUlRQUNvZENodHljRjlvT21GZk4zQkljMkl4WldkV2FIZElYMkZ1Y1hoRFJHYxAB",
+              "user_link": "https://www.google.com/maps/contrib/105156345061947741256?hl=en-GB",
+              "user_name": "Diovani painter",
+              "review_link": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT21GZk4zQkljMkl4WldkV2FIZElYMkZ1Y1hoRFJHYxAB!2m1!1s0x0:0x12a60e2299b13d65!3m1!1s2@1:CAIQACodChtycF9oOmFfN3BIc2IxZWdWaHdIX2FucXhDRGc%7C%7C?hl=en",
+              "review_rate": 5,
+              "review_text": "loja de Peixes muito bem organizada",
+              "review_time": "2 months ago",
+              "user_avatar": "https://lh3.googleusercontent.com/a-/ALV-UjXatMQGx3iCNHow-ux0leV2rWH3gFRt8xfJ3qcV9qv7Ue1xMSBi=s120-c-rp-mo-ba12-br100",
+              "review_cursor": "Ci8IARInCgoAP72GLeIhTj__EhAQtT60R3YAiF06XewAAAAAGgf_AmLeIhTjGAAiAA:6",
+              "review_photos": [],
+              "review_services": {
+                "Wait time": "No wait",
+                "Visited on": "Weekday",
+                "Reservation recommended": "Yes"
+              },
+              "review_timestamp": 1774389685020147,
+              "user_total_photos": 21,
+              "iso_date_timestamp": 1774389685020147,
+              "user_total_reviews": 229,
+              "iso_date_of_last_edit": "2026-03-24 22:01:25",
+              "business_response_text": null,
+              "iso_date_of_last_edit_timestamp": 1774389685020147
+            },
+            {
+              "iso_date": "2026-03-03 15:59:25",
+              "review_id": "Ci9DQUlRQUNvZENodHljRjlvT2s1eWQxaGxkbGRhYm1acWNVaFpaMlEzZGpGa1MyYxAB",
+              "user_link": "https://www.google.com/maps/contrib/117667462468222604666?hl=en-GB",
+              "user_name": "Nicole Pontes Menegardo",
+              "review_link": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2s1eWQxaGxkbGRhYm1acWNVaFpaMlEzZGpGa1MyYxAB!2m1!1s0x0:0x12a60e2299b13d65!3m1!1s2@1:CAIQACodChtycF9oOk5yd1hldldabmZqcUhZZ2Q3djFkS2c%7C%7C?hl=en",
+              "review_rate": 5,
+              "review_text": null,
+              "review_time": "3 months ago",
+              "user_avatar": "https://lh3.googleusercontent.com/a/ACg8ocLRxShTRbhKpXFvti9zZkSyq2TNGnc3nscoyFgjQfEMFBUgKw=s120-c-rp-mo-br100",
+              "review_cursor": "CjEIARIpCgoAP72GNLkw5D__EhB9FzdD0llb9jE4hA4AAAAAGgn9-0wCY0uTDkMYACIA:7",
+              "review_photos": [],
+              "review_services": {
+                "Wait time": "No wait",
+                "Visited on": "Weekday"
+              },
+              "review_timestamp": 1772553564604131,
+              "user_total_photos": 0,
+              "iso_date_timestamp": 1772553564604131,
+              "user_total_reviews": 1,
+              "iso_date_of_last_edit": "2026-03-03 15:59:25",
+              "business_response_text": null,
+              "iso_date_of_last_edit_timestamp": 1772553564604131
+            },
+            {
+              "iso_date": "2026-02-19 21:29:44",
+              "review_id": "Ci9DQUlRQUNvZENodHljRjlvT25CM2NqWlFhRFJRTm5kSVpFZHNSSEF0VFhaaFkyYxAB",
+              "user_link": "https://www.google.com/maps/contrib/110717149385911301944?hl=en-GB",
+              "user_name": "Emerson Querubino",
+              "review_link": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT25CM2NqWlFhRFJRTm5kSVpFZHNSSEF0VFhaaFkyYxAB!2m1!1s0x0:0x12a60e2299b13d65!3m1!1s2@1:CAIQACodChtycF9oOnB3cjZQaDRQNndIZEdsRHAtTXZhY2c%7C%7C?hl=en",
+              "review_rate": 5,
+              "review_text": null,
+              "review_time": "4 months ago",
+              "user_avatar": "https://lh3.googleusercontent.com/a-/ALV-UjXj961Om8EGobJMZRgvfii7pap-S1TEP9J65nbKLDsqrpNYXsE=s120-c-rp-mo-br100",
+              "review_cursor": "CjEIARIpCgoAP72GOIMPDM__EhAcnOzdNyeXC_DCNzQAAAAAGgn9-tgCY4gw8MwYACIA:8",
+              "review_photos": [],
+              "review_services": {
+                "Wait time": "No wait",
+                "Visited on": "Weekday",
+                "Reservation recommended": "No"
+              },
+              "review_timestamp": 1771536584499146,
+              "user_total_photos": 0,
+              "iso_date_timestamp": 1771536584499146,
+              "user_total_reviews": 4,
+              "iso_date_of_last_edit": "2026-02-19 21:29:44",
+              "business_response_text": null,
+              "iso_date_of_last_edit_timestamp": 1771536584499146
+            },
+            {
+              "iso_date": "2026-02-12 14:25:33",
+              "review_id": "Ci9DQUlRQUNvZENodHljRjlvT2tGMFh6TnZkVkF0ZFhaRVgyWkdSak5TTW5JdFdVRRAB",
+              "user_link": "https://www.google.com/maps/contrib/118187548704370080400?hl=en-GB",
+              "user_name": "Andre Schieck",
+              "review_link": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2tGMFh6TnZkVkF0ZFhaRVgyWkdSak5TTW5JdFdVRRAB!2m1!1s0x0:0x12a60e2299b13d65!3m1!1s2@1:CAIQACodChtycF9oOkF0XzNvdVAtdXZEX2ZGRjNSMnItWUE%7C%7C?hl=en",
+              "review_rate": 5,
+              "review_text": "Espaço bem localizado em Jardim da Penha, sendo uma loja pequena, mas com uma enorme variedade de peixes e produtos para aquário, como pedras, plantas, galhos e outros itens que deixam seu aquário ainda mais lindo. Ha uma enorme variedade de peixes, tanto para água doce como para água salgada, além dos produtos a serem colocados no aquário. No sábado pela manhã a loja estava bem movimentada. O atendimento é muito bom. Vale a pena conferir!",
+              "review_time": "4 months ago",
+              "user_avatar": "https://lh3.googleusercontent.com/a/ACg8ocKLX1B7hMueamakFJjmx7H65WUXw_Xi4dr_kf4Hd5n-xG_1KA=s120-c-rp-mo-ba12-br100",
+              "review_cursor": "CjEIARIpCgoAP72GOtwIPH__EhCCHAECqvqnJshwtgYAAAAAGgn92PsCY63Ag8cYACIA:9",
+              "review_photos": [
+                "https://lh3.googleusercontent.com/grass-cs/ANxoTn1QTIr-2ysTRC-x9ACfTX44g2pCwbauMLhmeBCqk3OhHRE4AxIsRr-t6TPXN7VuBeFjig6atICVzdBfJVHIvE1PyYfHD53TUXDbU9qgWl4r3CCD0SoRweSeR3vrqzB2EdeA2qp7TbnMrL26=k-no",
+                "https://lh3.googleusercontent.com/grass-cs/ANxoTn0ytRk0pJ2M5wHXCoUEPevkucOAxPLmzSdt9r45Be9NwDvYn-0ke8s0c-SUsEODRjpkrzd66LD8NujnVRlltOBu-jKOw99T8z0h4huS1kgtn0sRnmmcgggVEUiOiJhhFbK9KohqBJjP_BSc=k-no",
+                "https://lh3.googleusercontent.com/grass-cs/ANxoTn1p4nWiACWF4SA5c2FL6fuP8uqrtTdzjSstNNupEfOCd5_IuQdv2wDgCF_srg6SLArLlyZPnPPnQA1R0ndKduDWFb1XIX5DbVLPHIYz7BNqWBL2_XBwK4E3U5HjpaSvSTDJG95Mb2IRpGI4=k-no",
+                "https://lh3.googleusercontent.com/grass-cs/ANxoTn1URglnZgseeiNJDBZXuz_UTc6osoapePHBozsyfo4Sd3wryzhj6hmFudcY-VbKx75RzYo0sQ0x13T3mcoD_hSCnl6SDxyEJ2HgXSglIED7l9REwzVgXycWX4M2rD6tZPUz0qZubCGxqYE=k-no",
+                "https://lh3.googleusercontent.com/grass-cs/ANxoTn3BejFizauyXHAY8YHb_CtdRsX9gwhbmr3BJDoeq5Rl43ElDz4wyJ8ULSVTq38IJHqU1_DtxjgIkVEoVX0Oi_9KcRtKNrM8a4I6YLISZvb49LsY2xidOp7PCnlLik1cpRYJOMbI3LVQmHw=k-no",
+                "https://lh3.googleusercontent.com/grass-cs/ANxoTn1mEUPlkNXjIQCnFQc5NnQfneIym6iMBWVpCAllpAdH82ZUK3GM36TQBvuUlTwwv4NZKeuyc1guTFygdjnb5esblSNlAj9l-ImtoNMKplVDNBpr8aT9DsRlDKPKXZ0V6AHVbC6uVA_uHFsz=k-no",
+                "https://lh3.googleusercontent.com/grass-cs/ANxoTn2lRdTXH_EvivVv31k620Kyv7wIcUBy_N9xnhVobeZX_xm-9Y2u5eIhAGL7eTyDpJ4IbSNP-HCj64m-1F5COEhhsa4KPviTwInGGk1FT4Uj5IsJWHinGiA0JsMKf-MyCu_1QBShOF4JCVY=k-no",
+                "https://lh3.googleusercontent.com/grass-cs/ANxoTn0pLUCdJLrFmv1Cbd-xOjOk-eAGuC9M1W6mr-2z-fBlq3yLih0nBLHqlqjCloWjmOEp1AE51O-IhkUmn2oTQmY7z1SyqPHwXxA9PCy9qd28MkvB-ZCT5WP8jWyR_VSZnNOXUTE1Ts24zLA=k-no",
+                "https://lh3.googleusercontent.com/grass-cs/ANxoTn0oZ_7OzhujRvAKshirZhKmTE9DVIU1bQMi_XG4CDqmA4-fAEyABQsppipdo0BNLO1mMSBsOz-wk3vp-OpH1OkFk1X6e_8M-aKMv8FUeMWJf6qdEiGPrd5-rc99UXHYCyvhvVKrvKd4wR6o=k-no",
+                "https://lh3.googleusercontent.com/grass-cs/ANxoTn3Zi_Led7Y0xPKq5o7bEsA76qEP1RA6-7n3ZQOsRuI5wFHYE0pLd23LjcY3lWeU6XAy235WEUgqMMj2UnM16b6yx-AZ-p2mwlEYISKz6WIXhhnqqMnYpN3_AHVdxCjQNx6B88br-zdpGbxQ=k-no",
+                "https://lh3.googleusercontent.com/grass-cs/ANxoTn0pC4ojOiUQ1oBObsRNrXHybLB_CrtSTX8wEnhDIjR8uRNqTKUaeVq90EzEd6w2MkxAD_uLCaol4CSBpMJ_VhGY9ayzbBoNyVOzgJjnSDRQrM6iwivyYq92f7yO5u4VrVGMZnVs3XeNpr6J=k-no",
+                "https://lh3.googleusercontent.com/grass-cs/ANxoTn1imYblB7CEQ-zG9wdnCAS5TAk69X5Iga8JedW0vo95VMkIXUPeLJce83n8PUwOb-GBbF0iGUPVhiW6xai7hvBvE3y2pmBy2nJuH-Kvdt2zqaYHw-tAJnlJNoyKNCP5CsNl3cDKuj0m_-s=k-no",
+                "https://lh3.googleusercontent.com/grass-cs/ANxoTn1q7dRIVJ5JYjuvGDc1F9DgaRFOE_-9u33JhnRViVIjB20h9TLusZNneFB7J-Y0PQ1c6LhHDcqVHQRVbO1wVWAVLRsUh5wx2awoTh6KRsZcgj1qXGb5-KQUu_bfJfY3MCMmOnp3-SwwvMA=k-no",
+                "https://lh3.googleusercontent.com/grass-cs/ANxoTn1LygL6_ppOARI17jCE0l2bagErifBDc3xQFdaQkpPgqogaJZRlDJSyRHSAl8IJF9kxTpTJWjQMXNZoWGQ_gd86dWNp6xQpTTX6WmocuX3FCSgBPUyP6mGnN3xB-6usRg3K2IwKdYMIVawo=k-no",
+                "https://lh3.googleusercontent.com/grass-cs/ANxoTn3bDLKV15-swf4qGZbZ3Dn2tc5WyRGUl0_wAq-X6-Dd2komyWZIVtI6GgOHFgd8nH1QrD1Cd1xYb3wWpxjhWUbQ72s3XtBBwfZhSZDSVfks_hvSA01sno6IOSSSwNb-JXYvH4IIWHah6YGa=k-no",
+                "https://lh3.googleusercontent.com/grass-cs/ANxoTn31X8uNEoyg8dW_g6eyBRZu8U8MMT0CfvCP4nVKPwOenT-j_iLvGbIqDSLPmjPxdXz4jJBcBUn3AS0sqx9H5lvWGgZ7OTZ1TUUcUxLVnYb7AmWtnhT-6Yke-KYyWSSgnW74RvmmiRe95ZE=k-no",
+                "https://lh3.googleusercontent.com/grass-cs/ANxoTn28q5wVbJf7bevLLpAlg-GtgGQUQmhdZC9uGJ0jgm5jYl2eihDjY9PVR9ZDr5Pcy2CEPYQqU0RT1vaXOwvAEF1h1JkwiZMXpCPOHwiuwzzNII6p8y60OKxpg_5nNfxHg-0sLdR6xNdc3OQ=k-no",
+                "https://lh3.googleusercontent.com/grass-cs/ANxoTn2xsMeILsdGrYlHvwlkCB-I2T73lvXwYzCbtAZ5ANXupQdh5xAisuX0OmoyLXrTaGo1Abn6LnR7HByfc2V28jPY1Insf4ccNUauYx2yY7E7LSo3JQj0DvmjIFd5-gw4-aRln9N6eAnJmks=k-no",
+                "https://lh3.googleusercontent.com/grass-cs/ANxoTn38VYGScZhpHrRkx-v8wK5ZUs7VJaur5TNYTVCcBx5zyuDFafDUZJwtIEbGu87lGThg1zjme8NswzKeQexePiLGepw3GlCAC22vjNMaI9IA8nmZu1qQ4VY_L2-6_m20POsS2IqhuwQ9JSW8=k-no"
+              ],
+              "review_services": {
+                "Wait time": "No wait",
+                "Visited on": "Weekend",
+                "Reservation recommended": "No"
+              },
+              "review_timestamp": 1770906418232458,
+              "user_total_photos": 1119,
+              "iso_date_timestamp": 1770906332715804,
+              "user_total_reviews": 312,
+              "iso_date_of_last_edit": "2026-02-12 14:26:58",
+              "business_response_text": null,
+              "iso_date_of_last_edit_timestamp": 1770906418232458
+            },
+            {
+              "iso_date": "2026-02-08 20:38:49",
+              "review_id": "Ci9DQUlRQUNvZENodHljRjlvT25aeVkyaFVlbEo0Y1doeWFrWm9NVU5sYUV0dFIxRRAB",
+              "user_link": "https://www.google.com/maps/contrib/102185558204781105298?hl=en-GB",
+              "user_name": "leandro ferreira",
+              "review_link": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT25aeVkyaFVlbEo0Y1doeWFrWm9NVU5sYUV0dFIxRRAB!2m1!1s0x0:0x12a60e2299b13d65!3m1!1s2@1:CAIQACodChtycF9oOnZyY2hUelJ4cWhyakZoMUNlaEttR1E%7C%7C?hl=en",
+              "review_rate": 5,
+              "review_text": null,
+              "review_time": "4 months ago",
+              "user_avatar": "https://lh3.googleusercontent.com/a-/ALV-UjUQ5Nxeed2V-4FUSSz--DWcvfvjYJWUmChUJuIwA107tHWvk-HHbA=s120-c-rp-mo-ba12-br100",
+              "review_cursor": "Ci8IARInCgoAP72GPBBYKK__EhD7R1dXZDuzAMuNVaEAAAAAGgf_AmPBBYKKGAAiAA:10",
+              "review_photos": [],
+              "review_services": [],
+              "review_timestamp": 1770583129461104,
+              "user_total_photos": 0,
+              "iso_date_timestamp": 1770583129461104,
+              "user_total_reviews": 21,
+              "iso_date_of_last_edit": "2026-02-08 20:38:49",
+              "business_response_text": null,
+              "iso_date_of_last_edit_timestamp": 1770583129461104
+            },
+            {
+              "iso_date": "2026-02-05 18:00:01",
+              "review_id": "Ci9DQUlRQUNvZENodHljRjlvT20wNUxYTllVbmhvV1dOR1pFUldjbUYzVVc1Vk1FRRAB",
+              "user_link": "https://www.google.com/maps/contrib/114128885376776818247?hl=en-GB",
+              "user_name": "Luciene F.R.Martins",
+              "review_link": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT20wNUxYTllVbmhvV1dOR1pFUldjbUYzVVc1Vk1FRRAB!2m1!1s0x0:0x12a60e2299b13d65!3m1!1s2@1:CAIQACodChtycF9oOm05LXNYUnhoWWNGZERWcmF3UW5VMEE%7C%7C?hl=en",
+              "review_rate": 1,
+              "review_text": "Achei a loja muito bonita,muitos peixes,corais e plantas diferentes,porém achei tudo meio caro comparado com outras lojas de aquarismo que tem lá perto....mas fora isso achei muito bonito",
+              "review_time": "4 months ago",
+              "user_avatar": "https://lh3.googleusercontent.com/a-/ALV-UjWXANnJ9dWZM8Iqw9C_ZNyRoDLEue8YvhM1u4u2fTif_o743VXeQQ=s120-c-rp-mo-ba12-br100",
+              "review_cursor": "CjEIARIpCgoAP72GPRCfsB__EhBDSfUcHEJW5bKLpDgAAAAAGgn92XkCY9EJ-wEYACIA:11",
+              "review_photos": [],
+              "review_services": {
+                "Wait time": "No wait",
+                "Visited on": "Weekday",
+                "Reservation recommended": "No"
+              },
+              "review_timestamp": 1770314401022095,
+              "user_total_photos": 103,
+              "iso_date_timestamp": 1770314401022095,
+              "user_total_reviews": 20,
+              "iso_date_of_last_edit": "2026-02-05 18:00:01",
+              "business_response_text": null,
+              "iso_date_of_last_edit_timestamp": 1770314401022095
+            },
+            {
+              "iso_date": "2026-01-22 14:13:39",
+              "review_id": "Ci9DQUlRQUNvZENodHljRjlvT2tKemMxVmtibDlUUTFNNVVETk5NSEI2VkdaSVJIYxAB",
+              "user_link": "https://www.google.com/maps/contrib/112557200271411422845?hl=en-GB",
+              "user_name": "Talitha Feitosa",
+              "review_link": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2tKemMxVmtibDlUUTFNNVVETk5NSEI2VkdaSVJIYxAB!2m1!1s0x0:0x12a60e2299b13d65!3m1!1s2@1:CAIQACodChtycF9oOkJzc1Vkbl9TQ1M5UDNNMHB6VGZIRHc%7C%7C?hl=en",
+              "review_rate": 3,
+              "review_text": null,
+              "review_time": "5 months ago",
+              "user_avatar": "https://lh3.googleusercontent.com/a-/ALV-UjW-v-Jl_qr0StwVG_QcZQ2ClRFcI-RDK-50w4_eCokpzKF--_vO=s120-c-rp-mo-ba12-br100",
+              "review_cursor": "Ci8IARInCgoAP72GQZ8kEl__EhDtVv_0HDsLAJMxGmgAAAAAGgf_AmQZ8kElGAAiAA:12",
+              "review_photos": [],
+              "review_services": [],
+              "review_timestamp": 1769091219162032,
+              "user_total_photos": 230,
+              "iso_date_timestamp": 1769091219162032,
+              "user_total_reviews": 258,
+              "iso_date_of_last_edit": "2026-01-22 14:13:39",
+              "business_response_text": null,
+              "iso_date_of_last_edit_timestamp": 1769091219162032
+            },
+            {
+              "iso_date": "2025-08-26 09:52:59",
+              "review_id": "Ci9DQUlRQUNvZENodHljRjlvT25walozRjZXbkJqWmtjNGJUQjBWbGd3YzNoYU9FRRAB",
+              "user_link": "https://www.google.com/maps/contrib/104051368012895834419?hl=en-GB",
+              "user_name": "Neto Vivo",
+              "review_link": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT25walozRjZXbkJqWmtjNGJUQjBWbGd3YzNoYU9FRRAB!2m1!1s0x0:0x12a60e2299b13d65!3m1!1s2@1:CAIQACodChtycF9oOnpjZ3F6WnBjZkc4bTB0Vlgwc3haOEE%7C%7C?hl=en",
+              "review_rate": 5,
+              "review_text": "Lugar fantástico pra quem ama aquarismo, pra quem gosta de bichos, atendimento nota 10, variedades, pessoas de muito conhecimento, peixes lindíssimos, produtos de ótima qualidade, preços acessíveis!",
+              "review_time": "Edited 6 months ago",
+              "user_avatar": "https://lh3.googleusercontent.com/a-/ALV-UjUWYWNRu45OMqwwdo6hByT_q4t1aTq0pW5d91K2VR99KZYRTFcGLQ=s120-c-rp-mo-ba12-br100",
+              "owner_answer": {
+                "date": "7 months ago",
+                "text": {
+                  "en": "Thank you for your feedback, we are very happy to read it.\n\nCount on us, come back anytime!\n\n",
+                  "pt": "Grato por sua avaliação, ficamos muito felizes em lê-la.\nConte conosco, volte sempre!\n"
+                }
+              },
+              "review_cursor": "CjEIARIpCgoAP72GSvTMNE__EhDZnYhL29tz0YBW2dwAAAAAGgn92uwCZK9Mw0QYACIA:13",
+              "review_photos": [],
+              "review_services": {
+                "Wait time": "No wait",
+                "Visited on": "Weekday",
+                "Reservation recommended": "No"
+              },
+              "review_timestamp": 1766585482427806,
+              "user_total_photos": 49,
+              "iso_date_timestamp": 1756201979367415,
+              "user_total_reviews": 77,
+              "iso_date_of_last_edit": "2025-12-24 14:11:22",
+              "business_response_text": "Grato por sua avaliação, ficamos muito felizes em lê-la.\nConte conosco, volte sempre!\n",
+              "iso_date_of_last_edit_timestamp": 1766585482427806
+            },
+            {
+              "iso_date": "2025-12-02 17:36:21",
+              "review_id": "Ci9DQUlRQUNvZENodHljRjlvT21WcGJXMHRTRE5EUWxkTlZHVnVUMWd6UzJ0WGVuYxAB",
+              "user_link": "https://www.google.com/maps/contrib/112545285895674179379?hl=en-GB",
+              "user_name": "Matheus Boldrini",
+              "review_link": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT21WcGJXMHRTRE5EUWxkTlZHVnVUMWd6UzJ0WGVuYxAB!2m1!1s0x0:0x12a60e2299b13d65!3m1!1s2@1:CAIQACodChtycF9oOmVpbW0tSDNDQldNVGVuT1gzS2tXenc%7C%7C?hl=en",
+              "review_rate": 5,
+              "review_text": "Melhor loja de aquarismo do ES!  Excelentes opções de peixes, ambiente muito agradável",
+              "review_time": "6 months ago",
+              "user_avatar": "https://lh3.googleusercontent.com/a-/ALV-UjXkH7QW391WewqZpAOoPFJ9BIHWco4rGM5SoaqLGqP-j7kRN60W=s120-c-rp-mo-ba12-br100",
+              "review_cursor": "CjEIARIpCgoAP72GUf3QCV__EhCKnhEuoD1vfzLepRUAAAAAGgn92mwCZR_dAJUYACIA:14",
+              "review_photos": [],
+              "review_services": {
+                "Wait time": "No wait",
+                "Visited on": "Weekday",
+                "Reservation recommended": "Not sure"
+              },
+              "review_timestamp": 1764696981354460,
+              "user_total_photos": 11,
+              "iso_date_timestamp": 1764696981354460,
+              "user_total_reviews": 29,
+              "iso_date_of_last_edit": "2025-12-02 17:36:21",
+              "business_response_text": null,
+              "iso_date_of_last_edit_timestamp": 1764696981354460
+            },
+            {
+              "iso_date": "2025-11-20 09:56:14",
+              "review_id": "Ci9DQUlRQUNvZENodHljRjlvT2tWU2VuUm9lRGd5VlVrMllUTm1TM1JXWVZSQlYwRRAB",
+              "user_link": "https://www.google.com/maps/contrib/116926109667037945213?hl=en-GB",
+              "user_name": "ANDRÉ SILVA",
+              "review_link": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2tWU2VuUm9lRGd5VlVrMllUTm1TM1JXWVZSQlYwRRAB!2m1!1s0x0:0x12a60e2299b13d65!3m1!1s2@1:CAIQACodChtycF9oOkVSenRoeDgyVUk2YTNmS3RWYVRBV0E%7C%7C?hl=en",
+              "review_rate": 5,
+              "review_text": null,
+              "review_time": "7 months ago",
+              "user_avatar": "https://lh3.googleusercontent.com/a/ACg8ocIo-kJdJHNwZZRPKmEMl_R5XBQOiUe4bwISSFUGHXwrAc7hWsaw=s120-c-rp-mo-ba12-br100",
+              "review_cursor": "Ci8IARInCgoAP72GVfTo_s__EhBdQ0OqJcdZerWn4UYAAAAAGgf_AmVfTo_sGAAiAA:15",
+              "review_photos": [],
+              "review_services": [],
+              "review_timestamp": 1763632574483551,
+              "user_total_photos": 1,
+              "iso_date_timestamp": 1763632574483551,
+              "user_total_reviews": 16,
+              "iso_date_of_last_edit": "2025-11-20 09:56:14",
+              "business_response_text": null,
+              "iso_date_of_last_edit_timestamp": 1763632574483551
+            },
+            {
+              "iso_date": "2025-11-14 11:34:19",
+              "review_id": "Ci9DQUlRQUNvZENodHljRjlvT2podFUwSkpPV1ZtUWxGNVltVlpZa2x3U25kSFNsRRAB",
+              "user_link": "https://www.google.com/maps/contrib/103700962149141573370?hl=en-GB",
+              "user_name": "Luiz Eduardo Souza Batista",
+              "review_link": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2podFUwSkpPV1ZtUWxGNVltVlpZa2x3U25kSFNsRRAB!2m1!1s0x0:0x12a60e2299b13d65!3m1!1s2@1:CAIQACodChtycF9oOjhtU0JJOWVmQlF5YmVZYklwSndHSlE%7C%7C?hl=en",
+              "review_rate": 5,
+              "review_text": "Loja muito legal bastante variedade, lindos peixes e corais",
+              "review_time": "7 months ago",
+              "user_avatar": "https://lh3.googleusercontent.com/a/ACg8ocLHSZP-hPJBnX_sGK2_mPMNekAbL__7xq8K0bJ2D3uBtnK3oA=s120-c-rp-mo-ba12-br100",
+              "review_cursor": "CjEIARIpCgoAP72GV92uw5__EhBgxk7ntSJhAp50RxgAAAAAGgn93VMCZX3a7DkYACIA:16",
+              "review_photos": [],
+              "review_services": {
+                "Wait time": "No wait",
+                "Visited on": "Weekday",
+                "Reservation recommended": "No"
+              },
+              "review_timestamp": 1763120059334581,
+              "user_total_photos": 2,
+              "iso_date_timestamp": 1763120059334581,
+              "user_total_reviews": 17,
+              "iso_date_of_last_edit": "2025-11-14 11:34:19",
+              "business_response_text": null,
+              "iso_date_of_last_edit_timestamp": 1763120059334581
+            },
+            {
+              "iso_date": "2025-11-06 15:36:54",
+              "review_id": "Ci9DQUlRQUNvZENodHljRjlvT21ZdFVFeFBXRm93WkZoVVoxRTNVRE10ZUVOc1FrRRAB",
+              "user_link": "https://www.google.com/maps/contrib/102795587854172223548?hl=en-GB",
+              "user_name": "Viajando",
+              "review_link": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT21ZdFVFeFBXRm93WkZoVVoxRTNVRE10ZUVOc1FrRRAB!2m1!1s0x0:0x12a60e2299b13d65!3m1!1s2@1:CAIQACodChtycF9oOmYtUExPWFowZFhUZ1E3UDMteENsQkE%7C%7C?hl=en",
+              "review_rate": 5,
+              "review_text": null,
+              "review_time": "7 months ago",
+              "user_avatar": "https://lh3.googleusercontent.com/a/ACg8ocLMYYUkltq96bxz1lAvX9hAp2ov12uYGvsi7CKonY9RDqkKFA=s120-c-rp-mo-ba12-br100",
+              "owner_answer": {
+                "date": "7 months ago",
+                "text": {
+                  "en": "Thank you for your feedback, we are happy with the rating you gave us, come back anytime!\n\n",
+                  "pt": "Agradecemos por nos avaliar, ficamos felizes pela classificação que nos marcou, volte sempre!\n"
+                }
+              },
+              "review_cursor": "Ci8IARInCgoAP72GWmL7Yf__EhC5Cltz9Jh7Lv1J2YIAAAAAGgf_AmWmL7YfGAAiAA:17",
+              "review_photos": [],
+              "review_services": [],
+              "review_timestamp": 1762443413984325,
+              "user_total_photos": 18,
+              "iso_date_timestamp": 1762443413984325,
+              "user_total_reviews": 50,
+              "iso_date_of_last_edit": "2025-11-06 15:36:54",
+              "business_response_text": "Agradecemos por nos avaliar, ficamos felizes pela classificação que nos marcou, volte sempre!\n",
+              "iso_date_of_last_edit_timestamp": 1762443413984325
+            },
+            {
+              "iso_date": "2025-08-22 17:56:11",
+              "review_id": "Ci9DQUlRQUNvZENodHljRjlvT2tGRVFXZG9XV1V5YjBKVWRsTXlNa1JLWkhGMldVRRAB",
+              "user_link": "https://www.google.com/maps/contrib/100744417758197120401?hl=en-GB",
+              "user_name": "Rafael Simão Xavier",
+              "review_link": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2tGRVFXZG9XV1V5YjBKVWRsTXlNa1JLWkhGMldVRRAB!2m1!1s0x0:0x12a60e2299b13d65!3m1!1s2@1:CAIQACodChtycF9oOkFEQWdoWWUyb0JUdlMyMkRKZHF2WUE%7C%7C?hl=en",
+              "review_rate": 5,
+              "review_text": null,
+              "review_time": "10 months ago",
+              "user_avatar": "https://lh3.googleusercontent.com/a/ACg8ocIiLwLLQPgM8EDkf6UaaVQQEA71H8BcqDh7Y8TcHoJf4Naecg=s120-c-rp-mo-ba12-br100",
+              "owner_answer": {
+                "date": "7 months ago",
+                "text": {
+                  "en": "Thank you for your feedback, come back anytime!",
+                  "pt": "agrademos por sua avaliação, volte sempre!"
+                }
+              },
+              "review_cursor": "Ci8IARInCgoAP72GctE4N2__EhBWtng1jUUi-1C5BQgAAAAAGgf_AmctE4N2GAAiAA:18",
+              "review_photos": [],
+              "review_services": [],
+              "review_timestamp": 1755885370505109,
+              "user_total_photos": 0,
+              "iso_date_timestamp": 1755885370505109,
+              "user_total_reviews": 10,
+              "iso_date_of_last_edit": "2025-08-22 17:56:11",
+              "business_response_text": "agrademos por sua avaliação, volte sempre!",
+              "iso_date_of_last_edit_timestamp": 1755885370505109
+            },
+            {
+              "iso_date": "2025-07-25 21:21:57",
+              "review_id": "Ci9DQUlRQUNvZENodHljRjlvT2taelRqUXpheTFzTm1zd2JVZHBaVjgzVGpnd2FYYxAB",
+              "user_link": "https://www.google.com/maps/contrib/113234686865618630569?hl=en-GB",
+              "user_name": "Amaryllis Rollemberg",
+              "review_link": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2taelRqUXpheTFzTm1zd2JVZHBaVjgzVGpnd2FYYxAB!2m1!1s0x0:0x12a60e2299b13d65!3m1!1s2@1:CAIQACodChtycF9oOkZzTjQzay1sNmswbUdpZV83TjgwaXc%7C%7C?hl=en",
+              "review_rate": 5,
+              "review_text": null,
+              "review_time": "10 months ago",
+              "user_avatar": "https://lh3.googleusercontent.com/a-/ALV-UjX8k4RJ2_MCn1a2K-nE0U_Z4iHef3lfOQfzGhWNQlkZgr71WJocAg=s120-c-rp-mo-ba12-br100",
+              "owner_answer": {
+                "date": "7 months ago",
+                "text": {
+                  "en": "Thank you for your feedback, come back anytime!",
+                  "pt": "agradecemos por sua avaliação, volte sempre!"
+                }
+              },
+              "review_cursor": "Ci8IARInCgoAP72Ge8iS9f__EhA9nayirKLnn7wWgBsAAAAAGgf_Ame8iS9fGAAiAA:19",
+              "review_photos": [],
+              "review_services": [],
+              "review_timestamp": 1753478516896740,
+              "user_total_photos": 42,
+              "iso_date_timestamp": 1753478516896740,
+              "user_total_reviews": 38,
+              "iso_date_of_last_edit": "2025-07-25 21:21:57",
+              "business_response_text": "agradecemos por sua avaliação, volte sempre!",
+              "iso_date_of_last_edit_timestamp": 1753478516896740
+            },
+            {
+              "iso_date": "2025-07-20 17:29:59",
+              "review_id": "Ci9DQUlRQUNvZENodHljRjlvT2kxNE0ydFZhbTFhZWtFeU5GSmhaRXBLYkVkdFFWRRAB",
+              "user_link": "https://www.google.com/maps/contrib/103091643428159804079?hl=en-GB",
+              "user_name": "Di Giulia Massas Especiais",
+              "review_link": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2kxNE0ydFZhbTFhZWtFeU5GSmhaRXBLYkVkdFFWRRAB!2m1!1s0x0:0x12a60e2299b13d65!3m1!1s2@1:CAIQACodChtycF9oOi14M2tVam1aekEyNFJhZEpKbEdtQVE%7C%7C?hl=en",
+              "review_rate": 5,
+              "review_text": null,
+              "review_time": "11 months ago",
+              "user_avatar": "https://lh3.googleusercontent.com/a-/ALV-UjVkkA_ZA-eLXCmJhy2WgXwZ56hiNYlF8B9ox3lOJPslNajNUkc=s120-c-rp-mo-ba12-br100",
+              "owner_answer": {
+                "date": "7 months ago",
+                "text": {
+                  "en": "Thank you for your feedback, thank you for choosing us, come back anytime!",
+                  "pt": "agradecemos por sua avaliação, obrigado pela preferência, volte sempre!"
+                }
+              },
+              "review_cursor": "CjEIARIpCgoAP72GfXHVht__EhCTQ13N37Bzj2qiA6sAAAAAGgn9_dcCZ9cdWG0YACIA:20",
+              "review_photos": [],
+              "review_services": {
+                "Wait time": "No wait",
+                "Visited on": "Weekday",
+                "Reservation recommended": "No"
+              },
+              "review_timestamp": 1753032599442849,
+              "user_total_photos": 2,
+              "iso_date_timestamp": 1753032599442849,
+              "user_total_reviews": 12,
+              "iso_date_of_last_edit": "2025-07-20 17:29:59",
+              "business_response_text": "agradecemos por sua avaliação, obrigado pela preferência, volte sempre!",
+              "iso_date_of_last_edit_timestamp": 1753032599442849
+            }
+          ],
+          "Segmento": null,
+          "details_google": null,
+          "crated_at": "2026-06-24T18:37:39.344501+00:00",
+          "nr_latitude": -20.2862253,
+          "nr_longitude": -40.2946512,
+          "pais": "Brasil",
+          "go_to_trip": false,
+          "minimum_grade": 6.5,
+          "categoria_principal": "Fazendas e animais",
+          "categorias": [
+            "Fazendas e animais",
+            "Outros"
+          ],
+          "subtipos_normalizados": [
+            "Aquarium",
+            "Aquarium shop"
+          ],
+          "subtipos_pt": [
+            "Aquário",
+            "Loja de aquários"
+          ],
+          "subtipos_pt_str": "Aquário, Loja de aquários",
+          "comentarios_formatados": "Comentário 1: Loja bem arrumada, tem bastante coisas, principalmente para Aquário d água doce\n\nComentário 2: loja de Peixes muito bem organizada\n\nComentário 3: Espaço bem localizado em Jardim da Penha, sendo uma loja pequena, mas com uma enorme variedade de peixes e produtos para aquário, como pedras, plantas, galhos e outros itens que deixam seu aquário ainda mais lindo. Ha uma enorme variedade de peixes, tanto para água doce como para água salgada, além dos produtos a serem colocados no aquário. No sábado pela manhã a loja estava bem movimentada. O atendimento é muito bom. Vale a pena conferir!\n\nComentário 4: Achei a loja muito bonita,muitos peixes,corais e plantas diferentes,porém achei tudo meio caro comparado com outras lojas de aquarismo que tem lá perto....mas fora isso achei muito bonito\n\nComentário 5: Melhor loja de aquarismo do ES!  Excelentes opções de peixes, ambiente muito agradável\n\nComentário 6: Loja muito legal bastante variedade, lindos peixes e corais\n\nComentário 7: Lugar fantástico pra quem ama aquarismo, pra quem gosta de bichos, atendimento nota 10, variedades, pessoas de muito conhecimento, peixes lindíssimos, produtos de ótima qualidade, preços acessíveis!",
+          "qtd_comentarios_reais": 7,
+          "metadados": {
+            "subtipos": null,
+            "bairro": "Jardim da Penha",
+            "cidade": "Vitória",
+            "estado": "ES",
+            "endereco": "Aquáticus Design - Praça Filogomiro Lanes, 78 - Jardim da Penha, Vitória - ES, 29060-740, Brazil",
+            "faixa_preco": null,
+            "status": "ativo",
+            "nota_google": 4.8,
+            "qtd_avaliacoes": 296,
+            "distribuicao_notas": [
+              4,
+              1,
+              6,
+              29,
+              256
+            ]
+          },
+          "status_global": "✅ Aprovado — 9/10 categorias aprovadas sem reprovações",
+          "status_codigo": "aprovado",
+          "motivo_status": "9/10 categorias aprovadas sem reprovações",
+          "processar_qualitativo": true,
+          "regras_hard_violadas": [],
+          "leitura_rapida": "4.8 ★ (IC 95%: 4.6723–4.8762, n=296, confiança alta)",
+          "score_composto_estatistico": 7.82,
+          "score_categorias_ponderado": 7.91,
+          "classificacao": "🟢 Muito bom",
+          "confianca_nivel": "alta",
+          "proxima_acao": "Pode visitar com confiança",
+          "tags": [
+            "consenso-positivo",
+            "muito-positivo",
+            "NPS-alto",
+            "recomendado"
+          ],
+          "highlights": [
+            "✅ Aprovado — 9/10 categorias aprovadas sem reprovações — 9/10 categorias aprovadas (score categorias 7.91/10)",
+            "✚ Mais forte: Sentimento (score 9.63, aprovado)",
+            "✗ Mais fraco: Engajamento do Proprietário (score 0.75, neutro)"
+          ],
+          "resumo_categorias": {
+            "status_global": "✅ Aprovado — 9/10 categorias aprovadas sem reprovações",
+            "status_base": "✅ Aprovado",
+            "status_codigo": "aprovado",
+            "motivo_status": "9/10 categorias aprovadas sem reprovações",
+            "processar_qualitativo": true,
+            "regras_hard_violadas": [],
+            "aprovadas": 9,
+            "reprovadas": 0,
+            "neutras": 1,
+            "total_categorias": 10,
+            "score_categorias_ponderado": 7.91,
+            "confiabilidade_media_pct": 85.6,
+            "leitura_rapida": "9/10 aprovadas — score categorias 7.91/10 (confiabilidade 85.6%)"
+          },
+          "cat_tendencia": {
+            "nome": "Tendência Central",
+            "status": "aprovado",
+            "score": 9.49,
+            "confiabilidade_pct": 90,
+            "criterio": "Aprovado: média ≥ 3.5★. Reprovado: < 3.0★.",
+            "valor_observado": "média=4.8, truncada=4.96",
+            "observacao": "Média de 4.8★ com consistência boa (|Δ truncada|=0.16)"
+          },
+          "cat_dispersao": {
+            "nome": "Dispersão / Consenso",
+            "status": "aprovado",
+            "score": 6.9,
+            "confiabilidade_pct": 90,
+            "criterio": "Aprovado: σ < 1.2★. Reprovado: σ ≥ 1.7★.",
+            "valor_observado": "σ=0.62, CV=0.129, entropia_norm=0.317",
+            "observacao": "Desvio de 0.62★ — forte consenso"
+          },
+          "cat_inferencia": {
+            "nome": "Precisão da Estimativa",
+            "status": "aprovado",
+            "score": 9.49,
+            "confiabilidade_pct": 90,
+            "criterio": "Aprovado: amplitude IC95% Wilson < 0.8★. Reprovado: ≥ 1.5★.",
+            "valor_observado": "IC95% Wilson=[4.6723, 4.8762], amplitude=0.2039",
+            "observacao": "Margem de incerteza de ±0.1★ — estimativa precisa"
+          },
+          "cat_sentimento": {
+            "nome": "Sentimento",
+            "status": "aprovado",
+            "score": 9.63,
+            "confiabilidade_pct": 90,
+            "criterio": "Aprovado: ≥65% positivas E ≤25% negativas. Reprovado: <45% positivas OU >40% negativas.",
+            "valor_observado": "pos=96.28%, neu=2.03%, neg=1.69%, NPS=84.8",
+            "observacao": "96.28% positivas vs. 1.69% negativas; NPS adaptado de 84.8 (muito bom)"
+          },
+          "cat_forma": {
+            "nome": "Forma da Distribuição",
+            "status": "aprovado",
+            "score": 9.5,
+            "confiabilidade_pct": 76.5,
+            "criterio": "Aprovado: J invertido / concentrado-positivo / predominantemente positivo. Reprovado: polarizado / negativo.",
+            "valor_observado": "formato=\"concentrado em 5★\", índice_polarização=0.0962",
+            "observacao": "Consenso forte positivo"
+          },
+          "cat_temporal": {
+            "nome": "Estabilidade Temporal",
+            "status": "aprovado",
+            "score": 6.59,
+            "confiabilidade_pct": 85,
+            "criterio": "Aprovado: sem queda + última < 180d. Reprovado: queda clara OU > 365d sem reviews.",
+            "valor_observado": "slope=-0.2833★/ano, Δ metades=0.6, últimos=29.4d, amostra=20",
+            "observacao": "Tendência: leve queda. Última review há 29 dias."
+          },
+          "cat_credibilidade": {
+            "nome": "Credibilidade dos Avaliadores",
+            "status": "aprovado",
+            "score": 9.2,
+            "confiabilidade_pct": 85,
+            "criterio": "Aprovado: ≤50% novatos E |Δ exp vs nov| < 1.0. Reprovado: >60% novatos OU |Δ| > 1.5.",
+            "valor_observado": "novatos=10%, experientes=75%, Δ=-0.4★, amostra=20",
+            "observacao": "10% novatos; Δ exp vs nov=-0.4★"
+          },
+          "cat_engajamento": {
+            "nome": "Engajamento do Proprietário",
+            "status": "neutro",
+            "score": 0.75,
+            "confiabilidade_pct": 85,
+            "criterio": "Aprovado: engajado=true OU responde ≥40% das negativas. Reprovado: <15% geral.",
+            "valor_observado": "resp_geral=25%, resp_neg=0%, engajado=false",
+            "observacao": "Dono responde 25% em geral e 0% das negativas"
+          },
+          "cat_red_flags": {
+            "nome": "Ausência de Red Flags",
+            "status": "aprovado",
+            "score": 9.6,
+            "confiabilidade_pct": 90,
+            "criterio": "Aprovado: 0 altas E ≤1 média. Reprovado: ≥2 altas OU ≥4 médias.",
+            "valor_observado": "altas=0, médias=0, baixas=1",
+            "observacao": "1 alerta(s): [baixa] Baixa taxa de resposta às reviews negativas"
+          },
+          "cat_veredicto": {
+            "nome": "Veredicto Global",
+            "status": "aprovado",
+            "score": 7.82,
+            "confiabilidade_pct": 74.2,
+            "criterio": "Aprovado: score ≥ 7.0. Reprovado: < 4.0.",
+            "valor_observado": "classificação=\"🟢 Muito bom\", score=7.82, confiança=\"alta\"",
+            "observacao": "Nota média de 4.8 estrelas, baseada em 296 avaliações (confiança alta). IC 95% Wilson: [4.6723, 4.8762]. Distribuição: concentrado em 5★. Tendência temporal: leve queda."
+          },
+          "analise": {
+            "veredicto": {
+              "classificacao": "🟢 Muito bom",
+              "score_final": 7.82,
+              "texto": "Nota média de 4.8 estrelas, baseada em 296 avaliações (confiança alta). IC 95% Wilson: [4.6723, 4.8762]. Distribuição: concentrado em 5★. Tendência temporal: leve queda.",
+              "recomendacao": "Sem alertas relevantes — pode visitar com confiança"
+            },
+            "leitura_rapida": "4.8 ★ (IC 95%: 4.6723–4.8762, n=296, confiança alta)",
+            "validacao_dados": {
+              "nota_google": 4.8,
+              "media_calculada": 4.7973,
+              "divergencia": 0.0027,
+              "interpretacao": "consistente"
+            },
+            "tendencia_central": {
+              "media": 4.7973,
+              "media_truncada_10": 4.9561,
+              "media_laplace": 4.7386,
+              "mediana": 5,
+              "moda": 5,
+              "q1": 5,
+              "q3": 5,
+              "iqr": 0
+            },
+            "dispersao_forma": {
+              "variancia": 0.3846,
+              "desvio_padrao": 0.6202,
+              "coef_variacao": 0.1293,
+              "assimetria": -4.0839,
+              "curtose_excesso": 19.1028,
+              "entropia_shannon": 0.7352,
+              "entropia_normalizada": 0.3166
+            },
+            "inferencia": {
+              "normal_95": {
+                "inferior": 4.7266,
+                "superior": 4.868,
+                "amplitude": 0.1413
+              },
+              "normal_99": {
+                "inferior": 4.7044,
+                "superior": 4.8902,
+                "amplitude": 0.1857
+              },
+              "wilson_95": {
+                "inferior": 4.6723,
+                "superior": 4.8762,
+                "amplitude": 0.2039
+              },
+              "wilson_99": {
+                "inferior": 4.6221,
+                "superior": 4.8936,
+                "amplitude": 0.2715
+              },
+              "bayes_95": {
+                "inferior": 4.6689,
+                "superior": 4.8778,
+                "amplitude": 0.209
+              },
+              "bayes_99": {
+                "inferior": 4.636,
+                "superior": 4.9107,
+                "amplitude": 0.2746
+              },
+              "posterior_beta": {
+                "alpha": 283.0002,
+                "beta": 16.9998,
+                "media_posterior_rescalada": 4.7733
+              }
+            },
+            "sentimento": {
+              "pct_negativas": 1.69,
+              "pct_neutras": 2.03,
+              "pct_positivas": 96.28,
+              "razao_pos_neg": 57,
+              "nps_adaptado": 84.8,
+              "top_box": 86.49,
+              "top_2_box": 96.28,
+              "bottom_box": 1.35,
+              "bottom_2_box": 1.69,
+              "proporcoes": [
+                0.0135,
+                0.0034,
+                0.0203,
+                0.098,
+                0.8649
+              ]
+            },
+            "diagnostico_forma": {
+              "formato": "concentrado em 5★",
+              "distancia_uniforme": 0.6649,
+              "indice_polarizacao": 0.0962
+            },
+            "temporal": {
+              "_aviso": "Métricas baseadas APENAS na amostra de reviews — não na população completa",
+              "amostra_size": 20,
+              "ultimos_30_dias": {
+                "media": 5,
+                "n": 1
+              },
+              "ultimos_90_dias": {
+                "media": 5,
+                "n": 5
+              },
+              "ultimos_180_dias": {
+                "media": 4.5,
+                "n": 12
+              },
+              "ultimos_365_dias": {
+                "media": 4.7,
+                "n": 20
+              },
+              "comparacao_metades": {
+                "media_metade_antiga": 4.4,
+                "media_metade_recente": 5,
+                "delta": 0.6,
+                "direcao": "melhorando"
+              },
+              "regressao_linear": {
+                "slope_por_dia": -0.000776,
+                "slope_estrelas_por_ano": -0.2833,
+                "interpretacao": "leve queda"
+              },
+              "reviews_por_mes_amostra": 1.938,
+              "periodo_coberto_dias": 309.6,
+              "media_fim_de_semana": 5,
+              "media_dias_uteis": 4.647,
+              "dias_desde_ultima_review": 29.4
+            },
+            "credibilidade": {
+              "amostra_size": 20,
+              "media_user_total_reviews": 59.85,
+              "mediana_user_total_reviews": 25,
+              "pct_novatos": 10,
+              "pct_intermediarios": 15,
+              "pct_experientes": 75,
+              "media_nota_novatos": 5,
+              "media_nota_intermediarios": 5,
+              "media_nota_experientes": 4.6,
+              "diff_experientes_vs_novatos": -0.4,
+              "pct_com_foto": 5,
+              "pct_com_texto": 35,
+              "comprimento_medio_texto": 155.3
+            },
+            "textual": {
+              "amostra_size": 20,
+              "comprimento_medio_positivas": 150,
+              "comprimento_medio_negativas": 187,
+              "top_palavras_positivas": [
+                {
+                  "palavra": "loja",
+                  "freq": 6
+                },
+                {
+                  "palavra": "peixes",
+                  "freq": 6
+                },
+                {
+                  "palavra": "aquario",
+                  "freq": 4
+                },
+                {
+                  "palavra": "agua",
+                  "freq": 3
+                },
+                {
+                  "palavra": "variedade",
+                  "freq": 3
+                },
+                {
+                  "palavra": "produtos",
+                  "freq": 3
+                },
+                {
+                  "palavra": "bastante",
+                  "freq": 2
+                },
+                {
+                  "palavra": "doce",
+                  "freq": 2
+                },
+                {
+                  "palavra": "enorme",
+                  "freq": 2
+                },
+                {
+                  "palavra": "atendimento",
+                  "freq": 2
+                }
+              ],
+              "top_palavras_negativas": [
+                {
+                  "palavra": "achei",
+                  "freq": 3
+                },
+                {
+                  "palavra": "loja",
+                  "freq": 1
+                },
+                {
+                  "palavra": "bonita",
+                  "freq": 1
+                },
+                {
+                  "palavra": "muitos",
+                  "freq": 1
+                },
+                {
+                  "palavra": "peixes",
+                  "freq": 1
+                },
+                {
+                  "palavra": "corais",
+                  "freq": 1
+                },
+                {
+                  "palavra": "plantas",
+                  "freq": 1
+                },
+                {
+                  "palavra": "diferentes",
+                  "freq": 1
+                },
+                {
+                  "palavra": "porem",
+                  "freq": 1
+                },
+                {
+                  "palavra": "tudo",
+                  "freq": 1
+                }
+              ],
+              "taxa_resposta_geral": 25,
+              "taxa_resposta_negativas": 0,
+              "taxa_resposta_positivas": 27.78,
+              "proprietario_engajado": false
+            },
+            "confianca": {
+              "nivel": "alta",
+              "peso": 0.8
+            },
+            "red_flags": [
+              {
+                "severidade": "baixa",
+                "flag": "Baixa taxa de resposta às reviews negativas",
+                "detalhe": "Apenas 0% das negativas receberam resposta"
+              }
+            ]
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "versionId": "ff6a21c8-5fcc-445e-becc-88b159185c11",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-06-03T22:47:25.623Z",
+      "createdAt": "2026-06-03T22:47:25.623Z",
+      "role": "workflow:owner",
+      "workflowId": "EQKy28pxJ2fzty0K",
+      "projectId": "G6oOhMxSr8k56eQz"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
