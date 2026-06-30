@@ -1,0 +1,1368 @@
+{
+  "updatedAt": "2026-06-29T22:01:46.853Z",
+  "createdAt": "2026-06-03T22:43:02.097Z",
+  "id": "gsUOJUPjGia0fLqt",
+  "name": "TRIP",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "geral_estabelecimentos_desc",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "go_to_trip",
+              "condition": "is",
+              "keyValue": "FALSE"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -2656,
+        320
+      ],
+      "id": "a52696a7-b9a6-42b6-91e2-8ac4356ec426",
+      "name": "DB request",
+      "alwaysOutputData": false,
+      "credentials": {
+        "supabaseApi": {
+          "id": "U4InZOJsE9hnMgS6",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -304,
+        304
+      ],
+      "id": "378caf32-2736-452d-9157-6a4595381a91",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Mode: Run Once for Each Item\nconst e = $input.item.json;\nconst reviews = Array.isArray(e.reviews) ? e.reviews : [];\n\nconst validos = reviews.filter(\n  r => r && r.review_text && r.review_text.trim().length > 0\n);\n\nconst comentarios_formatados = validos\n  .sort((a, b) => (b.iso_date_timestamp || 0) - (a.iso_date_timestamp || 0))\n  .map((r, i) => `Comentário ${i + 1}: ${r.review_text.trim()}`)\n  .join(\"\\n\\n\");\n\nreturn {\n  json: {\n    ...e,                                    // preserva id, nome, reviews, tudo\n    comentarios_formatados: comentarios_formatados || \"\",\n    qtd_comentarios_reais: validos.length\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        304,
+        320
+      ],
+      "id": "a85c210b-4c60-4c7e-8320-e0c744b82cdc",
+      "name": "Comment formatter"
+    },
+    {
+      "parameters": {
+        "jsCode": "// =============================================================================\n// n8n Code Node — Análise estatística + Avaliação por categoria\n// Modo: Run Once for All Items\n// Input:  $input.all() (estabelecimentos crus do scraping)\n// Output: return [{ json: {...} }]\n//\n// Mínimo de avaliações (minimum_reviews) lido do próprio estabelecimento,\n// com fallback para 10 quando o campo não vem.\n// =============================================================================\n\n// ===== HELPERS =====\nconst round = (x, d = 4) => {\n  if (x === null || x === undefined || Number.isNaN(x) || !Number.isFinite(x)) return null;\n  const f = Math.pow(10, d);\n  return Math.round(x * f) / f;\n};\nconst clamp = (x, lo, hi) => Math.min(Math.max(x, lo), hi);\n\nconst cumulative = (dist) => {\n  const c = [0];\n  for (let i = 0; i < dist.length; i++) c.push(c[i] + dist[i]);\n  return c;\n};\n\nconst quantilDiscreto = (dist, n, p) => {\n  const alvo = p * n;\n  let acc = 0;\n  for (let i = 0; i < dist.length; i++) {\n    acc += dist[i];\n    if (acc >= alvo) return i + 1;\n  }\n  return dist.length;\n};\n\nconst mean = (arr) => (arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : null);\n\n// === BLOCO 1 — Tendência central ===\nfunction tendenciaCentral(dist, n) {\n  if (n === 0) return null;\n  let soma = 0;\n  for (let i = 0; i < 5; i++) soma += (i + 1) * dist[i];\n  const media = soma / n;\n\n  const corteInf = 0.10 * n;\n  const corteSup = 0.90 * n;\n  const cum = cumulative(dist);\n  let pesoTotal = 0, somaTrunc = 0;\n  for (let i = 0; i < 5; i++) {\n    const inicio = cum[i], fim = cum[i + 1];\n    const peso = Math.max(0, Math.min(fim, corteSup) - Math.max(inicio, corteInf));\n    pesoTotal += peso;\n    somaTrunc += (i + 1) * peso;\n  }\n  const mediaTrunc = pesoTotal > 0 ? somaTrunc / pesoTotal : media;\n\n  const k = 2;\n  const nLap = n + 5 * k;\n  let somaLap = 0;\n  for (let i = 0; i < 5; i++) somaLap += (i + 1) * (dist[i] + k);\n  const mediaLaplace = somaLap / nLap;\n\n  const mediana = quantilDiscreto(dist, n, 0.5);\n  let moda = 1, maxF = -1;\n  for (let i = 0; i < 5; i++) if (dist[i] > maxF) { maxF = dist[i]; moda = i + 1; }\n  const q1 = quantilDiscreto(dist, n, 0.25);\n  const q3 = quantilDiscreto(dist, n, 0.75);\n\n  return {\n    media: round(media, 4),\n    media_truncada_10: round(mediaTrunc, 4),\n    media_laplace: round(mediaLaplace, 4),\n    mediana, moda, q1, q3, iqr: q3 - q1,\n  };\n}\n\n// === BLOCO 2 — Dispersão e forma ===\nfunction dispersaoForma(dist, n, media) {\n  if (n === 0 || media === null) return null;\n  let m2 = 0, m3 = 0, m4 = 0;\n  for (let i = 0; i < 5; i++) {\n    const d = (i + 1) - media;\n    const d2 = d * d;\n    m2 += d2 * dist[i];\n    m3 += d2 * d * dist[i];\n    m4 += d2 * d2 * dist[i];\n  }\n  m2 /= n; m3 /= n; m4 /= n;\n\n  const variancia = m2;\n  const desvio = Math.sqrt(variancia);\n  const cv = media !== 0 ? desvio / media : null;\n  const assimetria = m2 > 0 ? m3 / Math.pow(m2, 1.5) : 0;\n  const curtose = m2 > 0 ? (m4 / (m2 * m2)) - 3 : 0;\n\n  let H = 0;\n  for (let i = 0; i < 5; i++) {\n    const p = dist[i] / n;\n    if (p > 0) H -= p * Math.log2(p);\n  }\n  const Hmax = Math.log2(5);\n\n  return {\n    variancia: round(variancia, 4),\n    desvio_padrao: round(desvio, 4),\n    coef_variacao: round(cv, 4),\n    assimetria: round(assimetria, 4),\n    curtose_excesso: round(curtose, 4),\n    entropia_shannon: round(H, 4),\n    entropia_normalizada: round(H / Hmax, 4),\n  };\n}\n\n// === BLOCO 3 — Inferência ===\nfunction inferencia(media, variancia, n) {\n  if (n === 0) return null;\n  const desvio = Math.sqrt(variancia);\n  const erroPadrao = desvio / Math.sqrt(n);\n  const z95 = 1.96, z99 = 2.576;\n\n  const icNormal = (z) => {\n    const inf = clamp(media - z * erroPadrao, 1, 5);\n    const sup = clamp(media + z * erroPadrao, 1, 5);\n    return { inferior: round(inf, 4), superior: round(sup, 4), amplitude: round(sup - inf, 4) };\n  };\n\n  const pHat = clamp((media - 1) / 4, 0, 1);\n  const wilson = (z) => {\n    const z2 = z * z;\n    const denom = 1 + z2 / n;\n    const centro = (pHat + z2 / (2 * n)) / denom;\n    const margem = z * Math.sqrt((pHat * (1 - pHat) + z2 / (4 * n)) / n) / denom;\n    const inf = clamp(1 + 4 * Math.max(0, centro - margem), 1, 5);\n    const sup = clamp(1 + 4 * Math.min(1, centro + margem), 1, 5);\n    return { inferior: round(inf, 4), superior: round(sup, 4), amplitude: round(sup - inf, 4) };\n  };\n\n  const a = 2 + n * pHat;\n  const b = 2 + n * (1 - pHat);\n  const meanPost = a / (a + b);\n  const sdPost = Math.sqrt((a * b) / ((a + b) * (a + b) * (a + b + 1)));\n  const bayes = (z) => {\n    const inf = clamp(1 + 4 * Math.max(0, meanPost - z * sdPost), 1, 5);\n    const sup = clamp(1 + 4 * Math.min(1, meanPost + z * sdPost), 1, 5);\n    return { inferior: round(inf, 4), superior: round(sup, 4), amplitude: round(sup - inf, 4) };\n  };\n\n  return {\n    normal_95: icNormal(z95), normal_99: icNormal(z99),\n    wilson_95: wilson(z95),   wilson_99: wilson(z99),\n    bayes_95: bayes(z95),     bayes_99: bayes(z99),\n    posterior_beta: {\n      alpha: round(a, 4), beta: round(b, 4),\n      media_posterior_rescalada: round(1 + 4 * meanPost, 4),\n    },\n  };\n}\n\n// === BLOCO 4 — Sentimento ===\nfunction sentimento(dist, n) {\n  if (n === 0) return null;\n  const p = dist.map(x => x / n);\n  const pctNeg = (p[0] + p[1]) * 100;\n  const pctNeu = p[2] * 100;\n  const pctPos = (p[3] + p[4]) * 100;\n  const razao = (p[0] + p[1]) > 0 ? (p[3] + p[4]) / (p[0] + p[1]) : null;\n  const nps = (p[4] - (p[0] + p[1])) * 100;\n  return {\n    pct_negativas: round(pctNeg, 2),\n    pct_neutras: round(pctNeu, 2),\n    pct_positivas: round(pctPos, 2),\n    razao_pos_neg: round(razao, 3),\n    nps_adaptado: round(nps, 2),\n    top_box: round(p[4] * 100, 2),\n    top_2_box: round((p[3] + p[4]) * 100, 2),\n    bottom_box: round(p[0] * 100, 2),\n    bottom_2_box: round((p[0] + p[1]) * 100, 2),\n    proporcoes: p.map(x => round(x, 4)),\n  };\n}\n\n// === BLOCO 5 — Diagnóstico de forma ===\nfunction diagnosticoForma(dist, n, variancia) {\n  if (n === 0) return null;\n  const p = dist.map(x => x / n);\n  const distUniforme = p.reduce((s, x) => s + Math.abs(x - 0.2), 0) / 2;\n  const indicePol = variancia / 4;\n  const maxP = Math.max(...p);\n  const idxMax = p.indexOf(maxP);\n\n  let formato;\n  if (maxP > 0.7) formato = `concentrado em ${idxMax + 1}★`;\n  else if (p.every(x => x >= 0.15 && x <= 0.25)) formato = \"uniforme\";\n  else if (p[4] > p[3] && p[3] > p[2] && p[2] > p[1] && p[1] > p[0] && p[4] > 0.4)\n    formato = \"decrescente típico (J invertido, positivo saudável)\";\n  else if ((p[0] + p[4]) > 0.5 && (p[2] + p[3]) < 0.3) formato = \"polarizado / bimodal\";\n  else if ((p[0] + p[4]) > 0.5 && p[2] < p[0] && p[2] < p[4]) formato = \"J shape (bias de seleção, vale no meio)\";\n  else if (idxMax === 2) formato = \"centrado em 3★ (mediano)\";\n  else if (p[4] >= p[3] && p[3] >= p[2]) formato = \"predominantemente positivo\";\n  else if (p[0] >= p[1] && p[1] >= p[2]) formato = \"predominantemente negativo\";\n  else formato = \"misto / sem padrão claro\";\n\n  return {\n    formato,\n    distancia_uniforme: round(distUniforme, 4),\n    indice_polarizacao: round(indicePol, 4),\n  };\n}\n\n// === BLOCO 6 — Temporal ===\nfunction temporal(reviews) {\n  if (!Array.isArray(reviews) || reviews.length === 0)\n    return { _aviso: \"Sem reviews amostradas — análise temporal indisponível\", amostra_size: 0 };\n\n  const items = reviews\n    .map(r => {\n      const tsRaw = r?.iso_date_timestamp;\n      const ts = (typeof tsRaw === \"number\" && tsRaw > 0) ? tsRaw / 1000 : null;\n      const rate = typeof r?.review_rate === \"number\" ? r.review_rate : null;\n      return (ts !== null && rate !== null) ? { ts, rate, date: new Date(ts) } : null;\n    })\n    .filter(Boolean)\n    .sort((a, b) => a.ts - b.ts);\n\n  if (items.length === 0) return { _aviso: \"Sem timestamps válidos na amostra\", amostra_size: 0 };\n\n  const agora = Date.now();\n  const DIA = 86400 * 1000;\n  const mediaJanela = (dias) => {\n    const limite = agora - dias * DIA;\n    const sub = items.filter(x => x.ts >= limite);\n    if (sub.length === 0) return null;\n    return { media: round(mean(sub.map(x => x.rate)), 3), n: sub.length };\n  };\n\n  let comparacaoMetades = null;\n  if (items.length >= 4) {\n    const mid = Math.floor(items.length / 2);\n    const antiga = items.slice(0, mid);\n    const recente = items.slice(items.length - mid);\n    const mAnt = mean(antiga.map(x => x.rate));\n    const mRec = mean(recente.map(x => x.rate));\n    const delta = mRec - mAnt;\n    let direcao = \"estável\";\n    if (delta > 0.5) direcao = \"melhorando\";\n    else if (delta < -0.5) direcao = \"piorando\";\n    comparacaoMetades = {\n      media_metade_antiga: round(mAnt, 3),\n      media_metade_recente: round(mRec, 3),\n      delta: round(delta, 3),\n      direcao,\n    };\n  }\n\n  let regressao = null;\n  if (items.length >= 3) {\n    const t0 = items[0].ts;\n    const xs = items.map(x => (x.ts - t0) / DIA);\n    const ys = items.map(x => x.rate);\n    const nL = xs.length;\n    const sx = xs.reduce((a, b) => a + b, 0);\n    const sy = ys.reduce((a, b) => a + b, 0);\n    const sxx = xs.reduce((a, b) => a + b * b, 0);\n    const sxy = xs.reduce((a, b, i) => a + b * ys[i], 0);\n    const denom = nL * sxx - sx * sx;\n    const slope = denom !== 0 ? (nL * sxy - sx * sy) / denom : 0;\n    const slopeAno = slope * 365.25;\n    let interp = \"estável\";\n    if (slopeAno > 0.3) interp = \"melhora clara\";\n    else if (slopeAno < -0.3) interp = \"queda clara\";\n    else if (slopeAno > 0.1) interp = \"leve melhora\";\n    else if (slopeAno < -0.1) interp = \"leve queda\";\n    regressao = { slope_por_dia: round(slope, 6), slope_estrelas_por_ano: round(slopeAno, 4), interpretacao: interp };\n  }\n\n  const periodoDias = (items[items.length - 1].ts - items[0].ts) / DIA;\n  const reviewsPorMes = periodoDias > 0 ? (items.length / periodoDias) * 30 : null;\n  const fimSemana = [], diasUteis = [];\n  for (const it of items) {\n    const dow = it.date.getUTCDay();\n    (dow === 0 || dow === 6 ? fimSemana : diasUteis).push(it.rate);\n  }\n  const diasDesdeUltima = (agora - items[items.length - 1].ts) / DIA;\n\n  return {\n    _aviso: \"Métricas baseadas APENAS na amostra de reviews — não na população completa\",\n    amostra_size: items.length,\n    ultimos_30_dias: mediaJanela(30),\n    ultimos_90_dias: mediaJanela(90),\n    ultimos_180_dias: mediaJanela(180),\n    ultimos_365_dias: mediaJanela(365),\n    comparacao_metades: comparacaoMetades,\n    regressao_linear: regressao,\n    reviews_por_mes_amostra: round(reviewsPorMes, 3),\n    periodo_coberto_dias: round(periodoDias, 1),\n    media_fim_de_semana: round(mean(fimSemana), 3),\n    media_dias_uteis: round(mean(diasUteis), 3),\n    dias_desde_ultima_review: round(diasDesdeUltima, 1),\n  };\n}\n\n// === BLOCO 7 — Credibilidade ===\nfunction credibilidade(reviews) {\n  if (!Array.isArray(reviews) || reviews.length === 0)\n    return { _aviso: \"Sem reviews amostradas\", amostra_size: 0 };\n  const valid = reviews.filter(r => r);\n  if (valid.length === 0) return { _aviso: \"Sem reviews válidas\", amostra_size: 0 };\n\n  const totRevs = valid.map(r => r?.user_total_reviews ?? 0);\n  const sorted = [...totRevs].sort((a, b) => a - b);\n  const medianaTot = sorted.length % 2 === 1\n    ? sorted[Math.floor(sorted.length / 2)]\n    : (sorted[sorted.length / 2 - 1] + sorted[sorted.length / 2]) / 2;\n\n  const novatos = [], intermediarios = [], experientes = [];\n  for (const r of valid) {\n    const t = r?.user_total_reviews ?? 0;\n    const rate = typeof r?.review_rate === \"number\" ? r.review_rate : null;\n    if (rate === null) continue;\n    if (t <= 2) novatos.push(rate);\n    else if (t <= 10) intermediarios.push(rate);\n    else experientes.push(rate);\n  }\n  const mediaNov = mean(novatos);\n  const mediaExp = mean(experientes);\n  const diffExpNov = (mediaExp !== null && mediaNov !== null) ? mediaExp - mediaNov : null;\n  const total = valid.length;\n  const comFoto = valid.filter(r => Array.isArray(r?.review_photos) && r.review_photos.length > 0).length;\n  const comTexto = valid.filter(r => r?.review_text && String(r.review_text).trim().length > 0).length;\n  const compTexto = valid.filter(r => r?.review_text).map(r => String(r.review_text).length);\n\n  return {\n    amostra_size: total,\n    media_user_total_reviews: round(mean(totRevs), 2),\n    mediana_user_total_reviews: round(medianaTot, 1),\n    pct_novatos: round((novatos.length / total) * 100, 2),\n    pct_intermediarios: round((intermediarios.length / total) * 100, 2),\n    pct_experientes: round((experientes.length / total) * 100, 2),\n    media_nota_novatos: round(mediaNov, 3),\n    media_nota_intermediarios: round(mean(intermediarios), 3),\n    media_nota_experientes: round(mediaExp, 3),\n    diff_experientes_vs_novatos: round(diffExpNov, 3),\n    pct_com_foto: round((comFoto / total) * 100, 2),\n    pct_com_texto: round((comTexto / total) * 100, 2),\n    comprimento_medio_texto: round(mean(compTexto) ?? 0, 1),\n  };\n}\n\n// === BLOCO 8 — Textual ===\nconst STOPWORDS_PT = new Set([\n  \"a\",\"o\",\"e\",\"de\",\"da\",\"do\",\"das\",\"dos\",\"para\",\"com\",\"que\",\"em\",\"no\",\"na\",\"nos\",\"nas\",\n  \"um\",\"uma\",\"uns\",\"umas\",\"os\",\"as\",\"se\",\"por\",\"ao\",\"aos\",\"mas\",\"como\",\"muito\",\"mais\",\n  \"foi\",\"ser\",\"esta\",\"estao\",\"tambem\",\"so\",\"ja\",\"sem\",\"ou\",\"isso\",\"esse\",\"essa\",\"este\",\n  \"ele\",\"ela\",\"eles\",\"elas\",\"eu\",\"voce\",\"voces\",\"minha\",\"meu\",\"seu\",\"sua\",\"nao\",\n  \"sim\",\"sao\",\"tem\",\"ter\",\"fui\",\"vai\",\"vou\",\"todos\",\"todas\",\"todo\",\"toda\",\"pelo\",\n  \"pela\",\"pelos\",\"pelas\",\"quando\",\"onde\",\"aqui\",\"ali\",\"la\",\"entao\",\"porque\",\"pois\",\n  \"the\",\"and\",\"for\",\"with\",\"this\",\"that\",\"you\",\"are\",\"was\",\"were\",\n]);\nfunction tokenizar(texto) {\n  if (!texto) return [];\n  return String(texto).toLowerCase()\n    .normalize(\"NFD\").replace(/[\\u0300-\\u036f]/g, \"\")\n    .replace(/[^a-z0-9\\s]/g, \" \")\n    .split(/\\s+/)\n    .filter(w => w.length >= 4 && !STOPWORDS_PT.has(w));\n}\nfunction topPalavras(textos, top = 10) {\n  const freq = {};\n  for (const t of textos) for (const w of tokenizar(t)) freq[w] = (freq[w] || 0) + 1;\n  return Object.entries(freq).sort((a, b) => b[1] - a[1]).slice(0, top).map(([w, c]) => ({ palavra: w, freq: c }));\n}\nfunction analiseTextual(reviews) {\n  if (!Array.isArray(reviews) || reviews.length === 0)\n    return { _aviso: \"Sem reviews amostradas\", amostra_size: 0 };\n  const valid = reviews.filter(r => r);\n  const positivas = valid.filter(r => (r?.review_rate ?? 0) >= 4);\n  const negativas = valid.filter(r => (r?.review_rate ?? 0) <= 2 && (r?.review_rate ?? 0) > 0);\n\n  const compMedio = (arr) => {\n    const c = arr.map(r => r?.review_text ? String(r.review_text).length : 0).filter(x => x > 0);\n    return c.length > 0 ? mean(c) : 0;\n  };\n  const hasResp = (r) => Boolean(r?.business_response_text || r?.owner_answer);\n  const respGeral = valid.length > 0 ? valid.filter(hasResp).length / valid.length : 0;\n  const respNeg = negativas.length > 0 ? negativas.filter(hasResp).length / negativas.length : null;\n  const respPos = positivas.length > 0 ? positivas.filter(hasResp).length / positivas.length : null;\n\n  return {\n    amostra_size: valid.length,\n    comprimento_medio_positivas: round(compMedio(positivas), 1),\n    comprimento_medio_negativas: round(compMedio(negativas), 1),\n    top_palavras_positivas: topPalavras(positivas.map(r => r?.review_text), 10),\n    top_palavras_negativas: topPalavras(negativas.map(r => r?.review_text), 10),\n    taxa_resposta_geral: round(respGeral * 100, 2),\n    taxa_resposta_negativas: respNeg !== null ? round(respNeg * 100, 2) : null,\n    taxa_resposta_positivas: respPos !== null ? round(respPos * 100, 2) : null,\n    proprietario_engajado: respGeral >= 0.3,\n  };\n}\n\n// === BLOCO 9 — Red flags ===\nfunction redFlags(ctx) {\n  const flags = [];\n  const add = (severidade, flag, detalhe) => flags.push({ severidade, flag, detalhe });\n  const { divergencia, notaGoogle, mediaCalc, temporalData, n, minReviews, wilson95, credData, diagData, textualData } = ctx;\n\n  if (notaGoogle !== null && Math.abs(divergencia) > 0.15)\n    add(\"média\", \"Divergência entre nota do Google e média calculada\",\n      `Google=${notaGoogle}, calculada=${round(mediaCalc, 3)} (Δ=${round(divergencia, 3)})`);\n\n  const delta = temporalData?.comparacao_metades?.delta;\n  if (typeof delta === \"number\" && delta < -0.7)\n    add(\"alta\", \"Queda forte na qualidade ao longo do tempo\", `Delta entre metades: ${delta}`);\n\n  const d = temporalData?.dias_desde_ultima_review;\n  if (typeof d === \"number\") {\n    if (d > 365) add(\"alta\", \"Sem reviews há mais de 1 ano (na amostra)\", `${d} dias`);\n    else if (d > 180) add(\"média\", \"Sem reviews há mais de 6 meses (na amostra)\", `${d} dias`);\n  }\n  if (diagData?.formato?.includes(\"polarizado\"))\n    add(\"média\", \"Distribuição polarizada\", \"Muitas notas extremas (1★ e 5★), pouco meio — opiniões divididas\");\n  if (diagData?.formato?.includes(\"J shape\"))\n    add(\"baixa\", \"Possível viés de seleção\", \"J shape — clientes engajados só nos extremos da experiência\");\n  if (n < minReviews)\n    add(\"alta\", \"Amostra abaixo do mínimo\",\n      `Apenas ${n} de ${minReviews} avaliações mínimas — estatísticas pouco confiáveis`);\n  if (wilson95 && wilson95.amplitude > 1.5)\n    add(\"média\", \"IC 95% (Wilson) muito amplo\", `Amplitude de ${wilson95.amplitude} estrelas — alta incerteza sobre a média verdadeira`);\n  if (credData?.pct_novatos !== undefined && credData.pct_novatos > 60)\n    add(\"baixa\", \"Muitos avaliadores novatos\", `${credData.pct_novatos}% têm ≤2 reviews`);\n  const diff = credData?.diff_experientes_vs_novatos;\n  if (typeof diff === \"number\" && Math.abs(diff) > 1.5)\n    add(\"média\", \"Discrepância forte entre experientes e novatos\", `Diferença de ${diff} estrelas — possível astroturfing`);\n  const trn = textualData?.taxa_resposta_negativas;\n  if (typeof trn === \"number\" && trn < 20 && (textualData?.amostra_size ?? 0) > 3)\n    add(\"baixa\", \"Baixa taxa de resposta às reviews negativas\", `Apenas ${trn}% das negativas receberam resposta`);\n\n  return flags;\n}\n\n// === BLOCO 10 — Score composto e confiança ===\nfunction classificarConfianca(n) {\n  if (n < 5)   return { nivel: \"insuficiente\",  peso: 0.0 };\n  if (n < 15)  return { nivel: \"muito baixa\",   peso: 0.2 };\n  if (n < 30)  return { nivel: \"baixa\",         peso: 0.4 };\n  if (n < 100) return { nivel: \"média\",         peso: 0.6 };\n  if (n < 500) return { nivel: \"alta\",          peso: 0.8 };\n  return         { nivel: \"muito alta\",         peso: 1.0 };\n}\nfunction scoreComposto({ wilson95, n, slopeAno, pctExperientes, indicePol }) {\n  const notaBase    = clamp((wilson95.inferior - 1) / 4, 0, 1);\n  const confAmostra = Math.min(1, Math.log10(n + 1) / Math.log10(501));\n  const slope       = slopeAno ?? 0;\n  const bonusTend   = clamp(0.5 + slope / 2, 0, 1);\n  const bonusCred   = Math.min(1, (pctExperientes ?? 0) / 100 + 0.3);\n  const penalPol    = indicePol ?? 0;\n  let score = 0.50 * notaBase + 0.20 * confAmostra + 0.15 * bonusTend + 0.10 * bonusCred - 0.15 * penalPol;\n  return round(clamp(score, 0, 1) * 10, 2);\n}\n\n// === BLOCO 11 — Veredicto ===\nfunction classificarFaixa(score) {\n  if (score >= 8.5) return \"✅ Excelente\";\n  if (score >= 7.0) return \"🟢 Muito bom\";\n  if (score >= 5.5) return \"🟡 Bom\";\n  if (score >= 4.0) return \"🟠 Regular\";\n  if (score >= 2.5) return \"🔴 Ruim\";\n  return \"⛔ Péssimo\";\n}\nfunction recomendacaoFromFlags(flags) {\n  const altas = flags.filter(f => f.severidade === \"alta\").length;\n  const medias = flags.filter(f => f.severidade === \"média\").length;\n  if (altas >= 2) return \"Evitar — múltiplos sinais de alerta sérios\";\n  if (altas === 1) return \"Verificar contexto antes de visitar — há um alerta importante\";\n  if (medias >= 3) return \"Cautela — vários sinais de inconsistência\";\n  if (medias >= 1) return \"Aceitável com ressalvas\";\n  return \"Sem alertas relevantes — pode visitar com confiança\";\n}\nfunction veredicto({ confianca, score, mediaCalc, n, wilson95, diagData, temporalData, flags }) {\n  if (confianca.nivel === \"insuficiente\") {\n    return {\n      classificacao: \"❌ Indeterminado\", score_final: null,\n      texto: `Apenas ${n} avaliação(ões) — dados insuficientes para um veredicto estatístico confiável.`,\n      recomendacao: \"Buscar outras fontes de informação ou aguardar mais avaliações.\",\n    };\n  }\n  const tendencia = temporalData?.regressao_linear?.interpretacao ?? \"sem dados temporais suficientes\";\n  return {\n    classificacao: classificarFaixa(score),\n    score_final: score,\n    texto: `Nota média de ${round(mediaCalc, 2)} estrelas, baseada em ${n} avaliações (confiança ${confianca.nivel}). IC 95% Wilson: [${wilson95.inferior}, ${wilson95.superior}]. Distribuição: ${diagData.formato}. Tendência temporal: ${tendencia}.`,\n    recomendacao: recomendacaoFromFlags(flags),\n  };\n}\n\n// =============================================================================\n//   AVALIAÇÃO POR CATEGORIA\n// =============================================================================\n\nfunction confPopulacao(n) {\n  if (n < 5)   return 10;\n  if (n < 15)  return 35;\n  if (n < 30)  return 55;\n  if (n < 100) return 75;\n  if (n < 500) return 90;\n  return 97;\n}\nfunction confAmostra(k) {\n  if (k < 3)  return 15;\n  if (k < 5)  return 30;\n  if (k < 10) return 50;\n  if (k < 20) return 70;\n  return 85;\n}\nfunction ajustarFronteira(base, valor, limiar, range = 0.5) {\n  const dist = Math.abs(valor - limiar);\n  if (dist >= range) return base;\n  return base * (0.6 + 0.4 * (dist / range));\n}\nfunction montarCategoria({ nome, criterio, valor_observado, score, status, confiabilidade_pct, observacao }) {\n  return {\n    nome, status,\n    score: round(score, 2),\n    confiabilidade_pct: round(clamp(confiabilidade_pct, 0, 100), 1),\n    criterio, valor_observado, observacao,\n  };\n}\n\nfunction avaliarCategorias(analise, n) {\n  const reviewsN = analise?.temporal?.amostra_size ?? 0;\n  const cats = {};\n\n  (() => {\n    const m = analise.tendencia_central.media;\n    const trunc = analise.tendencia_central.media_truncada_10;\n    const consistencia = Math.abs(m - trunc);\n    let status = \"neutro\";\n    if (m >= 3.5) status = \"aprovado\";\n    else if (m < 3.0) status = \"reprovado\";\n    const score = clamp(((m - 1) / 4) * 10, 0, 10);\n    let conf = confPopulacao(n);\n    if (consistencia > 0.3) conf *= 0.85;\n    const limiar = status === \"aprovado\" ? 3.5 : (status === \"reprovado\" ? 3.0 : 3.25);\n    conf = ajustarFronteira(conf, m, limiar, 0.4);\n    cats.tendencia = montarCategoria({\n      nome: \"Tendência Central\",\n      criterio: \"Aprovado: média ≥ 3.5★. Reprovado: < 3.0★.\",\n      valor_observado: `média=${round(m, 2)}, truncada=${round(trunc, 2)}`,\n      score, status, confiabilidade_pct: conf,\n      observacao: `Média de ${round(m, 2)}★ com consistência ${consistencia < 0.3 ? \"boa\" : \"fraca\"} (|Δ truncada|=${round(consistencia, 2)})`,\n    });\n  })();\n\n  (() => {\n    const dp = analise.dispersao_forma.desvio_padrao;\n    const cv = analise.dispersao_forma.coef_variacao;\n    const ent = analise.dispersao_forma.entropia_normalizada;\n    let status = \"neutro\";\n    if (dp < 1.2) status = \"aprovado\";\n    else if (dp >= 1.7) status = \"reprovado\";\n    const score = clamp(10 - dp * 5, 0, 10);\n    let conf = confPopulacao(n);\n    const limiar = status === \"aprovado\" ? 1.2 : (status === \"reprovado\" ? 1.7 : 1.45);\n    conf = ajustarFronteira(conf, dp, limiar, 0.3);\n    cats.dispersao = montarCategoria({\n      nome: \"Dispersão / Consenso\",\n      criterio: \"Aprovado: σ < 1.2★. Reprovado: σ ≥ 1.7★.\",\n      valor_observado: `σ=${round(dp, 2)}, CV=${round(cv, 3)}, entropia_norm=${round(ent, 3)}`,\n      score, status, confiabilidade_pct: conf,\n      observacao: `Desvio de ${round(dp, 2)}★ — ${dp < 1.2 ? \"forte consenso\" : dp < 1.7 ? \"opiniões moderadamente espalhadas\" : \"opiniões muito divididas\"}`,\n    });\n  })();\n\n  (() => {\n    const w95 = analise.inferencia.wilson_95;\n    const amp = w95.amplitude;\n    let status = \"neutro\";\n    if (amp < 0.8) status = \"aprovado\";\n    else if (amp >= 1.5) status = \"reprovado\";\n    const score = clamp(10 - amp * 2.5, 0, 10);\n    let conf = confPopulacao(n);\n    const limiar = status === \"aprovado\" ? 0.8 : (status === \"reprovado\" ? 1.5 : 1.15);\n    conf = ajustarFronteira(conf, amp, limiar, 0.4);\n    cats.inferencia = montarCategoria({\n      nome: \"Precisão da Estimativa\",\n      criterio: \"Aprovado: amplitude IC95% Wilson < 0.8★. Reprovado: ≥ 1.5★.\",\n      valor_observado: `IC95% Wilson=[${w95.inferior}, ${w95.superior}], amplitude=${amp}`,\n      score, status, confiabilidade_pct: conf,\n      observacao: `Margem de incerteza de ±${round(amp / 2, 2)}★ — ${amp < 0.8 ? \"estimativa precisa\" : amp < 1.5 ? \"incerteza moderada\" : \"alta incerteza\"}`,\n    });\n  })();\n\n  (() => {\n    const s = analise.sentimento;\n    const pos = s.pct_positivas, neg = s.pct_negativas, nps = s.nps_adaptado;\n    let status = \"neutro\";\n    if (pos >= 65 && neg <= 25) status = \"aprovado\";\n    else if (pos < 45 || neg > 40) status = \"reprovado\";\n    const score = clamp(pos / 10, 0, 10);\n    let conf = confPopulacao(n);\n    conf = ajustarFronteira(conf, pos, status === \"aprovado\" ? 65 : (status === \"reprovado\" ? 45 : 55), 10);\n    cats.sentimento = montarCategoria({\n      nome: \"Sentimento\",\n      criterio: \"Aprovado: ≥65% positivas E ≤25% negativas. Reprovado: <45% positivas OU >40% negativas.\",\n      valor_observado: `pos=${pos}%, neu=${s.pct_neutras}%, neg=${neg}%, NPS=${nps}`,\n      score, status, confiabilidade_pct: conf,\n      observacao: `${pos}% positivas vs. ${neg}% negativas; NPS adaptado de ${nps} (${nps > 50 ? \"muito bom\" : nps > 0 ? \"positivo\" : \"negativo\"})`,\n    });\n  })();\n\n  (() => {\n    const f = analise.diagnostico_forma.formato;\n    const idxPol = analise.diagnostico_forma.indice_polarizacao;\n    const tabela = [\n      [/concentrado em 5/, 9.5, \"aprovado\", \"Consenso forte positivo\"],\n      [/concentrado em 4/, 8.0, \"aprovado\", \"Maioria muito satisfeita\"],\n      [/decrescente típico/, 9.0, \"aprovado\", \"Padrão saudável típico\"],\n      [/predominantemente positivo/, 7.0, \"aprovado\", \"Inclinação positiva clara\"],\n      [/centrado em 3/, 5.0, \"neutro\", \"Experiência mediana dominante\"],\n      [/uniforme/, 4.0, \"neutro\", \"Sem padrão claro\"],\n      [/J shape/, 5.0, \"neutro\", \"Viés de seleção — só extremos votam\"],\n      [/polarizado/, 3.5, \"reprovado\", \"Opiniões divididas\"],\n      [/predominantemente negativo/, 2.5, \"reprovado\", \"Inclinação negativa clara\"],\n      [/concentrado em 1/, 1.0, \"reprovado\", \"Consenso forte negativo\"],\n      [/concentrado em 2/, 2.0, \"reprovado\", \"Consenso forte negativo\"],\n    ];\n    let score = 5, status = \"neutro\", obs = \"Formato sem mapeamento explícito\";\n    for (const [rx, s, st, o] of tabela) if (rx.test(f)) { score = s; status = st; obs = o; break; }\n    let conf = confPopulacao(n);\n    if (idxPol < 0.15) conf *= 0.85;\n    if (n < 30) conf *= 0.9;\n    cats.forma = montarCategoria({\n      nome: \"Forma da Distribuição\",\n      criterio: \"Aprovado: J invertido / concentrado-positivo / predominantemente positivo. Reprovado: polarizado / negativo.\",\n      valor_observado: `formato=\"${f}\", índice_polarização=${idxPol}`,\n      score, status, confiabilidade_pct: conf, observacao: obs,\n    });\n  })();\n\n  (() => {\n    const t = analise.temporal;\n    if (!t || t._aviso?.includes(\"indisponível\") || t.amostra_size === 0) {\n      cats.temporal = montarCategoria({\n        nome: \"Estabilidade Temporal\",\n        criterio: \"Aprovado: sem queda + última < 180d. Reprovado: queda clara OU > 365d sem reviews.\",\n        valor_observado: \"amostra temporal vazia\",\n        score: 5, status: \"neutro\", confiabilidade_pct: 0,\n        observacao: \"Sem dados temporais para avaliar\",\n      });\n      return;\n    }\n    const slope = t.regressao_linear?.slope_estrelas_por_ano ?? 0;\n    const dias = t.dias_desde_ultima_review ?? 9999;\n    const delta = t.comparacao_metades?.delta ?? 0;\n    const piorando = slope < -0.3 || delta < -0.7;\n    const muitoAntiga = dias > 365;\n    const recente = dias < 180;\n    let status = \"neutro\";\n    if (!piorando && !muitoAntiga && recente) status = \"aprovado\";\n    else if (piorando || muitoAntiga) status = \"reprovado\";\n    const scoreTend = clamp(5 + slope * 5, 0, 10);\n    const scoreRec = clamp(10 - (dias / 365) * 5, 0, 10);\n    const score = (scoreTend + scoreRec) / 2;\n    let conf = confAmostra(reviewsN);\n    if (Math.abs(slope) < 0.1 && Math.abs(delta) < 0.2) conf *= 0.8;\n    cats.temporal = montarCategoria({\n      nome: \"Estabilidade Temporal\",\n      criterio: \"Aprovado: sem queda + última < 180d. Reprovado: queda clara OU > 365d sem reviews.\",\n      valor_observado: `slope=${slope}★/ano, Δ metades=${delta}, últimos=${dias}d, amostra=${reviewsN}`,\n      score, status, confiabilidade_pct: conf,\n      observacao: `Tendência: ${t.regressao_linear?.interpretacao ?? \"n/d\"}. Última review há ${round(dias, 0)} dias.`,\n    });\n  })();\n\n  (() => {\n    const c = analise.credibilidade;\n    if (!c || c._aviso || c.amostra_size === 0) {\n      cats.credibilidade = montarCategoria({\n        nome: \"Credibilidade dos Avaliadores\",\n        criterio: \"Aprovado: ≤50% novatos E |Δ exp vs nov| < 1.0. Reprovado: >60% novatos OU |Δ| > 1.5.\",\n        valor_observado: \"amostra de credibilidade vazia\",\n        score: 5, status: \"neutro\", confiabilidade_pct: 0,\n        observacao: \"Sem dados sobre avaliadores\",\n      });\n      return;\n    }\n    const pctNov = c.pct_novatos ?? 0;\n    const pctExp = c.pct_experientes ?? 0;\n    const diff = c.diff_experientes_vs_novatos;\n    const absDiff = diff !== null && diff !== undefined ? Math.abs(diff) : 0;\n    let status = \"neutro\";\n    if (pctNov <= 50 && absDiff < 1.0) status = \"aprovado\";\n    else if (pctNov > 60 || absDiff > 1.5) status = \"reprovado\";\n    const scoreExp = clamp(pctExp / 10 + 3, 0, 10);\n    const scoreDiff = clamp(10 - absDiff * 4, 0, 10);\n    const score = (scoreExp + scoreDiff) / 2;\n    let conf = confAmostra(c.amostra_size);\n    if (absDiff > 2) conf *= 1.15;\n    if (c.amostra_size < 5) conf *= 0.7;\n    cats.credibilidade = montarCategoria({\n      nome: \"Credibilidade dos Avaliadores\",\n      criterio: \"Aprovado: ≤50% novatos E |Δ exp vs nov| < 1.0. Reprovado: >60% novatos OU |Δ| > 1.5.\",\n      valor_observado: `novatos=${pctNov}%, experientes=${pctExp}%, Δ=${diff}★, amostra=${c.amostra_size}`,\n      score, status, confiabilidade_pct: conf,\n      observacao: `${pctNov}% novatos; Δ exp vs nov=${diff ?? \"n/d\"}★${absDiff > 1.5 ? \" → possível astroturfing\" : \"\"}`,\n    });\n  })();\n\n  (() => {\n    const t = analise.textual;\n    if (!t || t._aviso || t.amostra_size === 0) {\n      cats.engajamento = montarCategoria({\n        nome: \"Engajamento do Proprietário\",\n        criterio: \"Aprovado: engajado=true OU responde ≥40% das negativas. Reprovado: <15% geral.\",\n        valor_observado: \"amostra textual vazia\",\n        score: 5, status: \"neutro\", confiabilidade_pct: 0,\n        observacao: \"Sem dados sobre respostas do estabelecimento\",\n      });\n      return;\n    }\n    const respGeral = t.taxa_resposta_geral ?? 0;\n    const respNeg = t.taxa_resposta_negativas;\n    const engajado = t.proprietario_engajado;\n    let status = \"neutro\";\n    if (engajado || (typeof respNeg === \"number\" && respNeg >= 40)) status = \"aprovado\";\n    else if (respGeral < 15) status = \"reprovado\";\n    const score = typeof respNeg === \"number\"\n      ? clamp((respNeg * 0.7 + respGeral * 0.3) / 10, 0, 10)\n      : clamp(respGeral / 10, 0, 10);\n    let conf = confAmostra(t.amostra_size);\n    if (respNeg === null) conf *= 0.7;\n    if (t.amostra_size < 5) conf *= 0.7;\n    cats.engajamento = montarCategoria({\n      nome: \"Engajamento do Proprietário\",\n      criterio: \"Aprovado: engajado=true OU responde ≥40% das negativas. Reprovado: <15% geral.\",\n      valor_observado: `resp_geral=${respGeral}%, resp_neg=${respNeg ?? \"n/d\"}%, engajado=${engajado}`,\n      score, status, confiabilidade_pct: conf,\n      observacao: `Dono responde ${respGeral}% em geral${typeof respNeg === \"number\" ? ` e ${respNeg}% das negativas` : \" (sem negativas na amostra)\"}`,\n    });\n  })();\n\n  (() => {\n    const flags = analise.red_flags ?? [];\n    const altas = flags.filter(f => f.severidade === \"alta\").length;\n    const medias = flags.filter(f => f.severidade === \"média\").length;\n    const baixas = flags.filter(f => f.severidade === \"baixa\").length;\n    let status = \"neutro\";\n    if (altas === 0 && medias <= 1) status = \"aprovado\";\n    else if (altas >= 2 || medias >= 4) status = \"reprovado\";\n    const score = clamp(10 - (altas * 3 + medias * 1.2 + baixas * 0.4), 0, 10);\n    let conf = confPopulacao(n);\n    if (altas + medias >= 3) conf = Math.min(98, conf * 1.05);\n    cats.red_flags = montarCategoria({\n      nome: \"Ausência de Red Flags\",\n      criterio: \"Aprovado: 0 altas E ≤1 média. Reprovado: ≥2 altas OU ≥4 médias.\",\n      valor_observado: `altas=${altas}, médias=${medias}, baixas=${baixas}`,\n      score, status, confiabilidade_pct: conf,\n      observacao: flags.length === 0\n        ? \"Nenhum alerta detectado\"\n        : `${flags.length} alerta(s): ` + flags.map(f => `[${f.severidade}] ${f.flag}`).join(\"; \"),\n    });\n  })();\n\n  (() => {\n    const v = analise.veredicto;\n    const score = v.score_final ?? 0;\n    const cls = v.classificacao ?? \"❌ Indeterminado\";\n    let status = \"neutro\";\n    if (score >= 7.0) status = \"aprovado\";\n    else if (score < 4.0) status = \"reprovado\";\n    let conf = (analise.confianca?.peso ?? 0) * 100;\n    conf = ajustarFronteira(conf, score, status === \"aprovado\" ? 7.0 : (status === \"reprovado\" ? 4.0 : 5.5), 1.0);\n    cats.veredicto = montarCategoria({\n      nome: \"Veredicto Global\",\n      criterio: \"Aprovado: score ≥ 7.0. Reprovado: < 4.0.\",\n      valor_observado: `classificação=\"${cls}\", score=${score}, confiança=\"${analise.confianca?.nivel ?? \"n/d\"}\"`,\n      score, status, confiabilidade_pct: conf, observacao: v.texto ?? \"\",\n    });\n  })();\n\n  return cats;\n}\n\n// === EXTRAS ===\nfunction gerarTags(analise, cats) {\n  const tags = [];\n  const f = analise.diagnostico_forma?.formato ?? \"\";\n  if (f.includes(\"polarizado\")) tags.push(\"público-dividido\");\n  if (f.includes(\"J invertido\") || f.includes(\"decrescente\")) tags.push(\"padrão-saudável\");\n  if (f.includes(\"concentrado em 5\")) tags.push(\"consenso-positivo\");\n  if (f.includes(\"concentrado em 1\") || f.includes(\"concentrado em 2\")) tags.push(\"consenso-negativo\");\n  if (f.includes(\"J shape\")) tags.push(\"viés-de-seleção\");\n  const sen = analise.sentimento;\n  if (sen?.pct_positivas >= 80) tags.push(\"muito-positivo\");\n  if (sen?.pct_negativas >= 30) tags.push(\"muitas-reclamações\");\n  if (sen?.nps_adaptado >= 50) tags.push(\"NPS-alto\");\n  const t = analise.temporal;\n  if (t?.amostra_size === 0) tags.push(\"sem-amostra-temporal\");\n  if (t?.regressao_linear?.interpretacao === \"queda clara\") tags.push(\"em-queda\");\n  if (t?.regressao_linear?.interpretacao === \"melhora clara\") tags.push(\"em-ascensão\");\n  if (typeof t?.dias_desde_ultima_review === \"number\" && t.dias_desde_ultima_review > 365) tags.push(\"inativo\");\n  const c = analise.credibilidade;\n  if (c?.pct_novatos > 60) tags.push(\"muitos-novatos\");\n  const diff = c?.diff_experientes_vs_novatos;\n  if (typeof diff === \"number\" && Math.abs(diff) > 1.5) tags.push(\"suspeita-astroturfing\");\n  const txt = analise.textual;\n  if (txt?.proprietario_engajado) tags.push(\"dono-engajado\");\n  if (analise.confianca?.nivel === \"muito alta\") tags.push(\"dados-robustos\");\n  if (analise.confianca?.nivel === \"insuficiente\") tags.push(\"dados-insuficientes\");\n  if (cats.veredicto?.status === \"aprovado\") tags.push(\"recomendado\");\n  if (cats.veredicto?.status === \"reprovado\") tags.push(\"não-recomendado\");\n  return Array.from(new Set(tags));\n}\n\nfunction gerarHighlights(analise, cats, resumo) {\n  const hs = [];\n  hs.push(`${resumo.status_global} — ${resumo.aprovadas}/${resumo.total_categorias} categorias aprovadas (score categorias ${resumo.score_categorias_ponderado}/10)`);\n  const ord = Object.values(cats).filter(c => c.confiabilidade_pct > 30).sort((a, b) => b.score - a.score);\n  if (ord[0]) hs.push(`✚ Mais forte: ${ord[0].nome} (score ${ord[0].score}, ${ord[0].status})`);\n  if (ord.length > 1) {\n    const fraco = ord[ord.length - 1];\n    hs.push(`✗ Mais fraco: ${fraco.nome} (score ${fraco.score}, ${fraco.status})`);\n  }\n  const flags = analise.red_flags ?? [];\n  const flagAlta = flags.find(f => f.severidade === \"alta\");\n  if (flagAlta) hs.push(`⚠ Alerta alto: ${flagAlta.flag}`);\n  return hs;\n}\n\nfunction proximaAcao(resumo, cats) {\n  if (resumo.status_global.includes(\"Reprovado\")) return \"Evitar — múltiplos pontos críticos\";\n  if (resumo.status_global.includes(\"Insatisfatório\")) return \"Buscar alternativas antes de decidir\";\n  if (cats.veredicto?.status === \"aprovado\" && resumo.reprovadas === 0) return \"Pode visitar com confiança\";\n  if (resumo.aprovadas >= 5) return \"Aceitável — verificar pontos de ressalva antes\";\n  return \"Avaliar caso a caso\";\n}\n\n// === REGRAS HARD DE REPROVAÇÃO ===\nfunction regrasHardReprovacao({ n, minReviews, score, classificacao, conf, flags, wilson95, dist, temporalData }) {\n  const motivos = [];\n  const altasFlags = flags.filter(f => f.severidade === \"alta\").length;\n  const confNivelOk = [\"alta\", \"muito alta\"].includes(conf?.nivel);\n\n  if (n < minReviews) motivos.push(`Amostra abaixo do mínimo exigido (n=${n} < ${minReviews})`);\n  if (typeof score === \"number\" && score >= 4.0 && score < 5.5 && !confNivelOk)\n    motivos.push(`Resultado regular (score=${score}) com confiança apenas ${conf?.nivel}`);\n  if (classificacao === \"🔴 Ruim\" || classificacao === \"⛔ Péssimo\")\n    motivos.push(`Veredicto estatístico: ${classificacao}`);\n  if (altasFlags >= 2) motivos.push(`${altasFlags} alertas críticos simultâneos`);\n  if (wilson95 && typeof wilson95.superior === \"number\" && wilson95.superior < 3.0)\n    motivos.push(`Mesmo o melhor cenário é ruim (IC95% superior=${wilson95.superior}★)`);\n  if (Array.isArray(dist) && n > 0) {\n    const pctNeg = ((dist[0] + dist[1]) / n) * 100;\n    if (pctNeg > 60) motivos.push(`${pctNeg.toFixed(1)}% das notas são negativas (1-2★)`);\n  }\n  const dias = temporalData?.dias_desde_ultima_review;\n  if (typeof dias === \"number\" && dias > 730)\n    motivos.push(`Sem reviews há ${Math.round(dias)} dias (>2 anos) — possivelmente inativo`);\n\n  return motivos;\n}\n\n// === VERIFICAÇÃO: estabelecimento fechado permanentemente ===\nfunction isFechadoPermanente(statusRaw) {\n  const s = String(statusRaw ?? \"\")\n    .toLowerCase()\n    .normalize(\"NFD\").replace(/[\\u0300-\\u036f]/g, \"\")\n    .trim();\n  return (\n    s.includes(\"fechado_permanente\") ||\n    s.includes(\"fechado permanente\") ||\n    s.includes(\"permanentemente fechado\") ||\n    s === \"closed_permanently\" ||\n    s === \"permanently_closed\"\n  );\n}\n\n// === NORMALIZAÇÃO DE TIPOS ===\nfunction coerceItem(e) {\n  const parseJSON = (v) => {\n    if (typeof v !== \"string\") return v;\n    const s = v.trim();\n    if (s.startsWith(\"[\") || s.startsWith(\"{\")) {\n      try { return JSON.parse(s); } catch { return v; }\n    }\n    return v;\n  };\n  const toNum = (v) =>\n    (v === null || v === undefined || v === \"\") ? null\n      : (typeof v === \"number\" ? v : (Number.isNaN(Number(v)) ? null : Number(v)));\n  return {\n    ...e,\n    nota: toNum(e?.nota),\n    qtd_avaliacoes: toNum(e?.qtd_avaliacoes),\n    minimum_reviews: toNum(e?.minimum_reviews),\n    distribuicao_notas: parseJSON(e?.distribuicao_notas),\n    reviews: parseJSON(e?.reviews),\n  };\n}\n\n// ===== PIPELINE PRINCIPAL =====\nfunction analisar(e) {\n  const nome = e?.nome ?? \"(sem nome)\";\n\n  // Mínimo de avaliações exigido — vem do próprio estabelecimento (input),\n  // com fallback caso o campo não esteja presente.\n  const MIN_REVIEWS_DEFAULT = 10;\n  const minReviews = (typeof e?.minimum_reviews === \"number\" && e.minimum_reviews > 0)\n    ? e.minimum_reviews\n    : MIN_REVIEWS_DEFAULT;\n\n  const distMeta = (Array.isArray(e?.distribuicao_notas) && e.distribuicao_notas.length === 5)\n    ? e.distribuicao_notas.map(x => Number(x) || 0)\n    : [0, 0, 0, 0, 0];\n  const nMeta = distMeta.reduce((a, b) => a + b, 0);\n  const notaGoogleMeta = typeof e?.nota === \"number\" ? e.nota : null;\n  const qtdAvMeta = typeof e?.qtd_avaliacoes === \"number\" ? e.qtd_avaliacoes : nMeta;\n  const metadados = {\n    subtipos: e?.subtipos ?? null,\n    bairro: e?.bairro ?? null,\n    cidade: e?.cidade ?? null,\n    estado: e?.estado ?? null,\n    endereco: e?.endereco ?? null,\n    faixa_preco: e?.faixa_preco ?? null,\n    status: e?.status ?? null,\n    nota_google: notaGoogleMeta,\n    qtd_avaliacoes: qtdAvMeta,\n    distribuicao_notas: distMeta,\n    minimo_avaliacoes: minReviews,\n  };\n\n  // ===== CASO 1: FECHADO PERMANENTEMENTE =====\n  if (isFechadoPermanente(e?.status)) {\n    const motivo = `Estabelecimento fechado permanentemente (status=\"${e?.status}\")`;\n    const vazio = {\n      nome: \"—\", status: \"reprovado\", score: 0, confiabilidade_pct: 100,\n      criterio: \"Estabelecimento deve estar em operação.\",\n      valor_observado: `status=\"${e?.status}\"`,\n      observacao: motivo,\n    };\n    return {\n      nome, metadados,\n      status_global: `⛔ Reprovado — ${motivo}`,\n      status_codigo: \"reprovado_fechado\",\n      motivo_status: motivo,\n      processar_qualitativo: false,\n      regras_hard_violadas: [motivo],\n      leitura_rapida: \"Fechado permanentemente\",\n      score_composto_estatistico: null,\n      score_categorias_ponderado: null,\n      classificacao: \"⛔ Fechado\",\n      confianca_nivel: \"n/a\",\n      proxima_acao: \"Remover da base / não recomendar — não está mais em operação\",\n      tags: [\"fechado-permanente\", \"não-recomendado\"],\n      highlights: [`⛔ ${motivo}`],\n      resumo_categorias: {\n        status_global: `⛔ Reprovado — ${motivo}`,\n        status_base: \"⛔ Reprovado\",\n        status_codigo: \"reprovado_fechado\",\n        motivo_status: motivo,\n        processar_qualitativo: false,\n        regras_hard_violadas: [motivo],\n        aprovadas: 0, reprovadas: 10, neutras: 0, indeterminadas: 0,\n        total_categorias: 10, score_categorias_ponderado: null,\n        confiabilidade_media_pct: 100,\n        leitura_rapida: \"Fechado permanentemente\",\n      },\n      cat_tendencia: vazio, cat_dispersao: vazio, cat_inferencia: vazio,\n      cat_sentimento: vazio, cat_forma: vazio, cat_temporal: vazio,\n      cat_credibilidade: vazio, cat_engajamento: vazio, cat_red_flags: vazio,\n      cat_veredicto: vazio,\n      analise: {\n        status: \"fechado_permanente\",\n        veredicto: {\n          classificacao: \"⛔ Fechado\", score_final: null,\n          texto: motivo,\n          recomendacao: \"Não recomendar — estabelecimento encerrado.\",\n        },\n        leitura_rapida: \"Fechado permanentemente\",\n        validacao_dados: null,\n        tendencia_central: null, dispersao_forma: null, inferencia: null,\n        sentimento: null, diagnostico_forma: null, temporal: null,\n        credibilidade: null, textual: null,\n        confianca: { nivel: \"n/a\", peso: 0 },\n        red_flags: [{ severidade: \"alta\", flag: \"Fechado permanentemente\", detalhe: motivo }],\n      },\n    };\n  }\n\n  const dist = distMeta;\n  const n = nMeta;\n  const notaGoogle = notaGoogleMeta;\n  const reviews = Array.isArray(e?.reviews) ? e.reviews : [];\n\n  // ===== CASO 2: ZERO AVALIAÇÕES =====\n  if (n === 0) {\n    const vazio = {\n      nome: \"—\", status: \"indeterminado\", score: null, confiabilidade_pct: 0,\n      criterio: \"\", valor_observado: \"sem dados\", observacao: \"Estabelecimento sem avaliações\",\n    };\n    return {\n      nome, metadados,\n      status_global: \"❌ Indeterminado — Sem avaliações registradas\",\n      status_codigo: \"indeterminado\",\n      motivo_status: \"Sem avaliações registradas (n=0)\",\n      processar_qualitativo: false,\n      regras_hard_violadas: [],\n      resumo_categorias: {\n        status_global: \"❌ Indeterminado — Sem avaliações registradas\",\n        status_base: \"❌ Indeterminado\",\n        status_codigo: \"indeterminado\",\n        motivo_status: \"Sem avaliações registradas (n=0)\",\n        processar_qualitativo: false,\n        aprovadas: 0, reprovadas: 0, neutras: 0, indeterminadas: 10,\n        total_categorias: 10, score_categorias_ponderado: null, confiabilidade_media_pct: 0,\n        leitura_rapida: \"Sem avaliações\",\n      },\n      tags: [\"sem-avaliacoes\", \"indeterminado\"],\n      highlights: [\"Sem avaliações registradas — análise não aplicável\"],\n      proxima_acao: \"Buscar dados em outra fonte\",\n      cat_tendencia: vazio, cat_dispersao: vazio, cat_inferencia: vazio,\n      cat_sentimento: vazio, cat_forma: vazio, cat_temporal: vazio,\n      cat_credibilidade: vazio, cat_engajamento: vazio, cat_red_flags: vazio,\n      cat_veredicto: vazio,\n      analise: {\n        status: \"sem_avaliacoes\",\n        veredicto: {\n          classificacao: \"❌ Indeterminado\", score_final: null,\n          texto: \"Estabelecimento sem avaliações registradas.\",\n          recomendacao: \"Sem dados para análise.\",\n        },\n        leitura_rapida: \"Sem avaliações\",\n        validacao_dados: null,\n        tendencia_central: null, dispersao_forma: null, inferencia: null,\n        sentimento: null, diagnostico_forma: null, temporal: null,\n        credibilidade: null, textual: null,\n        confianca: { nivel: \"insuficiente\", peso: 0 },\n        red_flags: [{ severidade: \"alta\", flag: \"Sem avaliações\", detalhe: \"Distribuição totalmente zerada\" }],\n      },\n    };\n  }\n\n  // ---- Blocos da análise ----\n  const tc   = tendenciaCentral(dist, n);\n  const df   = dispersaoForma(dist, n, tc.media);\n  const inf  = inferencia(tc.media, df.variancia, n);\n  const sen  = sentimento(dist, n);\n  const diag = diagnosticoForma(dist, n, df.variancia);\n  const tmp  = temporal(reviews);\n  const cred = credibilidade(reviews);\n  const txt  = analiseTextual(reviews);\n  const conf = classificarConfianca(n);\n\n  const divergencia = notaGoogle !== null ? notaGoogle - tc.media : null;\n  let interpDiv = \"indeterminado\";\n  if (divergencia !== null) {\n    const ab = Math.abs(divergencia);\n    interpDiv = ab < 0.15 ? \"consistente\" : (ab < 0.30 ? \"leve divergência\" : \"divergente\");\n  }\n\n  const flags = redFlags({\n    divergencia: divergencia ?? 0, notaGoogle, mediaCalc: tc.media,\n    temporalData: tmp, n, minReviews, wilson95: inf.wilson_95,\n    credData: cred, diagData: diag, textualData: txt,\n  });\n\n  const score = conf.nivel === \"insuficiente\" ? null : scoreComposto({\n    wilson95: inf.wilson_95, n,\n    slopeAno: tmp?.regressao_linear?.slope_estrelas_por_ano ?? null,\n    pctExperientes: cred?.pct_experientes ?? 0,\n    indicePol: diag?.indice_polarizacao ?? 0,\n  });\n\n  const ver = veredicto({\n    confianca: conf, score, mediaCalc: tc.media, n,\n    wilson95: inf.wilson_95, diagData: diag, temporalData: tmp, flags,\n  });\n\n  const leituraRapida = `${round(tc.media, 2)} ★ (IC 95%: ${inf.wilson_95.inferior}–${inf.wilson_95.superior}, n=${n}, confiança ${conf.nivel})`;\n\n  const analise = {\n    veredicto: ver,\n    leitura_rapida: leituraRapida,\n    validacao_dados: {\n      nota_google: notaGoogle,\n      media_calculada: round(tc.media, 4),\n      divergencia: divergencia !== null ? round(divergencia, 4) : null,\n      interpretacao: interpDiv,\n    },\n    tendencia_central: tc,\n    dispersao_forma: df,\n    inferencia: inf,\n    sentimento: sen,\n    diagnostico_forma: diag,\n    temporal: tmp,\n    credibilidade: cred,\n    textual: txt,\n    confianca: conf,\n    red_flags: flags,\n  };\n\n  const cats = avaliarCategorias(analise, n);\n\n  const lista = Object.values(cats);\n  const aprovadas  = lista.filter(c => c.status === \"aprovado\").length;\n  const reprovadas = lista.filter(c => c.status === \"reprovado\").length;\n  const neutras    = lista.filter(c => c.status === \"neutro\").length;\n\n  const somaConf  = lista.reduce((s, c) => s + (c.confiabilidade_pct ?? 0), 0);\n  const scoreCategoriasPond = somaConf > 0\n    ? lista.reduce((s, c) => s + (c.score ?? 0) * (c.confiabilidade_pct ?? 0), 0) / somaConf\n    : null;\n  const confMedia = lista.reduce((s, c) => s + (c.confiabilidade_pct ?? 0), 0) / lista.length;\n\n  let statusBase;\n  if (conf.nivel === \"insuficiente\")            statusBase = \"❌ Indeterminado\";\n  else if (reprovadas >= 4)                     statusBase = \"⛔ Reprovado\";\n  else if (reprovadas >= 2 && aprovadas <= 4)   statusBase = \"🔴 Insatisfatório\";\n  else if (aprovadas >= 7 && reprovadas === 0)  statusBase = \"✅ Aprovado\";\n  else if (aprovadas >= 5)                      statusBase = \"🟢 Aprovado com ressalvas\";\n  else                                          statusBase = \"🟡 Parcialmente aprovado\";\n\n  const regrasHardViolated = regrasHardReprovacao({\n    n, minReviews, score, classificacao: ver.classificacao, conf,\n    flags, wilson95: inf.wilson_95, dist, temporalData: tmp,\n  });\n  if (regrasHardViolated.length > 0) statusBase = \"⛔ Reprovado\";\n\n  const reprovadasList = lista.filter(c => c.status === \"reprovado\");\n  const altasFlags     = flags.filter(f => f.severidade === \"alta\");\n\n  let statusCodigo, motivoStatus, processarQualitativo;\n\n  if (regrasHardViolated.length > 0) {\n    statusCodigo = \"reprovado_hard\";\n    processarQualitativo = false;\n    motivoStatus = `Regras críticas violadas: ${regrasHardViolated.join(\" | \")}`;\n  } else if (statusBase.includes(\"❌ Indeterminado\")) {\n    statusCodigo = \"indeterminado\";\n    processarQualitativo = false;\n    motivoStatus = `Confiança ${conf.nivel} (n=${n}) — dados insuficientes para análise estatística`;\n  } else if (statusBase.includes(\"⛔ Reprovado\")) {\n    statusCodigo = \"reprovado\";\n    processarQualitativo = false;\n    const partes = [];\n    if (altasFlags.length > 0)\n      partes.push(`${altasFlags.length} alerta(s) crítico(s): ${altasFlags.map(f => f.flag).join(\"; \")}`);\n    partes.push(`${reprovadasList.length} categorias reprovadas: ${reprovadasList.map(c => c.nome).join(\", \")}`);\n    motivoStatus = partes.join(\" | \");\n  } else if (statusBase.includes(\"Insatisfatório\")) {\n    statusCodigo = \"insatisfatorio\";\n    processarQualitativo = false;\n    const partes = [];\n    if (altasFlags.length > 0)\n      partes.push(`${altasFlags.length} alerta(s) crítico(s): ${altasFlags.map(f => f.flag).join(\"; \")}`);\n    partes.push(`${reprovadasList.length} reprovadas vs. ${aprovadas} aprovadas`);\n    if (reprovadasList.length > 0)\n      partes.push(`reprovadas em: ${reprovadasList.map(c => c.nome).join(\", \")}`);\n    motivoStatus = partes.join(\" | \");\n  } else if (statusBase.includes(\"✅ Aprovado\")) {\n    statusCodigo = \"aprovado\";\n    processarQualitativo = true;\n    motivoStatus = `${aprovadas}/${lista.length} categorias aprovadas sem reprovações`;\n  } else if (statusBase.includes(\"ressalvas\")) {\n    statusCodigo = \"aprovado_ressalvas\";\n    processarQualitativo = true;\n    const partes = [`${aprovadas}/${lista.length} aprovadas, ${reprovadasList.length} ressalva(s)`];\n    if (reprovadasList.length > 0)\n      partes.push(`atenção em: ${reprovadasList.map(c => c.nome).join(\", \")}`);\n    motivoStatus = partes.join(\" | \");\n  } else {\n    statusCodigo = \"parcial\";\n    processarQualitativo = true;\n    motivoStatus = `${aprovadas} aprovadas, ${reprovadasList.length} reprovadas, ${neutras} neutras`;\n    if (reprovadasList.length > 0)\n      motivoStatus += ` | reprovadas em: ${reprovadasList.map(c => c.nome).join(\", \")}`;\n  }\n\n  const statusGlobal = `${statusBase} — ${motivoStatus}`;\n\n  const resumo = {\n    status_global: statusGlobal,\n    status_base: statusBase,\n    status_codigo: statusCodigo,\n    motivo_status: motivoStatus,\n    processar_qualitativo: processarQualitativo,\n    regras_hard_violadas: regrasHardViolated,\n    aprovadas, reprovadas, neutras,\n    total_categorias: lista.length,\n    score_categorias_ponderado: round(scoreCategoriasPond, 2),\n    confiabilidade_media_pct: round(confMedia, 1),\n    leitura_rapida: `${aprovadas}/${lista.length} aprovadas — score categorias ${round(scoreCategoriasPond, 2)}/10 (confiabilidade ${round(confMedia, 1)}%)`,\n  };\n\n  const tags = gerarTags(analise, cats);\n  const highlights = gerarHighlights(analise, cats, resumo);\n  const acao = proximaAcao(resumo, cats);\n\n  return {\n    nome, metadados,\n    status_global: statusGlobal,\n    status_codigo: statusCodigo,\n    motivo_status: motivoStatus,\n    processar_qualitativo: processarQualitativo,\n    regras_hard_violadas: regrasHardViolated,\n    leitura_rapida: leituraRapida,\n    score_composto_estatistico: ver.score_final,\n    score_categorias_ponderado: resumo.score_categorias_ponderado,\n    classificacao: ver.classificacao,\n    confianca_nivel: conf.nivel,\n    proxima_acao: acao,\n    tags, highlights,\n    resumo_categorias: resumo,\n    cat_tendencia:     cats.tendencia,\n    cat_dispersao:     cats.dispersao,\n    cat_inferencia:    cats.inferencia,\n    cat_sentimento:    cats.sentimento,\n    cat_forma:         cats.forma,\n    cat_temporal:      cats.temporal,\n    cat_credibilidade: cats.credibilidade,\n    cat_engajamento:   cats.engajamento,\n    cat_red_flags:     cats.red_flags,\n    cat_veredicto:     cats.veredicto,\n    analise,\n  };\n}\n\n// ===== ENTRADA — Run Once for All Items =====\nreturn $input.all().map((item) => {\n  const eRaw = item.json || {};\n  const eNorm = coerceItem(eRaw);\n  return { json: { ...eRaw, ...analisar(eNorm) } };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        304,
+        592
+      ],
+      "id": "f58f3934-da62-4abf-8fa8-939c6b8525af",
+      "name": "Análise quantitativa"
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        672,
+        464
+      ],
+      "id": "cd7244b8-45a5-4706-af8e-e3283f270fc9",
+      "name": "Merge3"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Mode: Run Once for All Items\n// Recebe 150 itens (3 braços empilhados pelo Merge append).\n// Reagrupa por ID — nunca por posição.\nconst all = $input.all().map(i => i.json).filter(x => x && x.id);\n\n// Agrupa todos os fragmentos de cada estabelecimento sob o mesmo id\nconst porId = {};\nfor (const it of all) {\n  if (!porId[it.id]) porId[it.id] = [];\n  porId[it.id].push(it);\n}\n\n// Para cada estabelecimento, funde seus fragmentos num objeto só\nreturn Object.values(porId).map(fragmentos => {\n  // Identifica cada fragmento pelo que ele carrega de exclusivo\n  const comentarios = fragmentos.find(f => f.comentarios_formatados !== undefined) || {};\n  const analise     = fragmentos.find(f => f.analise !== undefined || f.score_composto_estatistico !== undefined) || {};\n  const cru         = fragmentos.find(f => f.reviews !== undefined) || {};\n\n  // Funde: base crua, depois análise, e por cima os comentários (fonte confiável do texto)\n  const merged = Object.assign({}, cru, analise, comentarios);\n\n  return { json: merged };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        928,
+        480
+      ],
+      "id": "ef854c63-ae4b-4952-9ea7-18d4acca5be3",
+      "name": "Organizer"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "84a61839-7de0-4328-9bf4-1b348818228c",
+                    "leftValue": "={{ $json.categoria_principal }}",
+                    "rightValue": "Entretenimento e lazer",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Entretenimento e lazer"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.categoria_principal }}",
+                    "rightValue": "Gastronomia",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "94134c25-e368-4b6f-8962-7b41b162a2d7"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Gastronomia"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "80cfb5a1-e18b-41f0-88da-ffca7c29473e",
+                    "leftValue": "={{ $json.categoria_principal }}",
+                    "rightValue": "Cultura e história",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Cultura e história"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "989c6b91-221b-47ec-a5f5-b8f9519d82cb",
+                    "leftValue": "={{ $json.categoria_principal }}",
+                    "rightValue": "Natureza e aventura",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Natureza e aventura"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "fd5aa389-4649-4da3-b2ce-dc93e129ea94",
+                    "leftValue": "={{ $json.categoria_principal }}",
+                    "rightValue": "Mercados e compras",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mercados e compras"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "62ea8e3e-70af-4478-a2d3-94f19c4b5b33",
+                    "leftValue": "={{ $json.categoria_principal }}",
+                    "rightValue": "Turismo e experiências",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Turismo e experiências"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "8fea9bba-260a-4b3f-bb53-d94755b6dcd7",
+                    "leftValue": "={{ $json.categoria_principal }}",
+                    "rightValue": "Fazendas e animais",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Fazendas e animais"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "84805d02-d195-4dbe-b615-b8a82a6a5451",
+                    "leftValue": "={{ $json.categoria_principal }}",
+                    "rightValue": "Outros",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Outros"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1584,
+        384
+      ],
+      "id": "d58f7cb9-4b96-40f0-98bb-dd060871a66c",
+      "name": "Switch2"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ ['aprovado','aprovado_ressalvas','parcial'].includes($json.status_codigo) }}",
+                    "rightValue": "desaprovado",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "74641e61-0305-451b-806a-f768284bf47e"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "901116fe-0b5b-47a0-9ebd-63e171fbb0f9",
+                    "leftValue": "={{ ['insatisfatorio', 'reprovado', 'reprovado_hard', 'reprovado_fechado', 'indeterminado'].includes($json.status_codigo) }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1072,
+        480
+      ],
+      "id": "47716975-e71c-4ced-bcdb-9fb1e8127c6b",
+      "name": "Switch3"
+    },
+    {
+      "parameters": {
+        "jsCode": "// =============================================================================\n// n8n Code Node — Classificador de Subtipos (EN/PT → categorias TIPOS_BUSCA)\n// =============================================================================\n// Entrada esperada: itens com campo `subsegmento` (string, separada por vírgula)\n// Saída: cada item ganha:\n//   - categoria_principal: categoria escolhida por prioridade\n//   - categorias: lista de todas categorias identificadas (sem repetição)\n//   - subtipos_pt: tradução EN→PT dos subtipos originais\n//   - subtipos_normalizados: array dos subtipos originais (trim)\n//\n// Categorias-alvo (8):\n//   1. Natureza e aventura\n//   2. Fazendas e animais\n//   3. Cultura e história\n//   4. Gastronomia\n//   5. Entretenimento e lazer\n//   6. Mercados e compras  -> WHITELIST: só compras com apelo turístico\n//   7. Turismo e experiências\n//   8. Outros  (não-turísticos: lojas em geral, serviços, hospedagem, etc.)\n//\n// REVISÃO ATUAL — mudanças marcadas com \"// >>> AJUSTE\":\n//   - [4] clinic: troca de has('clinic ') por hasw('clinic') p/ pegar\n//         'pet clinic', 'clinic', etc. de forma confiável (antes vazava p/ Outros\n//         por acaso, não por desenho).\n//   - [6] 'beach club' movido de Natureza -> Entretenimento e lazer.\n//   - [8] 'art studio' / 'estúdio de arte' removidos de Cultura (ateliê comercial\n//         não é atração cultural). Escolas de arte já caem em Outros via hasw('school').\n//   - Adições de cobertura em Natureza, Fazendas/agroturismo, Cultura,\n//     Gastronomia e Turismo (sem 'cemitério', conforme pedido).\n// =============================================================================\n\n// -------- Prioridade de categoria principal (quando há múltiplos subtipos) ----\nconst CATS_PRIORIDADE = [\n  'Natureza e aventura',\n  'Fazendas e animais',\n  'Cultura e história',\n  'Gastronomia',\n  'Entretenimento e lazer',\n  'Mercados e compras',\n  'Turismo e experiências',\n  'Outros'\n];\n\n// -------- Dicionário de tradução EN → PT (subtipos catalogados) --------------\nconst TRADUCAO_SUBTIPOS = {\n  // Gastronomia\n  'restaurant': 'Restaurante',\n  'snack bar': 'Lanchonete',\n  'coffee shop': 'Cafeteria',\n  'bakery': 'Padaria',\n  'dessert shop': 'Doceria',\n  'hamburger restaurant': 'Hamburgueria',\n  'buffet restaurant': 'Restaurante a quilo / Buffet',\n  'fast food restaurant': 'Fast food',\n  'pastry shop': 'Confeitaria',\n  'american restaurant': 'Restaurante americano',\n  'candy store': 'Loja de doces',\n  'delivery restaurant': 'Restaurante delivery',\n  'wine bar': 'Wine bar',\n  'chocolate shop': 'Chocolataria',\n  'ice cream shop': 'Sorveteria',\n  'sandwich shop': 'Sanduicheria',\n  'cake shop': 'Loja de bolos',\n  'brazilian restaurant': 'Restaurante brasileiro',\n  'bistro': 'Bistrô',\n  'chocolate factory': 'Fábrica de chocolate',\n  'health food restaurant': 'Restaurante natural / saudável',\n  'diner': 'Diner / lanchonete',\n  'seafood restaurant': 'Restaurante de frutos do mar',\n  'italian restaurant': 'Restaurante italiano',\n  'pasta shop': 'Massas',\n  'argentinian restaurant': 'Restaurante argentino',\n  'meat dish restaurant': 'Carnes',\n  'chocolate artisan': 'Chocolateiro artesanal',\n  'sfiha restaurant': 'Esfiharia',\n  'breakfast restaurant': 'Café da manhã',\n  'steak house': 'Steakhouse / Churrascaria',\n  'brewery': 'Cervejaria',\n  'lebanese restaurant': 'Restaurante libanês',\n  'chocolate cafe': 'Café de chocolate',\n  'sweets and dessert buffet': 'Buffet de doces e sobremesas',\n  'beer hall': 'Cervejaria / Beer hall',\n  'pie shop': 'Tortaria',\n  'grill': 'Grill / Churrasqueira',\n  'chilean restaurant': 'Restaurante chileno',\n  'peruvian restaurant': 'Restaurante peruano',\n  'food court': 'Praça de alimentação',\n  'cake decorating equipment shop': 'Materiais para confeitaria',\n  'pizza delivery': 'Pizza delivery',\n  'pizza restaurant': 'Pizzaria',\n  'cafe': 'Café',\n  'café': 'Café',\n  'bar & grill': 'Bar & grill',\n  'portuguese restaurant': 'Restaurante português',\n  'french restaurant': 'Restaurante francês',\n  'brewpub': 'Brewpub',\n  'açaí shop': 'Açaí',\n  'creperie': 'Creperia',\n  'wedding buffet': 'Buffet de casamento',\n  'cookie shop': 'Loja de biscoitos',\n  'mexican restaurant': 'Restaurante mexicano',\n  'kebab shop': 'Kebab',\n  'chicken restaurant': 'Frangaria',\n  'pancake restaurant': 'Panquecaria',\n  'kitchen supply store': 'Utensílios de cozinha',\n  'middle eastern restaurant': 'Restaurante do oriente médio',\n  'noodle shop': 'Casa de macarrão',\n  'cheese shop': 'Queijaria',\n  'gourmet grocery store': 'Empório gourmet',\n  'ham shop': 'Loja de presuntos',\n  'tapas bar': 'Tapas bar',\n  'greek restaurant': 'Restaurante grego',\n  'japanized western restaurant': 'Restaurante nipo-ocidental',\n  'espresso bar': 'Bar de café espresso',\n  'deli': 'Delicatessen',\n  'caterer': 'Buffet / Catering',\n  'minas gerais restaurant': 'Restaurante mineiro',\n  'catering food and drink supplier': 'Buffet e bebidas',\n  'food producer': 'Produtor de alimentos',\n  'takeout restaurant': 'Restaurante para viagem',\n  'hot dog restaurant': 'Cachorro-quente',\n  'frozen dessert supplier': 'Sobremesas congeladas',\n  // >>> AJUSTE adições gastronomia\n  'tea house': 'Casa de chá',\n  'cachaçaria': 'Cachaçaria',\n  'food hall': 'Mercado gastronômico',\n  'gastropub': 'Gastropub',\n  'winery': 'Vinícola',\n  'distillery': 'Destilaria',\n\n  // Mercados e compras (turísticas)\n  'antique store': 'Antiquário',\n  'handicraft': 'Artesanato',\n  'souvenir store': 'Loja de souvenirs',\n  'craft store': 'Loja de artesanato',\n  'gift shop': 'Loja de presentes',\n\n  // Mercados / lojas (agora caem em Outros, traduções mantidas p/ exibição)\n  'shopping mall': 'Shopping center',\n  'wholesale market': 'Atacado',\n  'supermarket': 'Supermercado',\n  'pet store': 'Petshop',\n  'liquor store': 'Loja de bebidas',\n  'novelty store': 'Loja de novidades',\n  'confectionery store': 'Loja de confeitaria',\n  'beer distributor': 'Distribuidora de cervejas',\n  'wine store': 'Loja de vinhos',\n  'grocery store': 'Mercearia',\n  'appliance store': 'Eletrodomésticos',\n  'variety store': 'Loja de variedades',\n  'stationery store': 'Papelaria',\n  'market': 'Mercado',\n  'discount supermarket': 'Supermercado de desconto',\n  'home goods store': 'Loja de utilidades domésticas',\n  'beer store': 'Loja de cervejas',\n  'tobacco shop': 'Tabacaria',\n  'animal feed store': 'Loja de ração',\n  'distribution service': 'Distribuidora',\n  'party store': 'Loja de festas',\n  'confectionery wholesaler': 'Atacado de confeitaria',\n  'seasonal goods store': 'Loja sazonal',\n  'christmas store': 'Loja de Natal',\n  'dried flower shop': 'Loja de flores secas',\n  'interior decorator': 'Decoração de interiores',\n  'lighting store': 'Loja de iluminação',\n  'pottery store': 'Loja de cerâmica',\n  'office supply store': 'Material de escritório',\n  'school supply store': 'Material escolar',\n  'hypermarket': 'Hipermercado',\n  'department store': 'Loja de departamento',\n  'beauty supply store': 'Loja de cosméticos',\n  'car accessories store': 'Acessórios automotivos',\n  'cell phone store': 'Loja de celulares',\n  'clothing store': 'Loja de roupas',\n  'computer accessories store': 'Acessórios de informática',\n  'computer store': 'Loja de informática',\n  'electronics store': 'Loja de eletrônicos',\n  \"farmers' market\": 'Feira livre',\n  \"farmer's market\": 'Feira livre',\n  'farmers market': 'Feira livre',\n  'convenience store': 'Loja de conveniência',\n  'furniture store': 'Loja de móveis',\n  'clothing supplier': 'Fornecedor de roupas',\n  'reptile store': 'Loja de répteis',\n  'pet supply store': 'Loja de produtos pet',\n  'beverage distributor': 'Distribuidora de bebidas',\n  'beverage supplier': 'Fornecedor de bebidas',\n  'state liquor store': 'Loja de bebidas estatal',\n  'tool & die shop': 'Loja de ferramentas e matrizes',\n  'tool store': 'Loja de ferramentas',\n  'cosmetics store': 'Loja de cosméticos',\n  'frozen food store': 'Loja de congelados',\n  'store': 'Loja',\n  'copy shop': 'Copiadora',\n  'warehouse store': 'Atacado / Galpão',\n  'notions store': 'Loja de aviamentos',\n  'florist': 'Floricultura',\n\n  // Entretenimento e lazer\n  'bar': 'Bar',\n  'cocktail bar': 'Bar de coquetéis',\n  'pub': 'Pub',\n  'night club': 'Boate',\n  'event venue': 'Espaço de eventos',\n  'movie theater': 'Cinema',\n  'live music bar': 'Bar com música ao vivo',\n  'performing arts theater': 'Teatro',\n  'function room facility': 'Salão de festas',\n  'theme park': 'Parque temático',\n  'amusement park': 'Parque de diversões',\n  \"children's party service\": 'Festa infantil',\n  'wine club': 'Clube de vinhos',\n  'children hall': 'Salão infantil',\n  'event planner': 'Organizador de eventos',\n  'banquet hall': 'Salão de banquetes',\n  'event management company': 'Gestão de eventos',\n  'wedding venue': 'Espaço para casamentos',\n  'irish pub': 'Pub irlandês',\n  'disco club': 'Discoteca',\n  // >>> AJUSTE [6] beach club agora entretenimento\n  'beach club': 'Beach club',\n\n  // Cultura e história\n  'catholic church': 'Igreja católica',\n  'art gallery': 'Galeria de arte',\n  'museum': 'Museu',\n  'landmark': 'Marco histórico',\n  'science museum': 'Museu de ciências',\n  'church of christ': 'Igreja de Cristo',\n  'chapel': 'Capela',\n  'planetarium': 'Planetário',\n  'church': 'Igreja',\n  // >>> AJUSTE adições cultura\n  'fort': 'Forte',\n  'castle': 'Castelo',\n  'palace': 'Palácio',\n  'monastery': 'Mosteiro',\n\n  // Natureza e aventura\n  'marina': 'Marina',\n  'mountain peak': 'Pico / Montanha',\n  'hiking area': 'Área de trilhas',\n  'public beach': 'Praia pública',\n\n  // Fazendas e animais\n  'poultry farm': 'Granja',\n  'aquarium': 'Aquário',\n  'aquarium shop': 'Loja de aquários',\n\n  // Turismo e experiências\n  'tourist attraction': 'Atração turística',\n  'park': 'Parque',\n  'city park': 'Parque municipal',\n  'plaza': 'Praça',\n  'travel agency': 'Agência de viagens',\n\n  // Outros (serviços / hospedagem)\n  'veterinarian': 'Veterinário',\n  'business center': 'Centro empresarial',\n  'pet groomer': 'Banho e tosa',\n  'public university': 'Universidade pública',\n  'university': 'Universidade',\n  'fingerprinting service': 'Serviço de identificação',\n  'drama school': 'Escola de teatro',\n  'dance school': 'Escola de dança',\n  'music school': 'Escola de música',\n  'graduate school': 'Pós-graduação',\n  'educational institution': 'Instituição de ensino',\n  'private university': 'Universidade privada',\n  'art studio': 'Estúdio de arte',\n  'atm': 'Caixa eletrônico',\n  'delivery service': 'Serviço de entrega',\n  'association / organization': 'Associação / Organização',\n  'county government office': 'Órgão público municipal',\n  'handicapped transportation service': 'Transporte adaptado',\n  'veterinary pharmacy': 'Farmácia veterinária',\n  'pharmaceutical company': 'Empresa farmacêutica',\n  'electrical repair shop': 'Oficina elétrica',\n  'real estate agent': 'Imobiliária',\n  'drug store': 'Drogaria',\n  'dog walker': 'Passeador de cães',\n  'eyebrow bar': 'Design de sobrancelhas',\n  'taxi service': 'Serviço de táxi',\n  'legal services': 'Serviços jurídicos',\n  'hotel': 'Hotel',\n  'hostel': 'Hostel'\n};\n\n// ============================================================================\n// Função principal de classificação de UM subtipo (string única)\n// ============================================================================\nfunction classificarSubtipo(subtipo) {\n  if (!subtipo || typeof subtipo !== 'string') return 'Outros';\n  const s = subtipo.toLowerCase().trim();\n  if (!s) return 'Outros';\n\n  // helpers\n  const has = (kw) => s.indexOf(kw) !== -1;\n  const hasw = (kw) => {\n    const re = new RegExp('\\\\b' + kw.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&') + '\\\\b', 'i');\n    return re.test(s);\n  };\n  const hasAny = (kws) => kws.some(k => has(k));\n  const hasAnyW = (kws) => kws.some(k => hasw(k));\n\n  // ===========================================================\n  // 0) EXCLUSÕES — Outros (serviços não-turísticos / hospedagem)\n  //    Roda ANTES dos blocos positivos.\n  // ===========================================================\n\n  // --- Serviços originais ---\n  if (hasw('veterinarian') || has('veterinár') || has('veterinario')) return 'Outros';\n  if (has('pet groomer') || has('pet grooming') || has('banho e tosa')) return 'Outros';\n  if (hasw('business center') || has('centro empresarial') || has('coworking')) return 'Outros';\n  if (hasw('university') || hasw('universidade') || hasw('faculdade')\n      || hasw('college') || has('graduate school') || has('educational institution')\n      || has('public university') || has('private university')) return 'Outros';\n  // Escola / curso → Outros (não há categoria turística para ensino).\n  if (hasw('school')) return 'Outros';\n  if (hasw('fingerprinting') || hasw('atm')) return 'Outros';\n  if (has('pharmaceutical') || has('farmacêutic') || has('farmaceutic')\n      || hasw('pharmacy') || hasw('farmácia') || has('drogaria')) return 'Outros';\n  // >>> AJUSTE [4] clinic via word-boundary: pega 'clinic', 'pet clinic',\n  //     'dental clinic', 'clínica' de forma confiável (antes 'clinic ' com espaço\n  //     deixava 'pet clinic' vazar para o fallback por acaso).\n  if (has('medical center') || has('hospital')\n      || hasw('clinic') || has('clínica') || has('clinica')\n      || has('dental') || has('dentist')) return 'Outros';\n  if (has('government') || has('prefeitura') || has('câmara municipal')\n      || has('cartório')) return 'Outros';\n  if (has('association / organization') || has('associação')) return 'Outros';\n  if (has('handicapped transportation') || has('transportation service')) return 'Outros';\n  if (has('electrical repair') || has('repair shop') || has('oficina mecânica')) return 'Outros';\n  if (hasw('bank') || hasw('banco') || has('embassy') || has('embaixada')\n      || has('police') || has('polícia') || has('fire station') || has('bombeiro')) return 'Outros';\n  if (has('laundry') || has('lavanderia') || has('gas station')\n      || has('parking lot') || has('estacionamento') || has('real estate')\n      || has('imobiliária') || hasw('lawyer') || has('advogado')\n      || has('accountant') || has('contador') || hasw('insurance')\n      || hasw('seguro') || has('delivery service')) return 'Outros';\n\n  // --- Exclusões adicionais ---\n\n  // Beleza / serviços pessoais (eyebrow \"bar\" precisa cair AQUI, antes da regra de bar)\n  if (has('eyebrow') || has('brow bar') || has('sobrancelha')\n      || has('eyelash') || has('cílios') || has('cilios')\n      || has('nail salon') || has('manicure')\n      || has('barbearia') || has('barbershop')\n      || has('hair salon') || has('cabeleire')\n      || has('salão de beleza') || has('salao de beleza')) return 'Outros';\n\n  // Drogaria (reforço)\n  if (has('drug store') || has('drugstore')) return 'Outros';\n\n  // Pet services + pet shops + répteis (nenhum tem apelo turístico)\n  if (has('dog walker') || has('dog walking') || has('passeador')\n      || has('adestrador') || has('dog trainer')\n      || has('pet shop') || has('petshop') || has('pet store') || has('pet supply')\n      || has('aquarium shop') || has('reptile store')\n      || has('loja de répteis') || has('loja de repteis')\n      || has('animal feed')) return 'Outros';\n\n  // Floricultura\n  if (has('florist') || has('florista') || has('floricultura')\n      || has('flower shop') || has('dried flower')) return 'Outros';\n\n  // Papelaria / copiadora / material de escritório-escolar\n  if (has('papelaria') || has('stationery')\n      || has('copiadora') || has('copy shop')\n      || has('office supply') || has('school supply') || has('material escolar')) return 'Outros';\n\n  // Supermercado / mercearia / conveniência → Outros (loja, sem apelo turístico).\n  if (has('supermercado') || has('supermarket')\n      || has('hipermercado') || has('hypermarket') || has('discount supermarket')\n      || has('loja de conveniência') || has('loja de conveniencia') || has('convenience store')\n      || has('mercearia') || has('grocery store')) return 'Outros';\n\n  // Cinema (precisa vir antes de Entretenimento)\n  if (has('cinema') || has('movie theater')) return 'Outros';\n\n  // Gestão / organização de eventos (precisa vir antes de Entretenimento)\n  if (has('gestão de eventos') || has('gestao de eventos')\n      || has('organização de eventos') || has('organizacao de eventos')\n      || has('event management') || has('event planner')) return 'Outros';\n\n  // Espaços/serviços de evento privado (aluguel p/ festa/casamento, não atração) → Outros\n  if (has('event venue') || has('banquet hall') || has('salão de banquetes')\n      || has('function room') || has('wedding venue') || has('espaço para casamento')\n      || has(\"children's party\") || has('children hall') || has('salão infantil')\n      || has('festa infantil') || has('wine club') || has('beer club')) return 'Outros';\n\n  // Buffet / catering / produtor-fornecedor de alimentos (serviço ou B2B, não atração) → Outros\n  if (has('caterer') || has('catering')\n      || has('food producer') || has('produtor de alimentos')\n      || has('frozen dessert supplier')) return 'Outros';\n\n  // Granja / produção animal industrial (não é agroturismo) → Outros\n  if (has('poultry farm') || has('granja') || has('fazenda de aves')\n      || has('hatchery') || has('chicken farm') || has('cattle farm')\n      || has('pig farm')) return 'Outros';\n\n  // Doces / chocolate de varejo (loja) → Outros, pela regra de whitelist de loja.\n  // ATENÇÃO: só 'candy store' e 'chocolate shop'. Fábrica/café/artesão de chocolate\n  // PERMANECEM em Gastronomia (chocolate factory, chocolate cafe, chocolate artisan).\n  if (has('candy store') || has('chocolate shop')) return 'Outros';\n\n  // Transporte\n  if (hasw('taxi') || has('táxi') || has('ponto de táxi')\n      || has('car rental') || has('locadora de carro')) return 'Outros';\n\n  // Serviços jurídicos\n  if (has('legal service') || has('serviço jurídic') || has('servico juridic')\n      || has('serviços jurídic') || has('advocacia') || has('law firm')) return 'Outros';\n\n  // Imobiliária (cobre o erro de digitação \"real state\")\n  if (has('real state') || has('realtor')) return 'Outros';\n\n  // Cursos / aulas avulsas\n  if (hasw('class') || has('classes') || hasw('curso') || hasw('cursos')\n      || has('training center')) return 'Outros';\n\n  // Igrejas (church / igreja) — culto religioso, não-turístico por decisão de produto.\n  // Catedral, basílica e capela PERMANECEM em Cultura e história (não casam aqui).\n  if (has('church') || has('igreja')) return 'Outros';\n\n  // Agência de viagens — serviço, não é atração em si.\n  if (has('travel agency') || has('agência de viagem') || has('agencia de viagem')) return 'Outros';\n\n  // Hospedagem (guarda 'historic hotel' / 'hotel histórico' p/ continuar em Cultura)\n  if ((hasw('hotel') && !has('historic') && !has('histórico') && !has('historico'))\n      || has('hostel') || has('pousada') || has('motel')\n      || has('resort') || has('hospedagem')) return 'Outros';\n\n  // >>> AJUSTE [6] 'beach club' é entretenimento, não natureza.\n  //     Precisa vir ANTES do natStrict (que casa 'beach').\n  if (has('beach club')) return 'Entretenimento e lazer';\n\n  // ===========================================================\n  // 1) NATUREZA E AVENTURA\n  // ===========================================================\n  const natStrict = ['rio', 'lago', 'lake', 'cave', 'beach', 'praia',\n                     'forest', 'floresta', 'pico', 'summit'];\n  const natLoose = [\n    'cachoeira', 'waterfall', 'trilha', 'hiking trail', 'hiking area',\n    'parque nacional', 'national park', 'reserva ecológ', 'reserva ecologica',\n    'ecological reserve', 'nature reserve', 'jardim botân', 'jardim botanico',\n    'botanical garden', 'mirante', 'viewpoint', 'observation deck', 'lookout',\n    'banho de mar', 'esporte náutico', 'esporte nautico', 'nautical sport',\n    'water sport', 'esportes aquát', 'marina', 'caverna', 'spelunking',\n    'escalada', 'climbing', 'rapel', 'rappel', 'voo livre', 'paraglid',\n    'hang glid', 'mountain peak', 'natural feature', 'mata atlân',\n    'public beach',\n    // >>> AJUSTE [6] 'beach club' REMOVIDO daqui (foi p/ Entretenimento).\n    // >>> AJUSTE adições natureza:\n    'dune', 'dunas', 'gruta', 'canyon', 'cânion', 'canion',\n    'thermal', 'termas', 'hot spring', 'fonte termal',\n    'surf', 'surfe', 'diving', 'mergulho', 'rafting',\n    'tirolesa', 'zipline', 'zip line',\n    'lagoon', 'lagoa', 'island', 'ilha', 'cliff', 'falésia', 'falesia'\n  ];\n  if (hasAnyW(natStrict)) return 'Natureza e aventura';\n  if (hasAny(natLoose)) return 'Natureza e aventura';\n\n  // ===========================================================\n  // 2) FAZENDAS E ANIMAIS\n  // ===========================================================\n  // farmer's market → Outros (feira livre é mercado de bairro, sem apelo turístico).\n  if (has(\"farmers' market\") || has('farmers market') || has(\"farmer's market\")) {\n    return 'Outros';\n  }\n  const fazendasLoose = [\n    'fazenda', 'fazendinha', 'ranch ', 'rancho',\n    'petting zoo', 'zoológico', 'zoologico', 'zoo ',\n    'aquário', 'aquarium', 'aviário', 'aviario', 'aviary',\n    'animal park', 'wildlife',\n    'horse riding', 'equestrian', 'haras', 'horse stable',\n    'vivência com animais', 'vivencia com animais',\n    'animal sanctuary', 'santuário animal',\n    // >>> AJUSTE adições fazendas/agroturismo:\n    'agroturismo', 'agritourism', 'agrotourism', 'farm stay', 'farm tour',\n    'dairy farm', 'cheese farm', 'apiary', 'apiário', 'apiario',\n    'bird sanctuary'\n  ];\n  if (s === 'zoo' || s.endsWith(' zoo') || s.startsWith('zoo ')) return 'Fazendas e animais';\n  if (hasAny(fazendasLoose)) return 'Fazendas e animais';\n  if (hasw('farm') && !has('pharm') && !has('farmer')) return 'Fazendas e animais';\n\n  // ===========================================================\n  // 3) CULTURA E HISTÓRIA\n  // ===========================================================\n  const culturaLoose = [\n    'museu', 'museum',\n    'centro histórico', 'centro historico', 'historic center',\n    'chapel', 'capela',\n    'cathedral', 'catedral', 'basilica', 'basílica',\n    'historic hotel', 'hotel histórico',\n    'ruína histórica', 'ruina historica', 'ruins',\n    'arqueológic', 'arqueologic', 'archaeolog',\n    'patrimônio', 'patrimonio', 'unesco', 'heritage site',\n    'mosteiro', 'monastery', 'convent', 'convento',\n    'sacred site', 'local sagrado', 'lugar sagrado',\n    'temple', 'templo', 'shrine', 'santuário religioso',\n    'arte urbana', 'street art', 'mural',\n    'art gallery', 'galeria de arte',\n    // >>> AJUSTE [8] 'art studio' / 'estúdio de arte' REMOVIDOS\n    //     (ateliê comercial não é atração cultural; escolas de arte já vão p/\n    //      Outros via hasw('school')).\n    'cultural center', 'centro cultural',\n    'landmark', 'monument', 'monumento', 'memorial',\n    'planetarium', 'planetário', 'planetario',\n    'observatory', 'observatório astronômico',\n    'historical place', 'sítio histórico', 'sitio historico',\n    // >>> AJUSTE adições cultura (sem cemitério):\n    'fort', 'forte', 'fortaleza', 'castle', 'castelo',\n    'palace', 'palácio', 'palacio'\n  ];\n  if (hasAny(culturaLoose)) return 'Cultura e história';\n\n  // ===========================================================\n  // 4) GASTRONOMIA (antes de Entretenimento p/ capturar bares de comida)\n  // ===========================================================\n  const gastroBar = [\n    'snack bar', 'espresso bar', 'tapas bar', 'sushi bar',\n    'juice bar', 'salad bar', 'sweets and dessert buffet',\n    'sweet and dessert buffet', 'wedding buffet'\n  ];\n  if (hasAny(gastroBar)) return 'Gastronomia';\n\n  // Subcategorias gastronômicas específicas do escopo\n  if (hasAny(['brewery', 'cervejaria', 'brewpub', 'beer hall', 'beer garden', 'gastropub'])) return 'Gastronomia';\n  if (hasAny(['winery', 'vinícola', 'vinicola'])) return 'Gastronomia';\n  if (hasAny(['distillery', 'destilaria', 'alambique', 'cachaçaria', 'cachacaria', 'cachaça', 'cachaca'])) return 'Gastronomia';\n  if (hasAny(['cheese shop', 'queijaria'])) return 'Gastronomia';\n  if (hasAny(['chocolate', 'cacau', 'chocolataria'])) return 'Gastronomia';\n\n  const gastronomiaLoose = [\n    'restaurant', 'restaurante', 'cozinha regional', 'regional cuisine',\n    'comida de rua', 'street food', 'food truck', 'food court', 'food hall',\n    'cafeteria', 'coffee shop', 'coffee house',\n    'tea house', 'casa de chá', 'casa de cha',\n    'confeitaria', 'pastry shop', 'pastelaria', 'patisserie',\n    'bakery', 'padaria',\n    'sorveteria', 'ice cream', 'gelataria', 'gelato',\n    'frozen yogurt', 'açaí', 'acai', 'açai',\n    'hamburgueria', 'hamburger', 'burger',\n    'festival gastronômico', 'rota gastronômica', 'food festival',\n    'pizzeria', 'pizzaria', 'pizza',\n    'bistro', 'bistrô',\n    'lanchonete', 'fast food', 'diner',\n    'buffet', 'churrascaria', 'churrasc',\n    'steak house', 'steakhouse', 'grill', 'grelhad',\n    'sandwich', 'sanduíche', 'sub shop',\n    'sushi', 'japanese restaurant', 'japonesa',\n    'chinese restaurant', 'chinesa',\n    'italian restaurant', 'italiana',\n    'french restaurant', 'francesa',\n    'mexican restaurant', 'mexicana',\n    'argentinian', 'argentin', 'peruvian', 'peruano', 'peruana',\n    'chilean', 'chileno', 'chilena',\n    'portuguese restaurant', 'portuguesa',\n    'lebanese', 'libanês', 'libanesa',\n    'greek restaurant', 'grego', 'grega',\n    'spanish restaurant', 'espanhol', 'espanhola',\n    'thai restaurant', 'tailandês', 'tailandesa',\n    'indian restaurant', 'indiana',\n    'middle eastern', 'oriente médio',\n    'kebab', 'sfiha', 'esfiha', 'esfiharia', 'creperie', 'creperia', 'crepe',\n    'pasta shop', 'massa fresca', 'noodle', 'macarrão',\n    'cake shop',\n    'pie shop', 'cookie shop', 'biscoito',\n    'dessert', 'sobremesa',\n    'doceria',\n    'meat dish', 'seafood', 'frutos do mar',\n    'fish restaurant', 'peixaria',\n    'chicken restaurant', 'frangaria',\n    'poultry restaurant', 'hot dog', 'cachorro quente',\n    'health food', 'comida saudável',\n    'vegan restaurant', 'vegetarian restaurant',\n    'breakfast restaurant', 'brunch',\n    'deli', 'delicatessen',\n    'minas gerais restaurant', 'comida mineira',\n    'brazilian restaurant', 'comida brasileira',\n    'american restaurant', 'comida americana',\n    'japanized western', 'ham shop', 'pancake', 'panqueca',\n    'takeout restaurant', 'takeaway', 'delivery restaurant',\n    'pizza delivery'\n  ];\n  if (s === 'cafe' || s === 'café' || s === 'coffee') return 'Gastronomia';\n  if (hasAny(gastronomiaLoose)) return 'Gastronomia';\n\n  // ===========================================================\n  // 5) ENTRETENIMENTO E LAZER\n  // ===========================================================\n  const entLoose = [\n    'cocktail bar', 'wine bar', 'live music bar', 'music bar',\n    'karaoke bar', 'sports bar',\n    'irish pub', 'english pub',\n    'bar & grill', 'bar e grill', 'bar and grill',\n    'balada', 'night club', 'nightclub', 'disco club', 'discoteca',\n    'dance club',\n    'casa de show', 'concert hall', 'music venue',\n    'teatro', 'theater', 'theatre', 'performing arts',\n    'karaokê', 'karaoke',\n    'parque aquático', 'parque aquatico', 'water park', 'aquatic park',\n    'parque temático', 'parque tematico', 'theme park',\n    'amusement park', 'parque de diversões', 'parque de diversoes',\n    \"children's party\", 'children hall', 'salão infantil',\n    'family entertainment', 'kids entertainment',\n    'event venue',\n    'banquet hall', 'salão de banquetes',\n    'function room', 'wedding venue',\n    'salão de festa', 'salao de festa', 'casa de festa',\n    'wine club', 'beer club',\n    'casino', 'cassino', 'bowling', 'boliche',\n    'arcade', 'fliperama', 'escape room', 'laser tag',\n    'trampoline park', 'trampolim park', 'mini golf', 'minigolf',\n    'go kart', 'go-kart', 'kartódromo', 'paintball',\n    'spa', 'massage', 'massagem',\n    'pub',\n    // >>> AJUSTE [6] beach club agora aqui:\n    'beach club'\n  ];\n  if (hasAny(entLoose)) return 'Entretenimento e lazer';\n  if (hasw('bar')) return 'Entretenimento e lazer';\n\n  // ===========================================================\n  // 6) COMPRAS TURÍSTICAS (WHITELIST)\n  // ===========================================================\n  const comprasTuristicas = [\n    'souvenir', 'lembrança', 'lembrancas',\n    'gift shop', 'loja de presentes',\n    'artesanato', 'handicraft', 'handcraft',\n    'craft store', 'craft market', 'craft center', 'centro de artesanato',\n    'feira de artesanato',\n    'produto local', 'produtos locais', 'local product', 'local products',\n    'mercado municipal', 'municipal market', 'public market',\n    'mercado central', 'mercado típico', 'mercado tipico',\n    'antique', 'antiguidade', 'antiquário', 'antiquario'\n  ];\n  if (hasAny(comprasTuristicas)) return 'Mercados e compras';\n  // (catch-all de loja/store REMOVIDO de propósito)\n\n  // ===========================================================\n  // 7) TURISMO E EXPERIÊNCIAS\n  // ===========================================================\n  const turismoLoose = [\n    'ponto turístico', 'tourist attraction', 'turismo', 'tourism',\n    'instagram', 'instagramável',\n    'free walking', 'walking tour', 'guided tour',\n    'roteiro pet', 'pet friendly',\n    'lugar acessível', 'accessible place', 'cadeirante',\n    'wheelchair accessible',\n    'lugar para correr', 'running track',\n    'praça', 'plaza',\n    'city park',\n    'tourist info', 'visitor center', 'centro de visitantes',\n    'observation', 'sightseeing',\n    // >>> AJUSTE adições turismo:\n    'boat tour', 'passeio de barco', 'boat trip',\n    'cable car', 'teleférico', 'teleferico', 'bondinho',\n    'lookout tower', 'torre de observação',\n    'observation wheel', 'roda gigante', 'ferris wheel'\n  ];\n  if (hasAny(turismoLoose)) return 'Turismo e experiências';\n  if (hasw('square')) return 'Turismo e experiências';\n  if (hasw('park') || hasw('parque') || s === 'tour') return 'Turismo e experiências';\n\n  return 'Outros';\n}\n\n// ============================================================================\n// Tradução EN → PT de um subtipo individual (com fallback inteligente)\n// ============================================================================\nfunction traduzirSubtipo(subtipo) {\n  if (!subtipo) return '';\n  const original = subtipo.trim();\n  const key = original.toLowerCase();\n  if (TRADUCAO_SUBTIPOS[key]) return TRADUCAO_SUBTIPOS[key];\n\n  // Fallback: tradução parcial por palavras-chave comuns\n  let traduzido = original;\n  const mapaFallback = [\n    [/^(.+) restaurant$/i, 'Restaurante $1'],\n    [/^(.+) store$/i, 'Loja de $1'],\n    [/^(.+) shop$/i, 'Loja de $1'],\n    [/^(.+) bar$/i, '$1 bar']\n  ];\n  for (const [re, repl] of mapaFallback) {\n    if (re.test(original)) {\n      traduzido = original.replace(re, repl);\n      break;\n    }\n  }\n  return traduzido;\n}\n\n// ============================================================================\n// Classifica um estabelecimento (com múltiplos subtipos)\n// ============================================================================\nfunction classificarEstabelecimento(subtiposStr) {\n  const resultado = {\n    categoria_principal: 'Outros',\n    categorias: [],\n    subtipos_normalizados: [],\n    subtipos_pt: []\n  };\n\n  if (!subtiposStr || typeof subtiposStr !== 'string') return resultado;\n\n  const lista = subtiposStr.split(',').map(x => x.trim()).filter(Boolean);\n  resultado.subtipos_normalizados = lista;\n\n  const catsEncontradas = [];\n  for (const sub of lista) {\n    const cat = classificarSubtipo(sub);\n    if (!catsEncontradas.includes(cat)) catsEncontradas.push(cat);\n    resultado.subtipos_pt.push(traduzirSubtipo(sub));\n  }\n\n  resultado.categorias = catsEncontradas;\n\n  if (catsEncontradas.length === 0) {\n    resultado.categoria_principal = 'Outros';\n    return resultado;\n  }\n\n  // Escolhe principal: prefere categorias != Outros, por ordem de prioridade\n  const validas = catsEncontradas.filter(c => c !== 'Outros');\n  const pool = validas.length > 0 ? validas : catsEncontradas;\n\n  for (const prio of CATS_PRIORIDADE) {\n    if (pool.includes(prio)) {\n      resultado.categoria_principal = prio;\n      return resultado;\n    }\n  }\n  resultado.categoria_principal = pool[0];\n  return resultado;\n}\n\n// ============================================================================\n// LOOP n8n — processa todos os itens\n// ============================================================================\nconst outputs = [];\n\nfor (const item of $input.all()) {\n  const data = item.json;\n\n  // campo correto é `subsegmento`\n  const subtiposStr = data.subsegmento || '';\n\n  const classif = classificarEstabelecimento(subtiposStr);\n\n  outputs.push({\n    json: {\n      ...data,\n      categoria_principal: classif.categoria_principal,\n      categorias: classif.categorias,\n      subtipos_normalizados: classif.subtipos_normalizados,\n      subtipos_pt: classif.subtipos_pt,\n      subtipos_pt_str: classif.subtipos_pt.join(', ')\n    }\n  });\n}\n\nreturn outputs;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        304
+      ],
+      "id": "5d21d5ec-eabb-4469-a449-2d10ffb6256f",
+      "name": "type selct"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "GyQ6scJ4m5kyIxVO",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/GyQ6scJ4m5kyIxVO",
+          "cachedResultName": "restaurante"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        2272,
+        208
+      ],
+      "id": "14a0fd7d-61fa-4f4b-a777-a337c39007f9",
+      "name": "Call 'restaurante'"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "aMxaZnciMV3JcYVY",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/aMxaZnciMV3JcYVY",
+          "cachedResultName": "natureza_e_aventura"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        3136,
+        448
+      ],
+      "id": "c0fc93fb-b4d6-479a-9d2d-127711325d11",
+      "name": "Call 'natureza_e_aventura'"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "NGYUI2zM3nDkO7mT",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/NGYUI2zM3nDkO7mT",
+          "cachedResultName": "mercados_e_compras"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        3488,
+        576
+      ],
+      "id": "5166fec9-295c-4a54-8f6b-d1a3006e18b7",
+      "name": "Call 'mercados_e_compras'"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "EQKy28pxJ2fzty0K",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/EQKy28pxJ2fzty0K",
+          "cachedResultName": "fazenda_e_animais"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        4016,
+        928
+      ],
+      "id": "3a4cf989-c231-420a-a156-bfdddb2a14fd",
+      "name": "Call 'fazenda_e_animais'1"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{ json: { result: \"vaca-leiteira\" } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4784,
+        -416
+      ],
+      "id": "af948629-55e5-40f0-a241-954e405e503c",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{ json: { result: \"vaca-leiteira\" } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4864,
+        -608
+      ],
+      "id": "3e60560e-b053-42b0-a530-d2be334fa8b0",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{ json: { result: \"vaca-leiteira\" } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5408,
+        -672
+      ],
+      "id": "10b99b87-d873-432c-9c11-118dc519593e",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{ json: { result: \"vaca-leiteira\" } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5136,
+        -688
+      ],
+      "id": "2884a682-9071-44c6-b76b-5d4c875f5c9f",
+      "name": "Code in JavaScript3"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{ json: { result: \"vaca-leiteira\" } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5056,
+        -448
+      ],
+      "id": "00f82a8e-3747-4ec8-8cd9-a87d275a7ba2",
+      "name": "Code in JavaScript4"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{ json: { result: \"vaca-leiteira\" } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5456,
+        -464
+      ],
+      "id": "01c3cf92-dd3a-4426-8ff1-fbe3f5014930",
+      "name": "Code in JavaScript5"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "wKr9H241uNvuTGOI",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/wKr9H241uNvuTGOI",
+          "cachedResultName": "entreterimento_e_lazer"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1936,
+        112
+      ],
+      "id": "4c01f575-2b95-441f-ac81-7e2aa6ee8cb3",
+      "name": "Call 'entreterimento_e_lazer'1"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "8PUWBXKigvfIKiFV",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/8PUWBXKigvfIKiFV",
+          "cachedResultName": "cultura_e_historia"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        2720,
+        336
+      ],
+      "id": "30e87900-0012-4f17-9639-8fa9dbf66923",
+      "name": "Call 'cultura_e_historia'1"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "i5zjd89NJwuhoZJU",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/i5zjd89NJwuhoZJU",
+          "cachedResultName": "turismo_e_experiencias"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        3808,
+        768
+      ],
+      "id": "2c78afd4-a3ea-4a2d-a647-a16bad1718eb",
+      "name": "Call 'turismo_e_experiencias!'"
+    },
+    {
+      "parameters": {
+        "tableId": "geral_estabelecimentos_avaliados",
+        "dataToSend": "autoMapInputData"
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1536,
+        928
+      ],
+      "id": "078a3017-ace2-4e09-be92-793104b4df65",
+      "name": "Create a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "U4InZOJsE9hnMgS6",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all().map(i => i.json);\nreturn items.map(item => {\n  return {\n    json: {\n      id: item.id,\n      nome: item.nome,\n      subtipos: item.subtipos_pt_str,\n      endereco: item.endereco,\n      bairro: item.bairro,\n      cep: item.cep,\n      cidade: item.cidade,\n      estado: item.estado,\n      pais: item.pais,\n      telefone: item.telefone,\n      telefone_extra: item.telefone_extra,\n      email: item.email,\n      website: item.website,\n      instagram: item.instagram,\n      facebook: item.facebook,\n      link_google_maps: item.link_google_maps,\n      nota: item.nota,\n      qtd_avaliacoes: item.qtd_avaliacoes,\n      distribuicao_notas: JSON.stringify(item.distribuicao_notas),\n      status: item.status,\n      horarios: JSON.stringify(item.horarios),\n      faixa_preco: item.faixa_preco,\n      qtd_fotos: item.qtd_fotos,\n      fotos: JSON.stringify(item.fotos ?? []),\n      gallery: [],\n      capa: null,\n      resumo: item.resumo ?? null,\n      details_google: item.details_google ?? null,\n      google_id: item.google_id,\n      place_id: item.place_id,\n      verificado: item.verificado,\n      timezone: item.timezone,\n      reviews: JSON.stringify(item.reviews),\n      par1: null,\n      just1: null,\n      par2: null,\n      just2: null,\n      par3: null,\n      just3: null,\n      par4: null,\n      just4: null,\n      par5: null,\n      just5: null,\n      média: null,\n      aproved: false,\n      reason: item.motivo_status ?? null,\n      segmento: item.categoria_principal,\n      subsegmento: item.subsegmento,\n      nr_latitude: item.nr_latitude,\n      nr_longitude: item.nr_longitude,\n      minimum_grade: item.minimum_grade\n      \n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1280,
+        832
+      ],
+      "id": "81c78b1e-4266-4d2e-bd43-efd10f919b45",
+      "name": "Code in JavaScript6"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.id }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    },
+                    "id": "1db26442-81db-466c-8e1f-6d05511a72c5"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "21af3695-d01c-49cf-9dca-2c5709af083a",
+                    "leftValue": "={{ $json.id }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notExists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -1840,
+        336
+      ],
+      "id": "cf473b8e-033d-4c04-95bc-23ae2c80b3dd",
+      "name": "Switch"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -1360,
+        496
+      ],
+      "id": "ef296324-678b-4bb5-adbd-635a366b22c7",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "vaca-leiteira"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -3312,
+        320
+      ],
+      "id": "3b7183b1-a034-439b-ba15-f8334d0a2d11",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "tableId": "geral_estabelecimentos_avaliados",
+        "dataToSend": "autoMapInputData"
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2160,
+        816
+      ],
+      "id": "08fa08ed-5d67-46b1-a3ea-f1de0e1e5ce1",
+      "name": "Create a row1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "U4InZOJsE9hnMgS6",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all().map(i => i.json);\nreturn items.map(item => {\n  return {\n    json: {\n      id: item.id,\n      nome: item.nome,\n      subtipos: item.subtipos_pt_str,\n      endereco: item.endereco,\n      bairro: item.bairro,\n      cep: item.cep,\n      cidade: item.cidade,\n      estado: item.estado,\n      pais: item.pais,\n      telefone: item.telefone,\n      telefone_extra: item.telefone_extra,\n      email: item.email,\n      website: item.website,\n      instagram: item.instagram,\n      facebook: item.facebook,\n      link_google_maps: item.link_google_maps,\n      nota: item.nota,\n      qtd_avaliacoes: item.qtd_avaliacoes,\n      distribuicao_notas: JSON.stringify(item.distribuicao_notas),\n      status: item.status,\n      horarios: JSON.stringify(item.horarios),\n      faixa_preco: item.faixa_preco,\n      qtd_fotos: item.qtd_fotos,\n      fotos: JSON.stringify(item.fotos ?? []),\n      gallery: [],\n      capa: null,\n      resumo: item.resumo ?? null,\n      details_google: item.details_google ?? null,\n      google_id: item.google_id,\n      place_id: item.place_id,\n      verificado: item.verificado,\n      timezone: item.timezone,\n      reviews: JSON.stringify(item.reviews),\n      par1: null,\n      just1: null,\n      par2: null,\n      just2: null,\n      par3: null,\n      just3: null,\n      par4: null,\n      just4: null,\n      par5: null,\n      just5: null,\n      média: null,\n      aproved: false,\n      reason: item.motivo_status ?? null,\n      segmento: item.categoria_principal,\n      subsegmento: item.subsegmento,\n      nr_latitude: item.nr_latitude,\n      nr_longitude: item.nr_longitude,\n      Reevaluation: item.Reevaluation ?? null,\n      minimum_grade: item.minimum_grade ?? null,\n      \n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1968,
+        816
+      ],
+      "id": "58ae5525-7ca3-40b2-9a50-0301ac148843",
+      "name": "Code in JavaScript7"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "geral_estabelecimentos_desc",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json.id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "go_to_trip",
+              "fieldValue": "TRUE"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1728,
+        928
+      ],
+      "id": "511e2ae5-249d-48b4-8024-d4a21304ba89",
+      "name": "Update a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "U4InZOJsE9hnMgS6",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "geral_estabelecimentos_desc",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json.id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "go_to_trip",
+              "fieldValue": "TRUE"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2336,
+        816
+      ],
+      "id": "9e3e26b2-8152-4e2e-aa9b-038cff234b82",
+      "name": "Update a row1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "U4InZOJsE9hnMgS6",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "coleta_locais"
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -2624,
+        544
+      ],
+      "id": "2f93dd5d-8a59-433f-a399-39644980b8d6",
+      "name": "minimu_reviews",
+      "credentials": {
+        "supabaseApi": {
+          "id": "U4InZOJsE9hnMgS6",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4b5ccfdc-39f8-423e-8de9-e0d12394bf2a",
+              "name": "minimum_reviews",
+              "value": "={{ $json.minimum_reviews }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2400,
+        544
+      ],
+      "id": "85776157-ad3a-4ca6-b73a-1b5f5f748954",
+      "name": "minimum_reviews"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -2224,
+        336
+      ],
+      "id": "88446618-edc6-48eb-a7b2-cef2c0cc970d",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "jsCode": "// === n8n Code Node (Run Once for All Items) ===\n\n// 1. Normaliza a entrada: lista única de objetos, venham como itens\n//    separados ou como array dentro de um único item.\nlet registros = [];\n\nfor (const item of items) {\n  const j = item.json;\n  if (Array.isArray(j)) {\n    registros.push(...j);\n  } else if (Array.isArray(j.data)) {\n    registros.push(...j.data);\n  } else {\n    registros.push(j);\n  }\n}\n\n// 2. Extrai o minimum_reviews (linha de config no fim, sem id)\nlet minimumReviews = null;\nconst cfg = registros.find(\n  (r) => r && r.minimum_reviews !== undefined && r.id === undefined\n);\nif (cfg) minimumReviews = cfg.minimum_reviews;\n\n// 3. Injeta em cada estabelecimento (linhas que têm id)\nreturn registros\n  .filter((r) => r && r.id !== undefined)\n  .map((r) => ({\n    json: {\n      ...r,\n      minimum_reviews: minimumReviews,\n    },\n  }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2032,
+        336
+      ],
+      "id": "8199fcb2-2cbf-4d24-9218-618493212a07",
+      "name": "Code in JavaScript8"
+    }
+  ],
+  "connections": {
+    "DB request": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Organizer",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Comment formatter",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "Análise quantitativa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Comment formatter": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Análise quantitativa": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Merge3": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Organizer": {
+      "main": [
+        [
+          {
+            "node": "Switch3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch2": {
+      "main": [
+        [
+          {
+            "node": "Call 'entreterimento_e_lazer'1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Call 'restaurante'",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Call 'cultura_e_historia'1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Call 'natureza_e_aventura'",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Call 'mercados_e_compras'",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Call 'turismo_e_experiencias!'",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Call 'fazenda_e_animais'1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code in JavaScript7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch3": {
+      "main": [
+        [
+          {
+            "node": "Switch2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code in JavaScript6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "type selct": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'restaurante'": {
+      "main": [
+        []
+      ]
+    },
+    "Call 'natureza_e_aventura'": {
+      "main": [
+        []
+      ]
+    },
+    "Call 'mercados_e_compras'": {
+      "main": [
+        []
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        []
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        []
+      ]
+    },
+    "Code in JavaScript4": {
+      "main": [
+        []
+      ]
+    },
+    "Code in JavaScript3": {
+      "main": [
+        []
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        []
+      ]
+    },
+    "Code in JavaScript5": {
+      "main": [
+        []
+      ]
+    },
+    "Call 'entreterimento_e_lazer'1": {
+      "main": [
+        []
+      ]
+    },
+    "Call 'cultura_e_historia'1": {
+      "main": [
+        []
+      ]
+    },
+    "Call 'turismo_e_experiencias!'": {
+      "main": [
+        []
+      ]
+    },
+    "Code in JavaScript6": {
+      "main": [
+        [
+          {
+            "node": "Create a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "type selct",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "minimu_reviews",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "DB request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript7": {
+      "main": [
+        [
+          {
+            "node": "Create a row1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a row": {
+      "main": [
+        [
+          {
+            "node": "Update a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a row1": {
+      "main": [
+        [
+          {
+            "node": "Update a row1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "minimu_reviews": {
+      "main": [
+        [
+          {
+            "node": "minimum_reviews",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "minimum_reviews": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript8": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'fazenda_e_animais'1": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "vaca-leiteira": null
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "versionId": "ad402a48-e031-47e4-b5df-484716e866d6",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-06-03T22:43:02.099Z",
+      "createdAt": "2026-06-03T22:43:02.099Z",
+      "role": "workflow:owner",
+      "workflowId": "gsUOJUPjGia0fLqt",
+      "projectId": "G6oOhMxSr8k56eQz"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
